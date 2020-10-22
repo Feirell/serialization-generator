@@ -1,18 +1,21 @@
 import {ValueSerializer} from "./value-serializer";
 import {ArrayBufferSerializer} from "./array-buffer-serializer";
-import {fnc} from "../fnc-template";
 
 export class StringSerializer<Type extends object> extends ValueSerializer<string> {
     private static readonly te = new TextEncoder();
+    private static readonly td = new TextDecoder();
 
-    constructor() {
-        super();
+    private lastCheckedString: string = '';
+    private lastCheckedSerialization = new Uint8Array([0, 0]);
+
+    private readonly abSer = new ArrayBufferSerializer();
+
+    get staticSize(): number | undefined {
+        return undefined;
     }
 
     getSizeForValue(val: string): number {
-        // TODO don't encode here
-
-        const byteLength = StringSerializer.te.encode(val).length;
+        const byteLength = this.getNumberOfBytesString(val);
 
         if (byteLength > 0xffff)
             throw new Error('can not serialize a buffer with more than 65535 bytes length');
@@ -20,39 +23,43 @@ export class StringSerializer<Type extends object> extends ValueSerializer<strin
         return byteLength + 2;
     }
 
-    getDeserializerStrippedBody(ID_LOCAL_VAL: string): string {
-        const ID_INTERMEDIATE = 'intermediateBuffer';
+    typeCheck(val: string, name: string = 'val'): void {
+        if (typeof val != 'string')
+            throw new Error(name + ' needs to be an String but was ' + val);
 
-        const abDes = new ArrayBufferSerializer().getDeserializerStrippedBody(ID_INTERMEDIATE);
-        return fnc`
-        let ${ID_INTERMEDIATE};
-        ${abDes}
-        
-        const str = new TextDecoder().decode(${ID_INTERMEDIATE});
-        ${ID_LOCAL_VAL} = str;
-        `;
+        const size = this.getNumberOfBytesString(val);
+        if (size > 0xffff)
+            throw new Error(name + ' needs to have a size equal or lower than 65535 bytes but had a size of ' + size);
     }
 
-    getRangeCheckStrippedBody(ID_LOCAL_VAL: string): string {
-        return fnc`
-        if(typeof ${ID_LOCAL_VAL} == 'string')
-            throw new Error('${ID_LOCAL_VAL} needs to be an String but was ' + ${ID_LOCAL_VAL});
-        `;
-
-        // TODO removed length check, since it will otherwise be encoded thrice
-        // if(${ID_LOCAL_VAL}.byteLength > 0xffff)
-        //   throw new Error('${ID_LOCAL_VAL} is too large array buffer can not exceed 65535 bytes of length to be serialized');
+    serialize(dv: DataView, offset: number, val: string): { offset: number; } {
+        const ser = this.serializeString(val);
+        return this.abSer.serialize(dv, offset, ser.buffer);
     }
 
-    getSerializerStrippedBody(ID_LOCAL_VAL: string): string {
-        const ID_INTERMEDIATE = 'intermediateBuffer';
+    deserialize(dv: DataView, offset: number): { offset: number; val: string; } {
+        const ret = this.abSer.deserialize(dv, offset);
+        const val = this.deserializeString(ret.val);
 
-        const abSer = new ArrayBufferSerializer().getSerializerStrippedBody(ID_INTERMEDIATE);
-        return fnc`
-        const ${ID_INTERMEDIATE} = new TextEncoder().encode(${ID_LOCAL_VAL}).buffer;
-        
-        ${abSer}
-        `;
+        return {offset: ret.offset, val};
+    }
+
+    private deserializeString(ab: ArrayBuffer): string {
+        return StringSerializer.td.decode(ab);
+    }
+
+    private serializeString(str: string): Uint8Array {
+        if (this.lastCheckedString != str) {
+            this.lastCheckedString = str;
+            this.lastCheckedSerialization = StringSerializer.te.encode(str);
+        }
+
+        return this.lastCheckedSerialization;
+    }
+
+    private getNumberOfBytesString(str: string): number {
+        // TODO don't encode here
+        return this.serializeString(str).length;
     }
 
 }

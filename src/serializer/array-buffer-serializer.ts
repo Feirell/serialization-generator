@@ -1,9 +1,8 @@
-import {ID_DV, ID_OFFSET, ValueSerializer} from "./value-serializer";
-import {fnc} from "../fnc-template";
+import {ValueSerializer} from "./value-serializer";
 
 export class ArrayBufferSerializer extends ValueSerializer<ArrayBuffer> {
-    constructor() {
-        super();
+    get staticSize(): number | undefined {
+        return undefined;
     }
 
     getSizeForValue(val: ArrayBuffer): number {
@@ -13,44 +12,42 @@ export class ArrayBufferSerializer extends ValueSerializer<ArrayBuffer> {
         return val.byteLength + 2;
     }
 
-    getDeserializerStrippedBody(ID_LOCAL_VAL: string): string {
-        return fnc`
-        const length = ${ID_DV}.getUint16(${ID_OFFSET});
-        ${ID_OFFSET} += 2;
-        
-        ${ID_LOCAL_VAL} = new ArrayBuffer(length);
-        
-        const target = new Uint8Array(${ID_LOCAL_VAL});
-        const source = new Uint8Array(${ID_DV}.buffer);
-        
-        target.set(source.subarray(${ID_OFFSET}, ${ID_OFFSET} + length), 0);
-        ${ID_OFFSET} += length;
-        `;
+    typeCheck(val: ArrayBuffer, name: string | undefined): void {
+        if (!(val instanceof ArrayBuffer))
+            throw new Error(name + ' needs to be an ArrayBuffer but was ' + val);
+
+        if (val.byteLength > 0xffff)
+            throw new Error(name + ' is too large array buffer can not exceed 65535 bytes of length to be serialized');
     }
 
-    getRangeCheckStrippedBody(ID_LOCAL_VAL: string): string {
-        return fnc`
-        if(!(${ID_LOCAL_VAL} instanceof ArrayBuffer))
-            throw new Error('${ID_LOCAL_VAL} needs to be an ArrayBuffer but was ' + ${ID_LOCAL_VAL});
-            
-        if(${ID_LOCAL_VAL}.byteLength > 0xffff)
-            throw new Error('${ID_LOCAL_VAL} is too large array buffer can not exceed 65535 bytes of length to be serialized');
-        `;
+    serialize(dv: DataView, offset: number, val: ArrayBuffer): { offset: number } {
+        const target = new Uint8Array(dv.buffer);
+        const source = new Uint8Array(val);
+
+        const length = val.byteLength;
+
+        dv.setUint16(offset, length);
+        offset += 2;
+
+        target.set(source, offset);
+        offset += length;
+
+        return {offset};
     }
 
-    getSerializerStrippedBody(ID_LOCAL_VAL: string): string {
-        return fnc`
-        const target = new Uint8Array(${ID_DV}.buffer);
-        const source = new Uint8Array(${ID_LOCAL_VAL});
-        
-        const length = ${ID_LOCAL_VAL}.byteLength;
-        
-        ${ID_DV}.setUint16(${ID_OFFSET}, length);
-        ${ID_OFFSET} += 2;
-        debugger;
-        target.set(source, ${ID_OFFSET});
-        ${ID_OFFSET} += length;
-        `;
+    deserialize(dv: DataView, offset: number): { offset: number; val: ArrayBuffer } {
+        const length = dv.getUint16(offset);
+        offset += 2;
+
+        const val = new ArrayBuffer(length);
+
+        const target = new Uint8Array(val);
+        const source = new Uint8Array(dv.buffer);
+
+        target.set(source.subarray(offset, offset + length), 0);
+        offset += length;
+
+        return {offset, val};
     }
 }
 

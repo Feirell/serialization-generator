@@ -6,7 +6,7 @@ import {STRING_SERIALIZER} from "./serializer/string-serializer";
 import {ArraySerializer} from "./serializer/array-serializer";
 import {measure, speed} from "performance-test-runner";
 import {runAndReport} from "performance-test-runner/lib/suite-console-printer";
-import {VectorSerializer} from "./serializer/vector-serializer";
+
 
 interface ExampleType {
     a: number;
@@ -19,7 +19,6 @@ interface ExampleType {
 
     g: string;
     h: number[];
-    i: [number, number, number, number];
 }
 
 const ab = new ArrayBuffer(3);
@@ -35,13 +34,10 @@ const instance: ExampleType = {
     },
 
     g: "Test string €€",
-    h: new Array(500).fill(0xff),
-    i: [8, 7, 7, 2]
+    h: new Array(500).fill(0xff)
 }
 
 /*
-forged together:
-
                 ops/sec  MoE samples relative
 serialization
   serialize   5,321,436 1.12      89     1.15
@@ -58,43 +54,6 @@ serialization + String
 serialization + AB + String + Array
   serialize     100,676 0.74      95     1.00
   deserialize   111,592 0.61      90     1.11
-
-with the general form
-
-                  ops/sec  MoE samples relative
-serialization
-  serialize   2,762,253 1.49      91     1.20
-  deserialize 2,301,058 1.48      92     1.00
-
-
-with the correct specific identifiers for the functions in the Float32 / Uint32 classes
-
-                ops/sec  MoE samples relative
-serialization
-  serialize   4,055,612 1.45      88     1.38
-  deserialize 2,937,750 1.71      91     1.00
-
-With vector
-
-                ops/sec  MoE samples relative
-serialization
-  serialize   2,684,042 0.94      93     1.20
-  deserialize 2,238,283 1.55      87     1.00
-serialization + Array
-  serialize      60,061 2.39      86     1.00
-  deserialize    67,150 0.70      88     1.12
-serialization + Vector
-  serialize   1,420,139 0.44      95     1.32
-  deserialize 1,073,853 0.91      93     1.00
-serialization + AB
-  serialize   1,318,086 1.11      90     3.14
-  deserialize   419,398 1.16      89     1.00
-serialization + String
-  serialize   1,196,285 0.67      88     5.93
-  deserialize   201,582 0.83      90     1.00
-serialization + Array + Vector + AB + String
-  serialize      58,956 1.46      93     1.33
-  deserialize    44,490 1.25      93     1.00
  */
 
 let global: any;
@@ -108,26 +67,25 @@ measure('serialization', () => {
                 .append("e", FLOAT32_SERIALIZER)
             // .append("f", ARRAY_BUFFER_SERIALIZER)
         )
-        // .append("g", STRING_SERIALIZER)
-        // .append("h", new ArraySerializer(UINT32_SERIALIZER))
-        // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
+    // .append("g", STRING_SERIALIZER)
+    // .append("h", new ArraySerializer(UINT32_SERIALIZER))
 
+    const {serializer, deserializer} = exSer
+        .generate();
 
     const length = exSer.getSizeForValue(instance);
 
     // console.log('length', length);
     const data = new ArrayBuffer(length);
-    const view = new DataView(data);
 
-    speed('serialize', {view, exSer, instance}, () => {
-        global.exSer.serialize(global.view, 0, global.instance, false);
+    speed('serialize', {data, serializer, instance}, () => {
+        global.serializer(global.data, 0, global.instance, false);
     })
 
-    speed('deserialize', {view, exSer}, () => {
-        global.exSer.deserialize(global.view, 0);
+    speed('deserialize', {data, deserializer}, () => {
+        global.deserializer(global.data, 0);
     })
 })
-
 
 measure('serialization + Array', () => {
     const exSer = new ObjectSerializer<ExampleType>()
@@ -140,50 +98,21 @@ measure('serialization + Array', () => {
         )
         // .append("g", STRING_SERIALIZER)
         .append("h", new ArraySerializer(UINT32_SERIALIZER))
-        // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
 
-
-    const length = exSer.getSizeForValue(instance);
-
-    // console.log('length', length);
-    const data = new ArrayBuffer(length);
-    const view = new DataView(data);
-
-    speed('serialize', {view, exSer, instance}, () => {
-        global.exSer.serialize(global.view, 0, global.instance, false);
-    })
-
-    speed('deserialize', {view, exSer}, () => {
-        global.exSer.deserialize(global.view, 0);
-    })
-})
-
-measure('serialization + Vector', () => {
-    const exSer = new ObjectSerializer<ExampleType>()
-        .append("a", UINT32_SERIALIZER)
-        .append("b", FLOAT32_SERIALIZER)
-        .append("c", new ObjectSerializer<ExampleType["c"]>()
-                .append("d", UINT32_SERIALIZER)
-                .append("e", FLOAT32_SERIALIZER)
-            // .append("f", ARRAY_BUFFER_SERIALIZER)
-        )
-        // .append("g", STRING_SERIALIZER)
-        // .append("h", new ArraySerializer(UINT32_SERIALIZER))
-        .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
-
+    const {serializer, deserializer} = exSer
+        .generate();
 
     const length = exSer.getSizeForValue(instance);
 
     // console.log('length', length);
     const data = new ArrayBuffer(length);
-    const view = new DataView(data);
 
-    speed('serialize', {view, exSer, instance}, () => {
-        global.exSer.serialize(global.view, 0, global.instance, false);
+    speed('serialize', {data, serializer, instance}, () => {
+        global.serializer(global.data, 0, global.instance, false);
     })
 
-    speed('deserialize', {view, exSer}, () => {
-        global.exSer.deserialize(global.view, 0);
+    speed('deserialize', {data, deserializer}, () => {
+        global.deserializer(global.data, 0);
     })
 })
 
@@ -196,23 +125,23 @@ measure('serialization + AB', () => {
             .append("e", FLOAT32_SERIALIZER)
             .append("f", ARRAY_BUFFER_SERIALIZER)
         )
-        // .append("g", STRING_SERIALIZER)
-        // .append("h", new ArraySerializer(UINT32_SERIALIZER))
-        // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
+    // .append("g", STRING_SERIALIZER)
+    // .append("h", new ArraySerializer(UINT32_SERIALIZER))
 
+    const {serializer, deserializer} = exSer
+        .generate();
 
     const length = exSer.getSizeForValue(instance);
 
     // console.log('length', length);
     const data = new ArrayBuffer(length);
-    const view = new DataView(data);
 
-    speed('serialize', {view, exSer, instance}, () => {
-        global.exSer.serialize(global.view, 0, global.instance, false);
+    speed('serialize', {data, serializer, instance}, () => {
+        global.serializer(global.data, 0, global.instance, false);
     })
 
-    speed('deserialize', {view, exSer}, () => {
-        global.exSer.deserialize(global.view, 0);
+    speed('deserialize', {data, deserializer}, () => {
+        global.deserializer(global.data, 0);
     })
 })
 
@@ -226,26 +155,26 @@ measure('serialization + String', () => {
             // .append("f", ARRAY_BUFFER_SERIALIZER)
         )
         .append("g", STRING_SERIALIZER)
-        // .append("h", new ArraySerializer(UINT32_SERIALIZER))
-        // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
+    // .append("h", new ArraySerializer(UINT32_SERIALIZER))
 
+    const {serializer, deserializer} = exSer
+        .generate();
 
     const length = exSer.getSizeForValue(instance);
 
     // console.log('length', length);
     const data = new ArrayBuffer(length);
-    const view = new DataView(data);
 
-    speed('serialize', {view, exSer, instance}, () => {
-        global.exSer.serialize(global.view, 0, global.instance, false);
+    speed('serialize', {data, serializer, instance}, () => {
+        global.serializer(global.data, 0, global.instance, false);
     })
 
-    speed('deserialize', {view, exSer}, () => {
-        global.exSer.deserialize(global.view, 0);
+    speed('deserialize', {data, deserializer}, () => {
+        global.deserializer(global.data, 0);
     })
 })
 
-measure('serialization + Array + Vector + AB + String', () => {
+measure('serialization + AB + String + Array', () => {
     const exSer = new ObjectSerializer<ExampleType>()
         .append("a", UINT32_SERIALIZER)
         .append("b", FLOAT32_SERIALIZER)
@@ -256,21 +185,21 @@ measure('serialization + Array + Vector + AB + String', () => {
         )
         .append("g", STRING_SERIALIZER)
         .append("h", new ArraySerializer(UINT32_SERIALIZER))
-        .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
 
+    const {serializer, deserializer} = exSer
+        .generate();
 
     const length = exSer.getSizeForValue(instance);
 
     // console.log('length', length);
     const data = new ArrayBuffer(length);
-    const view = new DataView(data);
 
-    speed('serialize', {view, exSer, instance}, () => {
-        global.exSer.serialize(global.view, 0, global.instance, false);
+    speed('serialize', {data, serializer, instance}, () => {
+        global.serializer(global.data, 0, global.instance, false);
     })
 
-    speed('deserialize', {view, exSer}, () => {
-        global.exSer.deserialize(global.view, 0);
+    speed('deserialize', {data, deserializer}, () => {
+        global.deserializer(global.data, 0);
     })
 })
 

@@ -1,5 +1,4 @@
 import {ValueSerializer} from "./value-serializer";
-import {fncPrefixAndArr} from "../fnc-template";
 
 interface AppendedSerializer<Structure extends object, Name extends keyof Structure> {
     name: Name;
@@ -7,16 +6,22 @@ interface AppendedSerializer<Structure extends object, Name extends keyof Struct
 }
 
 export class ObjectSerializer<Structure extends object> extends ValueSerializer<Structure> {
-    // TODO improve internal typing (any the other casts)
+    // TODO improve internal typing (and the any casts)
     private serializationSteps: AppendedSerializer<Structure, any>[] = [];
 
-    constructor() {
-        super();
-    }
+    get staticSize(): number | undefined {
+        let size = 0;
 
-    getSizeForValue(val: Structure): number {
-        return this.serializationSteps.reduce((p, c) =>
-            p + c.serializer.getSizeForValue((val as any)[c.name]), 0);
+        for (const {serializer} of this.serializationSteps) {
+            const staticSize = serializer.staticSize
+
+            if (staticSize == undefined)
+                return undefined;
+
+            size += staticSize;
+        }
+
+        return size;
     }
 
     append<Name extends keyof Structure, Serializer extends ValueSerializer<Structure[Name]>>(name: Name, serializer: Serializer) {
@@ -24,24 +29,41 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
         return this;
     }
 
-    getRangeCheckStrippedBody(ID_LOCAL_VAL: string): string {
-        const mappedSerializer = this.serializationSteps
-            .map(({name, serializer}) => serializer.getRangeCheckStrippedBody(ID_LOCAL_VAL + '.' + name));
+    getSizeForValue(val: Structure): number {
+        let size = 0;
+        for (const {name, serializer} of this.serializationSteps)
+            size += serializer.getSizeForValue((val as any)[name]);
 
-        return fncPrefixAndArr('', ...mappedSerializer);
+        return size;
     }
 
-    getSerializerStrippedBody(ID_LOCAL_VAL: string): string {
-        const mappedSerializer = this.serializationSteps
-            .map(({name, serializer}) => '\n{' + serializer.getSerializerStrippedBody(ID_LOCAL_VAL + '.' + name) + '}\n');
+    typeCheck(val: Structure, name = 'val'): void {
+        if (typeof val != 'object')
+            throw new Error(name + ' needs to be a object but was ' + val);
 
-        return fncPrefixAndArr('', ...mappedSerializer);
+        for (const {name: innerName, serializer} of this.serializationSteps)
+            serializer.typeCheck((val as any)[innerName], name + '.' + innerName);
     }
 
-    getDeserializerStrippedBody(ID_LOCAL_VAL: string): string {
-        const mappedSerializer = this.serializationSteps
-            .map(({name, serializer}) => '\n{' + serializer.getDeserializerStrippedBody(ID_LOCAL_VAL + '.' + name) + '}\n');
+    serialize(dv: DataView, offset: number, val: Structure): { offset: number } {
+        for (const {name, serializer} of this.serializationSteps) {
+            const ret = serializer.serialize(dv, offset, (val as any)[name]);
+            offset = ret.offset;
+        }
 
-        return fncPrefixAndArr(ID_LOCAL_VAL + ' = {};\n', ...mappedSerializer);
+        return {offset};
     }
+
+    deserialize(dv: DataView, offset: number): { offset: number; val: Structure } {
+        const val = {} as Structure;
+        for (const {name, serializer} of this.serializationSteps) {
+            const ret = serializer.deserialize(dv, offset);
+            offset = ret.offset;
+            (val as any) [name] = ret.val;
+        }
+
+        return {offset, val};
+    }
+
+
 }

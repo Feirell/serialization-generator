@@ -1,56 +1,56 @@
-import {ID_DV, ID_OFFSET, ValueSerializer} from "./value-serializer";
-import {fnc} from "../fnc-template";
+import {ValueSerializer} from "./value-serializer";
 
 export class ArraySerializer<Type> extends ValueSerializer<Type[]> {
     constructor(private readonly serializer: ValueSerializer<Type>) {
         super();
     }
 
+    get staticSize(): number | undefined {
+        return undefined;
+    }
+
     getSizeForValue(val: Type[]): number {
-        return val.reduce((p, c) =>
-            p + this.serializer.getSizeForValue(c), 0) + 2;
+        let size = 0;
+        for (let i = 0; i < val.length; i++)
+            size += this.serializer.getSizeForValue(val[i]);
+
+        return size + 2;
     }
 
-    getRangeCheckStrippedBody(ID_LOCAL_VAL: string): string {
-        const ID_ARRAY_ITEM = ID_LOCAL_VAL + '[i]';
-        const rc = this.serializer.getRangeCheckStrippedBody(ID_ARRAY_ITEM);
+    typeCheck(val: Type[], name: string = 'val'): void {
+        if (!Array.isArray(val))
+            throw new Error(val + ' needs to be an array but was ' + val);
 
-        return fnc`
-        for(let i = 0; i < ${ID_LOCAL_VAL}.length; i++){ 
-            ${rc}
-        }
-        `;
+        for (let i = 0; i < val.length; i++)
+            this.serializer.typeCheck(val[i], name + '[' + i + ']');
     }
 
-    getSerializerStrippedBody(ID_LOCAL_VAL: string): string {
-        const ID_ARRAY_ITEM = ID_LOCAL_VAL + '[i]';
-        const rc = this.serializer.getSerializerStrippedBody(ID_ARRAY_ITEM);
+    serialize(dv: DataView, offset: number, val: Type[]): { offset: number } {
+        const length = val.length;
 
-        return fnc`
-        
-        const length = ${ID_LOCAL_VAL}.length;
-        
-        ${ID_DV}.setUint16(${ID_OFFSET}, length);
-        ${ID_OFFSET} += 2;
-        
-        for(let i = 0; i < length; i++){
-            ${rc}
+        dv.setUint16(offset, length);
+        offset += 2;
+
+        const ser = this.serializer;
+        for (let i = 0; i < length; i++) {
+            const ret = ser.serialize(dv, offset, val[i]);
+            offset = ret.offset;
         }
-        `;
+
+        return {offset};
     }
 
-    getDeserializerStrippedBody(ID_LOCAL_VAL: string): string {
-        const ID_ARRAY_ITEM = ID_LOCAL_VAL + '[i]';
-        const rc = this.serializer.getDeserializerStrippedBody(ID_ARRAY_ITEM);
+    deserialize(dv: DataView, offset: number): { offset: number; val: Type[] } {
+        const length = dv.getUint16(offset);
+        offset += 2;
 
-        return fnc`
-        const length = ${ID_DV}.getUint16(${ID_OFFSET});
-        ${ID_OFFSET} += 2;
-        
-        ${ID_LOCAL_VAL} = new Array(length);
-        for(let i = 0; i < length; i++){ 
-            ${rc}
+        const val = new Array(length);
+        for (let i = 0; i < length; i++) {
+            const ret = this.serializer.deserialize(dv, offset);
+            val[i] = ret.val;
+            offset = ret.offset;
         }
-        `;
+
+        return {offset, val};
     }
 }

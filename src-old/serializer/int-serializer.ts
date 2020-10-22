@@ -1,4 +1,5 @@
-import {ValueSerializer} from "./value-serializer";
+import {ID_DV, ID_OFFSET, ValueSerializer} from "./value-serializer";
+import {fnc} from "../fnc-template";
 
 const intRange = (unsigned: boolean, bytes: number): [number, number] => {
     let min = NaN;
@@ -42,9 +43,6 @@ class IntSerializer extends ValueSerializer<number> {
     private readonly max: number;
     private readonly typeIdentifier: string;
 
-    private readonly dvSerializer;
-    private readonly dvDeserializer;
-
     constructor(
         private readonly byteSize: 1 | 2 | 4,
         private readonly unsigned: boolean,
@@ -60,42 +58,48 @@ class IntSerializer extends ValueSerializer<number> {
         this.max = max;
 
         this.typeIdentifier = (unsigned ? 'Uint' : 'Int') + (byteSize * 8).toString();
-
-        this.dvSerializer = DataView.prototype['set' + this.typeIdentifier];
-        this.dvDeserializer = DataView.prototype['get' + this.typeIdentifier];
-    }
-
-    get staticSize(): number | undefined {
-        return this.byteSize;
     }
 
     getSizeForValue(val: number): number {
         return this.byteSize;
     }
 
-    typeCheck(val: number, name: string = 'val') {
-        if (!Number.isInteger(val))
-            throw new Error(name + ' needs to be a integer to be serialized as ' + this.typeIdentifier + ' but was ' + val);
+    getRangeCheckStrippedBody(ID_LOCAL_VAL: string): string {
+        const min = '' + this.min;
+        const max = '' + this.max;
 
-        if (val < this.min)
-            throw new Error(name + ' needs to be greater or equal to ' + this.min + ' to be serialized as ' + this.typeIdentifier + ' but was ' + val);
+        const TYPE_IDENTIFIER = this.typeIdentifier;
 
-        if (val > this.max)
-            throw new Error(name + ' needs to be less or equal to ${max} to be serialized as ' + this.typeIdentifier + ' but was ' + val);
+        return fnc`
+        if(!Number.isInteger(${ID_LOCAL_VAL}))
+           throw new Error('${ID_LOCAL_VAL} needs to be a integer to be serialized as ${TYPE_IDENTIFIER} but was ' + ${ID_LOCAL_VAL});
+              
+        if(${ID_LOCAL_VAL} < ${min})
+          throw new Error('${ID_LOCAL_VAL} needs to be greater or equal to ${min} to be serialized as ${TYPE_IDENTIFIER} but was ' + ${ID_LOCAL_VAL});
+          
+        if(${ID_LOCAL_VAL} > ${max})
+          throw new Error('${ID_LOCAL_VAL} needs to be less or equal to ${max} to be serialized as ${TYPE_IDENTIFIER} but was ' + ${ID_LOCAL_VAL});
+        `;
     }
 
-    serialize(dv: DataView, offset: number, val: number): { offset: number } {
-        // (dv as any)['set' + this.typeIdentifier](offset, val);
-        this.dvSerializer.call(dv, offset, val);
-        offset += this.byteSize;
-        return {offset};
+    getSerializerStrippedBody(ID_LOCAL_VAL: string): string {
+        const ID_TYPE = this.typeIdentifier;
+        const BYTE_SIZE = '' + this.byteSize;
+
+        return fnc`
+        ${ID_DV}.set${ID_TYPE}(${ID_OFFSET}, ${ID_LOCAL_VAL});
+        ${ID_OFFSET} += ${BYTE_SIZE};
+        `;
     }
 
-    deserialize(dv: DataView, offset: number): { offset: number; val: number } {
-        // const val = (dv as any)['get' + this.typeIdentifier](offset);
-        const val = this.dvDeserializer.call(dv, offset);
-        offset += this.byteSize;
-        return {offset, val};
+    getDeserializerStrippedBody(ID_LOCAL_VAL: string): string {
+        const ID_TYPE = this.typeIdentifier;
+        const BYTE_SIZE = '' + this.byteSize;
+
+        return fnc`
+        ${ID_LOCAL_VAL} = ${ID_DV}.get${ID_TYPE}(${ID_OFFSET});
+        ${ID_OFFSET} += ${BYTE_SIZE};
+        `;
     }
 }
 
