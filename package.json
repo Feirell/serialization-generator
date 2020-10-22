@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node lib/index.js"
+  },
+  "dependencies": {
+    "typescript": "^4.0.3"
+  },
+  "devDependencies": {
+    "performance-test-runner": "^0.1.1",
+    "terser": "^5.3.7"
+  }
+}
