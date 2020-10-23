@@ -1,13 +1,20 @@
 {
+  "name": "serialization-generator",
+  "version": "0.0.1",
+  "description": "Package to generate de-/serializers to convert JavaScript values to and from binaries.",
+  "main": "lib/index.js",
+  "files": ["lib"],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "start": "node lib/index.js"
   },
+  "repository": "https://github.com/Feirell/serialization-generator.git",
+  "author": "Florian Völker <Neirolf2030@web.de>",
+  "license": "MIT",
   "dependencies": {
     "typescript": "^4.0.3"
   },
   "devDependencies": {
-    "performance-test-runner": "^0.1.1",
-    "terser": "^5.3.7"
+    "performance-test-runner": "^0.1.1"
   }
 }
