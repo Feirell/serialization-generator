@@ -6,5 +6,5 @@
   "excludePrivate": true,
   "mode": "library",
   "out": "docs",
-  "name": "event-emitter-typesafe"
+  "name": "serialization-generator"
 }
