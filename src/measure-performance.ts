@@ -1,6 +1,6 @@
 import {ARRAY_BUFFER_SERIALIZER} from "./serializer/array-buffer-serializer";
 import {ObjectSerializer} from "./serializer/object-serializer";
-import {UINT32_SERIALIZER} from "./serializer/int-serializer";
+import {INT8_SERIALIZER, UINT16_SERIALIZER, UINT32_SERIALIZER, UINT8_SERIALIZER} from "./serializer/int-serializer";
 import {FLOAT32_SERIALIZER} from "./serializer/float-serializer";
 import {STRING_SERIALIZER} from "./serializer/string-serializer";
 import {ArraySerializer} from "./serializer/array-serializer";
@@ -29,7 +29,7 @@ const instance: ExampleType = {
     a: 12,
     b: Math.PI,
     c: {
-        d: 22,
+        d: -22,
         e: 443,
         f: ab
     },
@@ -104,13 +104,13 @@ measure('serialization', () => {
         .append("a", UINT32_SERIALIZER)
         .append("b", FLOAT32_SERIALIZER)
         .append("c", new ObjectSerializer<ExampleType["c"]>()
-                .append("d", UINT32_SERIALIZER)
-                .append("e", FLOAT32_SERIALIZER)
-            // .append("f", ARRAY_BUFFER_SERIALIZER)
+                .append("d", INT8_SERIALIZER)
+                .append("e", UINT16_SERIALIZER)
+             // .append("f", ARRAY_BUFFER_SERIALIZER)
         )
-        // .append("g", STRING_SERIALIZER)
-        // .append("h", new ArraySerializer(UINT32_SERIALIZER))
-        // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
+    // .append("g", STRING_SERIALIZER)
+    // .append("h", new ArraySerializer(UINT32_SERIALIZER))
+    // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
 
 
     const length = exSer.getSizeForValue(instance);
@@ -134,13 +134,13 @@ measure('serialization + Array', () => {
         .append("a", UINT32_SERIALIZER)
         .append("b", FLOAT32_SERIALIZER)
         .append("c", new ObjectSerializer<ExampleType["c"]>()
-                .append("d", UINT32_SERIALIZER)
-                .append("e", FLOAT32_SERIALIZER)
-            // .append("f", ARRAY_BUFFER_SERIALIZER)
+                .append("d", INT8_SERIALIZER)
+                .append("e", UINT16_SERIALIZER)
+             // .append("f", ARRAY_BUFFER_SERIALIZER)
         )
         // .append("g", STRING_SERIALIZER)
         .append("h", new ArraySerializer(UINT32_SERIALIZER))
-        // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
+    // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
 
 
     const length = exSer.getSizeForValue(instance);
@@ -163,9 +163,9 @@ measure('serialization + Vector', () => {
         .append("a", UINT32_SERIALIZER)
         .append("b", FLOAT32_SERIALIZER)
         .append("c", new ObjectSerializer<ExampleType["c"]>()
-                .append("d", UINT32_SERIALIZER)
-                .append("e", FLOAT32_SERIALIZER)
-            // .append("f", ARRAY_BUFFER_SERIALIZER)
+                .append("d", INT8_SERIALIZER)
+                .append("e", UINT16_SERIALIZER)
+             // .append("f", ARRAY_BUFFER_SERIALIZER)
         )
         // .append("g", STRING_SERIALIZER)
         // .append("h", new ArraySerializer(UINT32_SERIALIZER))
@@ -196,9 +196,9 @@ measure('serialization + AB', () => {
             .append("e", FLOAT32_SERIALIZER)
             .append("f", ARRAY_BUFFER_SERIALIZER)
         )
-        // .append("g", STRING_SERIALIZER)
-        // .append("h", new ArraySerializer(UINT32_SERIALIZER))
-        // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
+    // .append("g", STRING_SERIALIZER)
+    // .append("h", new ArraySerializer(UINT32_SERIALIZER))
+    // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
 
 
     const length = exSer.getSizeForValue(instance);
@@ -221,13 +221,13 @@ measure('serialization + String', () => {
         .append("a", UINT32_SERIALIZER)
         .append("b", FLOAT32_SERIALIZER)
         .append("c", new ObjectSerializer<ExampleType["c"]>()
-                .append("d", UINT32_SERIALIZER)
-                .append("e", FLOAT32_SERIALIZER)
-            // .append("f", ARRAY_BUFFER_SERIALIZER)
+                .append("d", INT8_SERIALIZER)
+                .append("e", UINT16_SERIALIZER)
+             // .append("f", ARRAY_BUFFER_SERIALIZER)
         )
         .append("g", STRING_SERIALIZER)
-        // .append("h", new ArraySerializer(UINT32_SERIALIZER))
-        // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
+    // .append("h", new ArraySerializer(UINT32_SERIALIZER))
+    // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
 
 
     const length = exSer.getSizeForValue(instance);

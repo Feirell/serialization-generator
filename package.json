@@ -3,18 +3,29 @@
   "version": "0.0.2",
   "description": "Package to generate de-/serializers to convert JavaScript values to and from binaries.",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "files": [
     "lib"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
-    "start": "node lib/index.js"
+    "start": "node lib/index.js",
+    "build-md": "ifim template.README.md --add-location-notice",
+    "build-docs": "typedoc"
   },
   "repository": "https://github.com/Feirell/serialization-generator.git",
   "author": "Florian Völker <Neirolf2030@web.de>",
   "license": "MIT",
   "devDependencies": {
+    "insert-filecontent-into-markdown": "^2.0.1",
     "performance-test-runner": "^0.1.1",
+    "typedoc": "^0.17.0-3",
     "typescript": "^4.0.3"
-  }
+  },
+  "keywords": [
+    "serialization",
+    "generator",
+    "data transport",
+    "export"
+  ]
 }

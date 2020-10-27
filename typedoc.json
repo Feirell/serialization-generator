@@ -1,0 +1,10 @@
+{
+  "inputFiles": [
+    "src/index.ts"
+  ],
+  "excludeNotExported": true,
+  "excludePrivate": true,
+  "mode": "library",
+  "out": "docs",
+  "name": "event-emitter-typesafe"
+}

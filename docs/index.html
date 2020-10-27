@@ -1,0 +1,358 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>event-emitter-typesafe</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">event-emitter-typesafe</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>event-emitter-typesafe</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#serialization-generator" id="serialization-generator" style="color: inherit; text-decoration: none;">
+					<h1>serialization-generator</h1>
+				</a>
+				<p>The main target of this package is to make the creation of serializers to transform JavaScript Values into binary and back
+				as easy as possible and to keep the creation readable.</p>
+				<p>To archive this goal this package provides multiple simple serializers which you can combine to create more complex
+				versions which fit your needed data structures.</p>
+				<!-- USEFILE: src\simple-example.ts; str => str.replace('./index', 'serialization-generator') -->
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> {
+    ObjectSerializer,
+    ArraySerializer,
+    VectorSerializer,
+
+    ARRAY_BUFFER_SERIALIZER,
+    STRING_SERIALIZER,
+
+    FLOAT32_SERIALIZER,
+    FLOAT64_SERIALIZER,
+
+    INT8_SERIALIZER,
+    INT16_SERIALIZER,
+    INT32_SERIALIZER,
+
+    UINT8_SERIALIZER,
+    UINT16_SERIALIZER,
+    UINT32_SERIALIZER,
+} <span class="hljs-keyword">from</span> <span class="hljs-string">'serialization-generator'</span>;
+
+<span class="hljs-keyword">interface</span> ExampleSubType {
+    d: <span class="hljs-built_in">number</span>;
+    e: <span class="hljs-built_in">number</span>;
+    f: <span class="hljs-built_in">ArrayBuffer</span>;
+}
+
+<span class="hljs-keyword">interface</span> ExampleType {
+    a: <span class="hljs-built_in">number</span>;
+    b: <span class="hljs-built_in">number</span>;
+    c: ExampleSubType;
+    g: <span class="hljs-built_in">string</span>;
+    h: <span class="hljs-built_in">number</span>[];
+    i: [<span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>];
+}
+
+<span class="hljs-keyword">const</span> EXAMPLE_SUBTYPE_SERIALIZER = <span class="hljs-keyword">new</span> ObjectSerializer&lt;ExampleSubType&gt;()
+    .append(<span class="hljs-string">"d"</span>, INT8_SERIALIZER)
+    .append(<span class="hljs-string">"e"</span>, UINT16_SERIALIZER)
+    .append(<span class="hljs-string">"f"</span>, ARRAY_BUFFER_SERIALIZER);
+
+<span class="hljs-keyword">const</span> exSer = <span class="hljs-keyword">new</span> ObjectSerializer&lt;ExampleType&gt;()
+    .append(<span class="hljs-string">"a"</span>, UINT32_SERIALIZER)
+    .append(<span class="hljs-string">"b"</span>, FLOAT32_SERIALIZER)
+    .append(<span class="hljs-string">"c"</span>, EXAMPLE_SUBTYPE_SERIALIZER)
+    .append(<span class="hljs-string">"g"</span>, STRING_SERIALIZER)
+    .append(<span class="hljs-string">"h"</span>, <span class="hljs-keyword">new</span> ArraySerializer(UINT32_SERIALIZER))
+    .append(<span class="hljs-string">"i"</span>, <span class="hljs-keyword">new</span> VectorSerializer(UINT8_SERIALIZER, <span class="hljs-number">4</span>))
+
+<span class="hljs-keyword">const</span> ab = <span class="hljs-keyword">new</span> <span class="hljs-built_in">ArrayBuffer</span>(<span class="hljs-number">3</span>);
+<span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(ab).set([<span class="hljs-number">1</span>, <span class="hljs-number">4</span>, <span class="hljs-number">9</span>]);
+
+<span class="hljs-keyword">const</span> instance: ExampleType = {
+    a: <span class="hljs-number">12</span>,
+    b: <span class="hljs-built_in">Math</span>.PI,
+    c: {
+        d: <span class="hljs-number">-22</span>,
+        e: <span class="hljs-number">443</span>,
+        f: ab
+    },
+    g: <span class="hljs-string">"Example string with UTF-8 chars €"</span>,
+    h: [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">22</span>],
+    i: [<span class="hljs-number">8</span>, <span class="hljs-number">7</span>, <span class="hljs-number">7</span>, <span class="hljs-number">2</span>]
+}
+
+<span class="hljs-comment">// check weather the provided values are serializable by the configured serializer</span>
+exSer.typeCheck(instance);
+
+<span class="hljs-comment">// retrieve the number of bytes needed to serialize this value</span>
+<span class="hljs-keyword">const</span> length = exSer.getSizeForValue(instance);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'length'</span>, length);
+
+<span class="hljs-comment">// create the arraybuffer to serialize this value</span>
+<span class="hljs-keyword">const</span> data = <span class="hljs-keyword">new</span> <span class="hljs-built_in">ArrayBuffer</span>(length);
+<span class="hljs-keyword">const</span> view = <span class="hljs-keyword">new</span> <span class="hljs-built_in">DataView</span>(data);
+
+exSer.serialize(view, <span class="hljs-number">0</span>, instance);
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'data'</span>, data);
+
+<span class="hljs-keyword">const</span> deValue = exSer.deserialize(view, <span class="hljs-number">0</span>);
+<span class="hljs-keyword">const</span> val = deValue.val;
+<span class="hljs-built_in">console</span>.log(<span class="hljs-string">'val'</span>, val);</code></pre>
+				<p><em>You can find this in <code>src\simple-example.ts</code></em></p>
+				<p>The provided functions are fully typesafe.</p>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<p>The easiest way to use this package is by declaring your data structure by a TypeScript interface and then create the
+					<code>ObjectSerializer</code> as was done in the example above. After this configuration you can export the serializer as reuse it
+				in your code base. Other serializers can use this custom serializer as subserializers.</p>
+				<p>Please have a look in the API documentation.</p>
+				<a href="#performance-remarks" id="performance-remarks" style="color: inherit; text-decoration: none;">
+					<h2>Performance remarks</h2>
+				</a>
+				<p>This package tries to make the serialization as fast as possible and still keep a readable codebase.
+				With this in mind you should create your own custom serializers and choose the ones you use.</p>
+				<p>There will be no typecheck done serialization, if you can not trust the datastructure you can do one manually by calling
+					<code>typeCheck</code> of the serializer. But if you need to do the serialization as fast as possible you should not include those
+				checks in the code running in production.</p>
+				<p>The provided default serializers have different runtime behavior which can heavily influence your choice for the datastructure.</p>
+				<p>The performance report below is the result of the serialization from the example provided above.
+					<code>serializetion</code> includes the <code>ObjectSerializer</code> and the number serializer but nothing else.
+				All other are added separately.</p>
+				<pre><code>                ops/sec  MoE samples relative
+serialization
+  serialize   <span class="hljs-number">2</span>,<span class="hljs-number">684</span>,<span class="hljs-number">042</span> <span class="hljs-number">0.94</span>      <span class="hljs-number">93</span>     <span class="hljs-number">1.20</span>
+  deserialize <span class="hljs-number">2</span>,<span class="hljs-number">238</span>,<span class="hljs-number">283</span> <span class="hljs-number">1.55</span>      <span class="hljs-number">87</span>     <span class="hljs-number">1.00</span>
+serialization + Array
+  serialize      <span class="hljs-number">60</span>,<span class="hljs-number">061</span> <span class="hljs-number">2.39</span>      <span class="hljs-number">86</span>     <span class="hljs-number">1.00</span>
+  deserialize    <span class="hljs-number">67</span>,<span class="hljs-number">150</span> <span class="hljs-number">0.70</span>      <span class="hljs-number">88</span>     <span class="hljs-number">1.12</span>
+serialization + Vector
+  serialize   <span class="hljs-number">1</span>,<span class="hljs-number">420</span>,<span class="hljs-number">139</span> <span class="hljs-number">0.44</span>      <span class="hljs-number">95</span>     <span class="hljs-number">1.32</span>
+  deserialize <span class="hljs-number">1</span>,<span class="hljs-number">073</span>,<span class="hljs-number">853</span> <span class="hljs-number">0.91</span>      <span class="hljs-number">93</span>     <span class="hljs-number">1.00</span>
+serialization + AB
+  serialize   <span class="hljs-number">1</span>,<span class="hljs-number">318</span>,<span class="hljs-number">086</span> <span class="hljs-number">1.11</span>      <span class="hljs-number">90</span>     <span class="hljs-number">3.14</span>
+  deserialize   <span class="hljs-number">419</span>,<span class="hljs-number">398</span> <span class="hljs-number">1.16</span>      <span class="hljs-number">89</span>     <span class="hljs-number">1.00</span>
+serialization + String
+  serialize   <span class="hljs-number">1</span>,<span class="hljs-number">196</span>,<span class="hljs-number">285</span> <span class="hljs-number">0.67</span>      <span class="hljs-number">88</span>     <span class="hljs-number">5.93</span>
+  deserialize   <span class="hljs-number">201</span>,<span class="hljs-number">582</span> <span class="hljs-number">0.83</span>      <span class="hljs-number">90</span>     <span class="hljs-number">1.00</span>
+serialization + Array + Vector + AB + String
+  serialize      <span class="hljs-number">58</span>,<span class="hljs-number">956</span> <span class="hljs-number">1.46</span>      <span class="hljs-number">93</span>     <span class="hljs-number">1.33</span>
+  deserialize    <span class="hljs-number">44</span>,<span class="hljs-number">490</span> <span class="hljs-number">1.25</span>      <span class="hljs-number">93</span>     <span class="hljs-number">1.00</span>
+ */</code></pre><p>Sadly the array serializer is really slow and should only be used if you really need to. All other serializers are quite
+					fast, but I would highly recommend that you stick to <code>ObjectSerialzer</code>, <code>VectorSerializer</code> and the number serializer and
+					that you either write a custom serializer by extending the <code>ValueSerializer</code> or just prepend a function which converts
+				your data in another structure which does not include strings, other arraybuffers or arrays.</p>
+				<a href="#in-comparison-to-other-means-of-serialization" id="in-comparison-to-other-means-of-serialization" style="color: inherit; text-decoration: none;">
+					<h2>In comparison to other means of serialization</h2>
+				</a>
+				<p>This package is rather basic and is only meant to serialize structures which remain mostly static.</p>
+				<a href="#this-package-vs-json" id="this-package-vs-json" style="color: inherit; text-decoration: none;">
+					<h3>This package vs JSON</h3>
+				</a>
+				<p>+ Maps to a lot less bytes</p>
+				<p>+ Has type check</p>
+				<p>+ The structure does not need to be send / saved each time</p>
+				<p>- Needs to be prepared</p>
+				<p>- The structure needs to remain the same</p>
+				<p>- The receiver needs to know the structure and construct a deserializer</p>
+				<a href="#structured-clone" id="structured-clone" style="color: inherit; text-decoration: none;">
+					<h3>Structured clone</h3>
+				</a>
+				<p>This is internally used by the JavaScript engine to transfer JavaScript values from one realm to another (WebWorkers, IndexDB, History API).
+				Sadly this API is not yet exposed directly but might be in the future.  </p>
+				<p>NodeJS exposed this functionality from the V8, have look here: <a href="https://nodejs.org/api/v8.html#v8_serialization_api">https://nodejs.org/api/v8.html#v8_serialization_api</a></p>
+				<p>Either way those values can not be read by JavaScript in the browser, which makes it not suitable for my usecase.
+				Hopefully this functionality will come to the browser at some point, you can read more about it here:</p>
+				<p>Definition: <a href="https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeforstorage">https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeforstorage</a>
+					ECMAScript proposal: <a href="https://github.com/dslomov/ecmascript-structured-clone">https://github.com/dslomov/ecmascript-structured-clone</a> (found here: <a href="https://github.com/tc39/proposals/blob/master/stage-0-proposals.md">https://github.com/tc39/proposals/blob/master/stage-0-proposals.md</a>)
+				Discussion about specification: <a href="https://github.com/whatwg/html/issues/793">https://github.com/whatwg/html/issues/793</a></p>
+				<a href="#runtime-requirements" id="runtime-requirements" style="color: inherit; text-decoration: none;">
+					<h2>Runtime requirements</h2>
+				</a>
+				<p>This package heavily relies on <code>ArrayBuffer</code> and <code>DataView</code>. This package will not work if they are not present. </p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="classes/arraybufferserializer.html" class="tsd-kind-icon">Array<wbr>Buffer<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/arrayserializer.html" class="tsd-kind-icon">Array<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/objectserializer.html" class="tsd-kind-icon">Object<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/stringserializer.html" class="tsd-kind-icon">String<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/valueserializer.html" class="tsd-kind-icon">Value<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/vectorserializer.html" class="tsd-kind-icon">Vector<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#array_buffer_serializer" class="tsd-kind-icon">ARRAY_<wbr>BUFFER_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#float32_serializer" class="tsd-kind-icon">FLOAT32_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#float64_serializer" class="tsd-kind-icon">FLOAT64_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#int16_serializer" class="tsd-kind-icon">INT16_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#int32_serializer" class="tsd-kind-icon">INT32_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#int8_serializer" class="tsd-kind-icon">INT8_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#string_serializer" class="tsd-kind-icon">STRING_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#uint16_serializer" class="tsd-kind-icon">UINT16_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#uint32_serializer" class="tsd-kind-icon">UINT32_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#uint8_serializer" class="tsd-kind-icon">UINT8_<wbr>SERIALIZER</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
