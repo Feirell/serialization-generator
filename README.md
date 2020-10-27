@@ -100,7 +100,7 @@ The easiest way to use this package is by declaring your data structure by a Typ
 `ObjectSerializer` as was done in the example above. After this configuration you can export the serializer as reuse it
 in your code base. Other serializers can use this custom serializer as subserializers.
 
-Please have a look in the API documentation.
+Please have a look at the [API documentation](https://feirell.github.io/serialization-generator/).
 
 ## Performance remarks
 
