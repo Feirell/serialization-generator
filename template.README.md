@@ -20,7 +20,8 @@ Please have a look at the [API documentation](https://feirell.github.io/serializ
 
 ## Mapping / transforming serializer
 
-If want to implement a mapping serializer which, for example, maps an enum to a number and back you could do so in four ways:
+If want to implement a mapping serializer which, for example, maps an enum to a number and back you could do so in four ways.
+`EnumSerializer` is a specific class to map a static number of values to their indexes and back, primarily Enums.
 
 <!-- USEFILE: examples/transform-values.ts; str => str.replace('../src', 'serialization-generator') -->
 
@@ -36,37 +37,37 @@ checks in the code running in production.
 The provided default serializers have different runtime behavior which can heavily influence your choice for the datastructure.
 
 The performance report below is the result of the serialization from the example provided above.
-`serializetion` includes the `ObjectSerializer` and the number serializer but nothing else.
+`serialization` includes the `ObjectSerializer` and the number serializer but nothing else.
 All other are added separately.
 
 ```
                 ops/sec  MoE samples relative
 serialization
-  serialize   2,684,042 0.94      93     1.20
-  deserialize 2,238,283 1.55      87     1.00
+  serialize   2,223,855 1.28      90     1.11
+  deserialize 2,006,597 0.91      85     1.00
 serialization + Array
-  serialize      60,061 2.39      86     1.00
-  deserialize    67,150 0.70      88     1.12
+  serialize   1,702,778 0.68      90     1.22
+  deserialize 1,397,288 2.43      91     1.00
 serialization + Vector
-  serialize   1,420,139 0.44      95     1.32
-  deserialize 1,073,853 0.91      93     1.00
+  serialize   1,371,070 0.67      87     1.31
+  deserialize 1,045,809 1.48      89     1.00
 serialization + AB
-  serialize   1,318,086 1.11      90     3.14
-  deserialize   419,398 1.16      89     1.00
+  serialize   1,250,732 1.54      90     3.09
+  deserialize   404,587 1.12      91     1.00
 serialization + String
-  serialize   1,196,285 0.67      88     5.93
-  deserialize   201,582 0.83      90     1.00
-serialization + Array + Vector + AB + String
-  serialize      58,956 1.46      93     1.33
-  deserialize    44,490 1.25      93     1.00
+  serialize   1,010,058 1.00      92     5.44
+  deserialize   185,555 1.74      88     1.00
+serialization + Enum
+  serialize   1,536,543 0.83      88     1.39
+  deserialize 1,109,299 1.14      94     1.00
+serialization + Array + Vector + AB + String + Enum
+  serialize     479,868 1.49      85     3.59
+  deserialize   133,637 0.90      88     1.00
  */
 ```
 
-Sadly the array serializer is really slow for smaller vectors and should only be used if the arrays are larger (> 10) or 
-if the size is not fixed. All other serializers are quite fast, but I would highly recommend that you stick to
-`ObjectSerialzer`, `VectorSerializer` and the number serializer and that you either write a custom serializer by extending
-the `ValueSerializer` or just prepend a function which converts your data in another structure which does not include
-strings, other arraybuffers or arrays.
+As this performance measurement show array buffer and string serialization are quite slow, I would recommend therefore
+to stick to the other serializers. Even though  
 
 ## In comparison to other means of serialization
 

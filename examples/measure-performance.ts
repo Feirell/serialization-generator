@@ -1,12 +1,20 @@
-import {ARRAY_BUFFER_SERIALIZER} from "./serializer/array-buffer-serializer";
-import {ObjectSerializer} from "./serializer/object-serializer";
-import {INT8_SERIALIZER, UINT16_SERIALIZER, UINT32_SERIALIZER, UINT8_SERIALIZER} from "./serializer/int-serializer";
-import {FLOAT32_SERIALIZER} from "./serializer/float-serializer";
-import {STRING_SERIALIZER} from "./serializer/string-serializer";
-import {ArraySerializer} from "./serializer/array-serializer";
+import {
+    ARRAY_BUFFER_SERIALIZER,
+    ArraySerializer,
+    EnumSerializer,
+    FLOAT32_SERIALIZER,
+    INT8_SERIALIZER,
+    ObjectSerializer,
+    STRING_SERIALIZER,
+    UINT16_SERIALIZER,
+    UINT32_SERIALIZER,
+    VectorSerializer
+} from "../src";
+
 import {measure, speed} from "performance-test-runner";
 import {runAndReport} from "performance-test-runner/lib/suite-console-printer";
-import {VectorSerializer} from "./serializer/vector-serializer";
+
+type Enum = 'ENUM_VAL_A' | 'ENUM_VAL_B' | 'ENUM_VAL_C';
 
 interface ExampleType {
     a: number;
@@ -19,7 +27,8 @@ interface ExampleType {
 
     g: string;
     h: number[];
-    i: [number, number, number, number];
+    i: [number, number, number, number, number, number, number, number, number, number];
+    j: Enum;
 }
 
 const ab = new ArrayBuffer(3);
@@ -35,8 +44,9 @@ const instance: ExampleType = {
     },
 
     g: "Test string €€",
-    h: new Array(500).fill(0xff),
-    i: [8, 7, 7, 2]
+    h: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    i: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    j: "ENUM_VAL_B"
 }
 
 /*
@@ -106,11 +116,12 @@ measure('serialization', () => {
         .append("c", new ObjectSerializer<ExampleType["c"]>()
                 .append("d", INT8_SERIALIZER)
                 .append("e", UINT16_SERIALIZER)
-             // .append("f", ARRAY_BUFFER_SERIALIZER)
+            // .append("f", ARRAY_BUFFER_SERIALIZER)
         )
     // .append("g", STRING_SERIALIZER)
     // .append("h", new ArraySerializer(UINT32_SERIALIZER))
-    // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
+    // .append("i", new VectorSerializer(UINT32_SERIALIZER, 10))
+    // .append("j", new EnumSerializer<Enum>(['ENUM_VAL_A', 'ENUM_VAL_B', 'ENUM_VAL_C']))
 
 
     const length = exSer.getSizeForValue(instance);
@@ -136,11 +147,12 @@ measure('serialization + Array', () => {
         .append("c", new ObjectSerializer<ExampleType["c"]>()
                 .append("d", INT8_SERIALIZER)
                 .append("e", UINT16_SERIALIZER)
-             // .append("f", ARRAY_BUFFER_SERIALIZER)
+            // .append("f", ARRAY_BUFFER_SERIALIZER)
         )
         // .append("g", STRING_SERIALIZER)
         .append("h", new ArraySerializer(UINT32_SERIALIZER))
-    // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
+    // .append("i", new VectorSerializer(UINT32_SERIALIZER, 10))
+    // .append("j", new EnumSerializer<Enum>(['ENUM_VAL_A', 'ENUM_VAL_B', 'ENUM_VAL_C']))
 
 
     const length = exSer.getSizeForValue(instance);
@@ -165,11 +177,12 @@ measure('serialization + Vector', () => {
         .append("c", new ObjectSerializer<ExampleType["c"]>()
                 .append("d", INT8_SERIALIZER)
                 .append("e", UINT16_SERIALIZER)
-             // .append("f", ARRAY_BUFFER_SERIALIZER)
+            // .append("f", ARRAY_BUFFER_SERIALIZER)
         )
         // .append("g", STRING_SERIALIZER)
         // .append("h", new ArraySerializer(UINT32_SERIALIZER))
-        .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
+        .append("i", new VectorSerializer(UINT32_SERIALIZER, 10))
+    // .append("j", new EnumSerializer<Enum>(['ENUM_VAL_A', 'ENUM_VAL_B', 'ENUM_VAL_C']))
 
 
     const length = exSer.getSizeForValue(instance);
@@ -198,7 +211,8 @@ measure('serialization + AB', () => {
         )
     // .append("g", STRING_SERIALIZER)
     // .append("h", new ArraySerializer(UINT32_SERIALIZER))
-    // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
+    // .append("i", new VectorSerializer(UINT32_SERIALIZER, 10))
+    // .append("j", new EnumSerializer<Enum>(['ENUM_VAL_A', 'ENUM_VAL_B', 'ENUM_VAL_C']))
 
 
     const length = exSer.getSizeForValue(instance);
@@ -223,11 +237,12 @@ measure('serialization + String', () => {
         .append("c", new ObjectSerializer<ExampleType["c"]>()
                 .append("d", INT8_SERIALIZER)
                 .append("e", UINT16_SERIALIZER)
-             // .append("f", ARRAY_BUFFER_SERIALIZER)
+            // .append("f", ARRAY_BUFFER_SERIALIZER)
         )
         .append("g", STRING_SERIALIZER)
     // .append("h", new ArraySerializer(UINT32_SERIALIZER))
-    // .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
+    // .append("i", new VectorSerializer(UINT32_SERIALIZER, 10))
+    // .append("j", new EnumSerializer<Enum>(['ENUM_VAL_A', 'ENUM_VAL_B', 'ENUM_VAL_C']))
 
 
     const length = exSer.getSizeForValue(instance);
@@ -245,7 +260,37 @@ measure('serialization + String', () => {
     })
 })
 
-measure('serialization + Array + Vector + AB + String', () => {
+measure('serialization + Enum', () => {
+    const exSer = new ObjectSerializer<ExampleType>()
+        .append("a", UINT32_SERIALIZER)
+        .append("b", FLOAT32_SERIALIZER)
+        .append("c", new ObjectSerializer<ExampleType["c"]>()
+                .append("d", INT8_SERIALIZER)
+                .append("e", UINT16_SERIALIZER)
+            // .append("f", ARRAY_BUFFER_SERIALIZER)
+        )
+        // .append("g", STRING_SERIALIZER)
+        // .append("h", new ArraySerializer(UINT32_SERIALIZER))
+        // .append("i", new VectorSerializer(UINT32_SERIALIZER, 10))
+        .append("j", new EnumSerializer<Enum>(['ENUM_VAL_A', 'ENUM_VAL_B', 'ENUM_VAL_C']))
+
+
+    const length = exSer.getSizeForValue(instance);
+
+    // console.log('length', length);
+    const data = new ArrayBuffer(length);
+    const view = new DataView(data);
+
+    speed('serialize', {view, exSer, instance}, () => {
+        global.exSer.serialize(global.view, 0, global.instance, false);
+    })
+
+    speed('deserialize', {view, exSer}, () => {
+        global.exSer.deserialize(global.view, 0);
+    })
+})
+
+measure('serialization + Array + Vector + AB + String + Enum', () => {
     const exSer = new ObjectSerializer<ExampleType>()
         .append("a", UINT32_SERIALIZER)
         .append("b", FLOAT32_SERIALIZER)
@@ -256,7 +301,8 @@ measure('serialization + Array + Vector + AB + String', () => {
         )
         .append("g", STRING_SERIALIZER)
         .append("h", new ArraySerializer(UINT32_SERIALIZER))
-        .append("i", new VectorSerializer(UINT32_SERIALIZER, 4))
+        .append("i", new VectorSerializer(UINT32_SERIALIZER, 10))
+        .append("j", new EnumSerializer<Enum>(['ENUM_VAL_A', 'ENUM_VAL_B', 'ENUM_VAL_C']))
 
 
     const length = exSer.getSizeForValue(instance);

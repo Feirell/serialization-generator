@@ -2,7 +2,7 @@ import {
     createTransformSerializer,
     TransformSerializer,
     ValueSerializer,
-    UINT8_SERIALIZER
+    UINT8_SERIALIZER, EnumSerializer
 } from "../src";
 
 type OriginType = 'ENUM_A' | 'ENUM_B' | 'ENUM_C' | 'ENUM_D'
@@ -33,6 +33,14 @@ const isOriginType = (val: any): val is  OriginType =>
     val != "ENUM_B" &&
     val != "ENUM_C" &&
     val != "ENUM_D";
+
+//
+// When the number of values in of type Origin are static and finite you can use EnumSerializer
+//
+
+const instance = new EnumSerializer(['ENUM_A' , 'ENUM_B' , 'ENUM_C' , 'ENUM_D'] as OriginType[]);
+
+// If this is not the case you have four other options
 
 //
 // First Option: Custom Class

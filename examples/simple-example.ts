@@ -1,6 +1,7 @@
 import {
-    ObjectSerializer,
     ArraySerializer,
+    EnumSerializer,
+    ObjectSerializer,
     VectorSerializer,
 
     ARRAY_BUFFER_SERIALIZER,
@@ -24,6 +25,8 @@ interface ExampleSubType {
     f: ArrayBuffer;
 }
 
+type Enum = 'ENUM_VAL_A' | 'ENUM_VAL_B' | 'ENUM_VAL_C';
+
 interface ExampleType {
     a: number;
     b: number;
@@ -31,6 +34,7 @@ interface ExampleType {
     g: string;
     h: number[];
     i: [number, number, number, number];
+    j: Enum;
 }
 
 const EXAMPLE_SUBTYPE_SERIALIZER = new ObjectSerializer<ExampleSubType>()
@@ -45,6 +49,7 @@ const exSer = new ObjectSerializer<ExampleType>()
     .append("g", STRING_SERIALIZER)
     .append("h", new ArraySerializer(UINT32_SERIALIZER))
     .append("i", new VectorSerializer(UINT8_SERIALIZER, 4))
+    .append("j", new EnumSerializer<Enum>(['ENUM_VAL_A', 'ENUM_VAL_B', 'ENUM_VAL_C']))
 
 const ab = new ArrayBuffer(3);
 new Uint8Array(ab).set([1, 4, 9]);
@@ -59,7 +64,8 @@ const instance: ExampleType = {
     },
     g: "Example string with UTF-8 chars €",
     h: [1, 2, 3, 22],
-    i: [8, 7, 7, 2]
+    i: [8, 7, 7, 2],
+    j: "ENUM_VAL_B"
 }
 
 // check weather the provided values are serializable by the configured serializer
