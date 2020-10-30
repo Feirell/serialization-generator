@@ -64,6 +64,19 @@
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>This class is meant to help to define serializers which map values from one type to another
+						before serialization. This mapping is meant to be done Origin -&gt; Base -&gt; Binary -&gt; Base -&gt; Origin</p>
+					</div>
+					<p>In this class you just define the mapping from Origin to Base and back and add the serializer for
+					the Base type. This also allows you to chain those serializers.</p>
+					<p>This abstract class reduces the number of methods one needs to implement in comparison
+						to a full custom class. Just the Origin =&gt; Base, Base =&gt; Origin and the type check need
+					to be implemented.</p>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-type-parameters">
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
@@ -132,7 +145,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/transform-serializer.ts#L3">serializer/transform-serializer.ts:3</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/55846cd/src/serializer/transform-serializer.ts#L14">serializer/transform-serializer.ts:14</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -155,7 +168,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#type_pinpoint">TYPE_PINPOINT</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/value-serializer.ts#L15">serializer/value-serializer.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/55846cd/src/serializer/value-serializer.ts#L15">serializer/value-serializer.ts:15</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -173,7 +186,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#deserialize">deserialize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/transform-serializer.ts#L27">serializer/transform-serializer.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/55846cd/src/serializer/transform-serializer.ts#L38">serializer/transform-serializer.ts:38</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -207,13 +220,21 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/transform-serializer.ts#L37">serializer/transform-serializer.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/55846cd/src/serializer/transform-serializer.ts#L59">serializer/transform-serializer.ts:59</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This method maps the value back from Base to Origin.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>val: <span class="tsd-signature-type">Base</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the value to map</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Origin</span></h4>
@@ -230,13 +251,22 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/transform-serializer.ts#L35">serializer/transform-serializer.ts:35</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/55846cd/src/serializer/transform-serializer.ts#L52">serializer/transform-serializer.ts:52</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This method maps the Origin value to Base. This method should throw an error
+									if the value is not in fact of type origin.</p>
+								</div>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>val: <span class="tsd-signature-type">Origin</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the value to map</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Base</span></h4>
@@ -254,7 +284,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#getsizeforvalue">getSizeForValue</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/transform-serializer.ts#L12">serializer/transform-serializer.ts:12</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/55846cd/src/serializer/transform-serializer.ts#L23">serializer/transform-serializer.ts:23</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -278,7 +308,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#getstaticsize">getStaticSize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/transform-serializer.ts#L8">serializer/transform-serializer.ts:8</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/55846cd/src/serializer/transform-serializer.ts#L19">serializer/transform-serializer.ts:19</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
@@ -295,16 +325,31 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/transform-serializer.ts#L39">serializer/transform-serializer.ts:39</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/55846cd/src/serializer/transform-serializer.ts#L72">serializer/transform-serializer.ts:72</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This method will be called by the <a href="transformserializer.html#typecheck">typeCheck</a> method. Before calling the
+									typeCheck of the parent with the mapped Base value.</p>
+								</div>
+								<p>This method should throw an error when the value is not of type Origin. This error
+									should be precise and use the provided name as identifier when addressing the value
+								to increase the error message readability.</p>
+							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
 									<h5>val: <span class="tsd-signature-type">Origin</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the value to check</p>
+									</div>
 								</li>
 								<li>
 									<h5>name: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>the identifier name this value had in the greater scope</p>
+									</div>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">never</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></h4>
@@ -322,7 +367,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#serialize">serialize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/transform-serializer.ts#L22">serializer/transform-serializer.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/55846cd/src/serializer/transform-serializer.ts#L33">serializer/transform-serializer.ts:33</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -357,7 +402,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#typecheck">typeCheck</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/transform-serializer.ts#L17">serializer/transform-serializer.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/55846cd/src/serializer/transform-serializer.ts#L28">serializer/transform-serializer.ts:28</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
