@@ -16,7 +16,7 @@ import {
     UINT8_SERIALIZER,
     UINT16_SERIALIZER,
     UINT32_SERIALIZER,
-} from './index';
+} from '../src';
 
 interface ExampleSubType {
     d: number;

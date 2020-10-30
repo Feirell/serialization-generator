@@ -6,7 +6,7 @@ as easy as possible and to keep the creation readable.
 To archive this goal this package provides multiple simple serializers which you can combine to create more complex
 versions which fit your needed data structures.
 
-<!-- USEFILE: src/simple-example.ts; str => str.replace('./index', 'serialization-generator') -->
+<!-- USEFILE: examples/simple-example.ts; str => str.replace('../src', 'serialization-generator') -->
 
 The provided functions are fully typesafe.
 
@@ -17,6 +17,12 @@ The easiest way to use this package is by declaring your data structure by a Typ
 in your code base. Other serializers can use this custom serializer as subserializers.
 
 Please have a look at the [API documentation](https://feirell.github.io/serialization-generator/).
+
+## Mapping / transforming serializer
+
+If want to implement a mapping serializer which, for example, maps an enum to a number and back you could do so in four ways:
+
+<!-- USEFILE: examples/transform-values.ts; str => str.replace('../src', 'serialization-generator') -->
 
 ## Performance remarks
 
