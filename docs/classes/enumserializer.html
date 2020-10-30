@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>TransformSerializer | serialization-generator</title>
+	<title>EnumSerializer | serialization-generator</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,10 +54,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="transformserializer.html">TransformSerializer</a>
+					<a href="enumserializer.html">EnumSerializer</a>
 				</li>
 			</ul>
-			<h1>Class TransformSerializer&lt;Origin, Base&gt;</h1>
+			<h1>Class EnumSerializer&lt;Enum&gt;</h1>
 		</div>
 	</div>
 </header>
@@ -67,24 +67,20 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>This class is meant to help to define serializers which map values from one type to another
-						before serialization. This mapping is meant to be done Origin -&gt; Base -&gt; Binary -&gt; Base -&gt; Origin</p>
+						<p>This class is meant to help you to construct a serializer which maps a static list of values to their indexes and
+							only serialize those. The values provided will be reduced to exclude duplications which are determined by the their
+						identity (==).</p>
 					</div>
-					<p>In this class you just define the mapping from Origin to Base and back and add the serializer for
-					the Base type. This also allows you to chain those serializers.</p>
-					<p>This abstract class reduces the number of methods one needs to implement in comparison
-						to a full custom class. Just the Origin =&gt; Base, Base =&gt; Origin and the type check need
-					to be implemented.</p>
+					<p>Despite its name, this class can be used to serialize any number of static collection of items to their indexes.</p>
+					<p>Be aware that this serializer needs to be configured the same way when deserializing otherwise it will not map to the
+					correct value.</p>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-type-parameters">
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
 					<li>
-						<h4>Origin</h4>
-					</li>
-					<li>
-						<h4>Base</h4>
+						<h4>Enum</h4>
 					</li>
 				</ul>
 			</section>
@@ -92,15 +88,10 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="valueserializer.html" class="tsd-signature-type">ValueSerializer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Origin</span><span class="tsd-signature-symbol">&gt;</span>
+						<a href="transformserializer.html" class="tsd-signature-type">TransformSerializer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Enum</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">&gt;</span>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">TransformSerializer</span>
-								<ul class="tsd-hierarchy">
-									<li>
-										<a href="enumserializer.html" class="tsd-signature-type">EnumSerializer</a>
-									</li>
-								</ul>
+								<span class="target">EnumSerializer</span>
 							</li>
 						</ul>
 					</li>
@@ -113,26 +104,27 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="transformserializer.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite"><a href="enumserializer.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="transformserializer.html#type_pinpoint" class="tsd-kind-icon">TYPE_<wbr>PINPOINT</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="enumserializer.html#type_pinpoint" class="tsd-kind-icon">TYPE_<wbr>PINPOINT</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="transformserializer.html#deserialize" class="tsd-kind-icon">deserialize</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transformserializer.html#frombasetoorigin" class="tsd-kind-icon">from<wbr>Base<wbr>ToOrigin</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transformserializer.html#fromorigintobase" class="tsd-kind-icon">from<wbr>Origin<wbr>ToBase</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="transformserializer.html#getsizeforvalue" class="tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="transformserializer.html#getstaticsize" class="tsd-kind-icon">get<wbr>Static<wbr>Size</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="transformserializer.html#origintypecheck" class="tsd-kind-icon">origin<wbr>Type<wbr>Check</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="transformserializer.html#serialize" class="tsd-kind-icon">serialize</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="transformserializer.html#typecheck" class="tsd-kind-icon">type<wbr>Check</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="enumserializer.html#deserialize" class="tsd-kind-icon">deserialize</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="enumserializer.html#frombasetoorigin" class="tsd-kind-icon">from<wbr>Base<wbr>ToOrigin</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="enumserializer.html#fromorigintobase" class="tsd-kind-icon">from<wbr>Origin<wbr>ToBase</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="enumserializer.html#getsizeforvalue" class="tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="enumserializer.html#getstaticsize" class="tsd-kind-icon">get<wbr>Static<wbr>Size</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="enumserializer.html#ispartofenum" class="tsd-kind-icon">is<wbr>Part<wbr>OfEnum</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="enumserializer.html#origintypecheck" class="tsd-kind-icon">origin<wbr>Type<wbr>Check</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="enumserializer.html#serialize" class="tsd-kind-icon">serialize</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="enumserializer.html#typecheck" class="tsd-kind-icon">type<wbr>Check</a></li>
 							</ul>
 						</section>
 					</div>
@@ -140,26 +132,27 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Transform<wbr>Serializer<span class="tsd-signature-symbol">(</span>baseSerializer<span class="tsd-signature-symbol">: </span><a href="valueserializer.html" class="tsd-signature-type">ValueSerializer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Base</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="transformserializer.html" class="tsd-signature-type">TransformSerializer</a></li>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Enum<wbr>Serializer<span class="tsd-signature-symbol">(</span>enumStrings<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Enum</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="enumserializer.html" class="tsd-signature-type">EnumSerializer</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="transformserializer.html">TransformSerializer</a>.<a href="transformserializer.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/6fc32ab/src/serializer/transform-serializer.ts#L14">serializer/transform-serializer.ts:14</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/6fc32ab/src/serializer/enum-serializer.ts#L24">serializer/enum-serializer.ts:24</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>baseSerializer: <a href="valueserializer.html" class="tsd-signature-type">ValueSerializer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Base</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<h5>enumStrings: <span class="tsd-signature-type">Enum</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="transformserializer.html" class="tsd-signature-type">TransformSerializer</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="enumserializer.html" class="tsd-signature-type">EnumSerializer</a></h4>
 						</li>
 					</ul>
 				</section>
@@ -169,7 +162,7 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="type_pinpoint" class="tsd-anchor"></a>
 					<h3>TYPE_<wbr>PINPOINT</h3>
-					<div class="tsd-signature tsd-kind-icon">TYPE_<wbr>PINPOINT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Origin</span><span class="tsd-signature-symbol"> = undefined as unknown as Type</span></div>
+					<div class="tsd-signature tsd-kind-icon">TYPE_<wbr>PINPOINT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Enum</span><span class="tsd-signature-symbol"> = undefined as unknown as Type</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#type_pinpoint">TYPE_PINPOINT</a></p>
 						<ul>
@@ -180,15 +173,16 @@
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="deserialize" class="tsd-anchor"></a>
 					<h3>deserialize</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">deserialize<span class="tsd-signature-symbol">(</span>dv<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">DataView</span>, offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Origin</span><span class="tsd-signature-symbol"> }</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">deserialize<span class="tsd-signature-symbol">(</span>dv<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">DataView</span>, offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Enum</span><span class="tsd-signature-symbol"> }</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="enumserializer.html">EnumSerializer</a>.<a href="enumserializer.html#deserialize">deserialize</a></p>
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#deserialize">deserialize</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/6fc32ab/src/serializer/transform-serializer.ts#L38">serializer/transform-serializer.ts:38</a></li>
@@ -203,90 +197,76 @@
 									<h5>offset: <span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Origin</span><span class="tsd-signature-symbol"> }</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Enum</span><span class="tsd-signature-symbol"> }</span></h4>
 							<ul class="tsd-parameters">
 								<li class="tsd-parameter">
 									<h5>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li class="tsd-parameter">
-									<h5>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Origin</span></h5>
+									<h5>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Enum</span></h5>
 								</li>
 							</ul>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="frombasetoorigin" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> from<wbr>Base<wbr>ToOrigin</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">from<wbr>Base<wbr>ToOrigin<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Base</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Origin</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/6fc32ab/src/serializer/transform-serializer.ts#L59">serializer/transform-serializer.ts:59</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>This method maps the value back from Base to Origin.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>val: <span class="tsd-signature-type">Base</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>the value to map</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Origin</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="fromorigintobase" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> from<wbr>Origin<wbr>ToBase</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">from<wbr>Origin<wbr>ToBase<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Origin</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Base</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/6fc32ab/src/serializer/transform-serializer.ts#L52">serializer/transform-serializer.ts:52</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>This method maps the Origin value to Base. This method should throw an error
-									if the value is not in fact of type origin.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>val: <span class="tsd-signature-type">Origin</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>the value to map</p>
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Base</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="getsizeforvalue" class="tsd-anchor"></a>
-					<h3>get<wbr>Size<wbr>For<wbr>Value</h3>
+					<a name="frombasetoorigin" class="tsd-anchor"></a>
+					<h3>from<wbr>Base<wbr>ToOrigin</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Origin</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+						<li class="tsd-signature tsd-kind-icon">from<wbr>Base<wbr>ToOrigin<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Enum</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="transformserializer.html">TransformSerializer</a>.<a href="transformserializer.html#frombasetoorigin">fromBaseToOrigin</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/6fc32ab/src/serializer/enum-serializer.ts#L56">serializer/enum-serializer.ts:56</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>val: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Enum</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="fromorigintobase" class="tsd-anchor"></a>
+					<h3>from<wbr>Origin<wbr>ToBase</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">from<wbr>Origin<wbr>ToBase<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Enum</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="transformserializer.html">TransformSerializer</a>.<a href="transformserializer.html#fromorigintobase">fromOriginToBase</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/6fc32ab/src/serializer/enum-serializer.ts#L63">serializer/enum-serializer.ts:63</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>val: <span class="tsd-signature-type">Enum</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="getsizeforvalue" class="tsd-anchor"></a>
+					<h3>get<wbr>Size<wbr>For<wbr>Value</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Enum</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="enumserializer.html">EnumSerializer</a>.<a href="enumserializer.html#getsizeforvalue">getSizeForValue</a></p>
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#getsizeforvalue">getSizeForValue</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/6fc32ab/src/serializer/transform-serializer.ts#L23">serializer/transform-serializer.ts:23</a></li>
@@ -295,22 +275,23 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>val: <span class="tsd-signature-type">Origin</span></h5>
+									<h5>val: <span class="tsd-signature-type">Enum</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="getstaticsize" class="tsd-anchor"></a>
 					<h3>get<wbr>Static<wbr>Size</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 						<li class="tsd-signature tsd-kind-icon">get<wbr>Static<wbr>Size<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="enumserializer.html">EnumSerializer</a>.<a href="enumserializer.html#getstaticsize">getStaticSize</a></p>
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#getstaticsize">getStaticSize</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/6fc32ab/src/serializer/transform-serializer.ts#L19">serializer/transform-serializer.ts:19</a></li>
@@ -321,55 +302,65 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="origintypecheck" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> origin<wbr>Type<wbr>Check</h3>
+					<a name="ispartofenum" class="tsd-anchor"></a>
+					<h3>is<wbr>Part<wbr>OfEnum</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">origin<wbr>Type<wbr>Check<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Origin</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">never</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Part<wbr>OfEnum<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">val</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">Enum</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/6fc32ab/src/serializer/transform-serializer.ts#L72">serializer/transform-serializer.ts:72</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/6fc32ab/src/serializer/enum-serializer.ts#L52">serializer/enum-serializer.ts:52</a></li>
 								</ul>
 							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>This method will be called by the <a href="transformserializer.html#typecheck">typeCheck</a> method. Before calling the
-									typeCheck of the parent with the mapped Base value.</p>
-								</div>
-								<p>This method should throw an error when the value is not of type Origin. This error
-									should be precise and use the provided name as identifier when addressing the value
-								to increase the error message readability.</p>
-							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>val: <span class="tsd-signature-type">Origin</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>the value to check</p>
-									</div>
-								</li>
-								<li>
-									<h5>name: <span class="tsd-signature-type">string</span></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>the identifier name this value had in the greater scope</p>
-									</div>
+									<h5>val: <span class="tsd-signature-type">any</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">never</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">void</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">val</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">Enum</span></h4>
 						</li>
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="serialize" class="tsd-anchor"></a>
-					<h3>serialize</h3>
+					<a name="origintypecheck" class="tsd-anchor"></a>
+					<h3>origin<wbr>Type<wbr>Check</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">serialize<span class="tsd-signature-symbol">(</span>dv<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">DataView</span>, offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Origin</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></li>
+						<li class="tsd-signature tsd-kind-icon">origin<wbr>Type<wbr>Check<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Enum</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Overrides <a href="transformserializer.html">TransformSerializer</a>.<a href="transformserializer.html#origintypecheck">originTypeCheck</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/6fc32ab/src/serializer/enum-serializer.ts#L72">serializer/enum-serializer.ts:72</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>val: <span class="tsd-signature-type">Enum</span></h5>
+								</li>
+								<li>
+									<h5>name: <span class="tsd-signature-type">string</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+					<a name="serialize" class="tsd-anchor"></a>
+					<h3>serialize</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">serialize<span class="tsd-signature-symbol">(</span>dv<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">DataView</span>, offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Enum</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Inherited from <a href="enumserializer.html">EnumSerializer</a>.<a href="enumserializer.html#serialize">serialize</a></p>
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#serialize">serialize</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/6fc32ab/src/serializer/transform-serializer.ts#L33">serializer/transform-serializer.ts:33</a></li>
@@ -384,7 +375,7 @@
 									<h5>offset: <span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li>
-									<h5>val: <span class="tsd-signature-type">Origin</span></h5>
+									<h5>val: <span class="tsd-signature-type">Enum</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></h4>
@@ -396,15 +387,16 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="typecheck" class="tsd-anchor"></a>
 					<h3>type<wbr>Check</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">type<wbr>Check<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Origin</span>, name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+						<li class="tsd-signature tsd-kind-icon">type<wbr>Check<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Enum</span>, name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
+								<p>Inherited from <a href="enumserializer.html">EnumSerializer</a>.<a href="enumserializer.html#typecheck">typeCheck</a></p>
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#typecheck">typeCheck</a></p>
 								<ul>
 									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/6fc32ab/src/serializer/transform-serializer.ts#L28">serializer/transform-serializer.ts:28</a></li>
@@ -413,7 +405,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>val: <span class="tsd-signature-type">Origin</span></h5>
+									<h5>val: <span class="tsd-signature-type">Enum</span></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> name: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;val&quot;</span></h5>
@@ -441,54 +433,57 @@
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="arrayserializer.html" class="tsd-kind-icon">Array<wbr>Serializer</a>
 					</li>
-					<li class=" tsd-kind-class tsd-has-type-parameter">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class tsd-has-type-parameter">
 						<a href="enumserializer.html" class="tsd-kind-icon">Enum<wbr>Serializer</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
+								<a href="enumserializer.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
+								<a href="enumserializer.html#type_pinpoint" class="tsd-kind-icon">TYPE_<wbr>PINPOINT</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="enumserializer.html#deserialize" class="tsd-kind-icon">deserialize</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="enumserializer.html#frombasetoorigin" class="tsd-kind-icon">from<wbr>Base<wbr>ToOrigin</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="enumserializer.html#fromorigintobase" class="tsd-kind-icon">from<wbr>Origin<wbr>ToBase</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="enumserializer.html#getsizeforvalue" class="tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="enumserializer.html#getstaticsize" class="tsd-kind-icon">get<wbr>Static<wbr>Size</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="enumserializer.html#ispartofenum" class="tsd-kind-icon">is<wbr>Part<wbr>OfEnum</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="enumserializer.html#origintypecheck" class="tsd-kind-icon">origin<wbr>Type<wbr>Check</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="enumserializer.html#serialize" class="tsd-kind-icon">serialize</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="enumserializer.html#typecheck" class="tsd-kind-icon">type<wbr>Check</a>
+							</li>
+						</ul>
 					</li>
+				</ul>
+				<ul class="after-current">
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="objectserializer.html" class="tsd-kind-icon">Object<wbr>Serializer</a>
 					</li>
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="stringserializer.html" class="tsd-kind-icon">String<wbr>Serializer</a>
 					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-class tsd-has-type-parameter">
+					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="transformserializer.html" class="tsd-kind-icon">Transform<wbr>Serializer</a>
-						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="transformserializer.html#constructor" class="tsd-kind-icon">constructor</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="transformserializer.html#type_pinpoint" class="tsd-kind-icon">TYPE_<wbr>PINPOINT</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="transformserializer.html#deserialize" class="tsd-kind-icon">deserialize</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="transformserializer.html#frombasetoorigin" class="tsd-kind-icon">from<wbr>Base<wbr>ToOrigin</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="transformserializer.html#fromorigintobase" class="tsd-kind-icon">from<wbr>Origin<wbr>ToBase</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="transformserializer.html#getsizeforvalue" class="tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="transformserializer.html#getstaticsize" class="tsd-kind-icon">get<wbr>Static<wbr>Size</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="transformserializer.html#origintypecheck" class="tsd-kind-icon">origin<wbr>Type<wbr>Check</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="transformserializer.html#serialize" class="tsd-kind-icon">serialize</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="transformserializer.html#typecheck" class="tsd-kind-icon">type<wbr>Check</a>
-							</li>
-						</ul>
 					</li>
-				</ul>
-				<ul class="after-current">
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="valueserializer.html" class="tsd-kind-icon">Value<wbr>Serializer</a>
 					</li>

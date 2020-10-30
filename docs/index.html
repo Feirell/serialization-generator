@@ -71,8 +71,9 @@
 				versions which fit your needed data structures.</p>
 				<!-- USEFILE: examples\simple-example.ts; str => str.replace('../src', 'serialization-generator') -->
 				<pre><code class="language-ts"><span class="hljs-keyword">import</span> {
-    ObjectSerializer,
     ArraySerializer,
+    EnumSerializer,
+    ObjectSerializer,
     VectorSerializer,
 
     ARRAY_BUFFER_SERIALIZER,
@@ -96,6 +97,8 @@
     f: <span class="hljs-built_in">ArrayBuffer</span>;
 }
 
+<span class="hljs-keyword">type</span> Enum = <span class="hljs-string">'ENUM_VAL_A'</span> | <span class="hljs-string">'ENUM_VAL_B'</span> | <span class="hljs-string">'ENUM_VAL_C'</span>;
+
 <span class="hljs-keyword">interface</span> ExampleType {
     a: <span class="hljs-built_in">number</span>;
     b: <span class="hljs-built_in">number</span>;
@@ -103,6 +106,7 @@
     g: <span class="hljs-built_in">string</span>;
     h: <span class="hljs-built_in">number</span>[];
     i: [<span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>];
+    j: Enum;
 }
 
 <span class="hljs-keyword">const</span> EXAMPLE_SUBTYPE_SERIALIZER = <span class="hljs-keyword">new</span> ObjectSerializer&lt;ExampleSubType&gt;()
@@ -117,6 +121,7 @@
     .append(<span class="hljs-string">"g"</span>, STRING_SERIALIZER)
     .append(<span class="hljs-string">"h"</span>, <span class="hljs-keyword">new</span> ArraySerializer(UINT32_SERIALIZER))
     .append(<span class="hljs-string">"i"</span>, <span class="hljs-keyword">new</span> VectorSerializer(UINT8_SERIALIZER, <span class="hljs-number">4</span>))
+    .append(<span class="hljs-string">"j"</span>, <span class="hljs-keyword">new</span> EnumSerializer&lt;Enum&gt;([<span class="hljs-string">'ENUM_VAL_A'</span>, <span class="hljs-string">'ENUM_VAL_B'</span>, <span class="hljs-string">'ENUM_VAL_C'</span>]))
 
 <span class="hljs-keyword">const</span> ab = <span class="hljs-keyword">new</span> <span class="hljs-built_in">ArrayBuffer</span>(<span class="hljs-number">3</span>);
 <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(ab).set([<span class="hljs-number">1</span>, <span class="hljs-number">4</span>, <span class="hljs-number">9</span>]);
@@ -131,7 +136,8 @@
     },
     g: <span class="hljs-string">"Example string with UTF-8 chars €"</span>,
     h: [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">22</span>],
-    i: [<span class="hljs-number">8</span>, <span class="hljs-number">7</span>, <span class="hljs-number">7</span>, <span class="hljs-number">2</span>]
+    i: [<span class="hljs-number">8</span>, <span class="hljs-number">7</span>, <span class="hljs-number">7</span>, <span class="hljs-number">2</span>],
+    j: <span class="hljs-string">"ENUM_VAL_B"</span>
 }
 
 <span class="hljs-comment">// check weather the provided values are serializable by the configured serializer</span>
@@ -163,13 +169,14 @@ exSer.serialize(view, <span class="hljs-number">0</span>, instance);
 				<a href="#mapping--transforming-serializer" id="mapping--transforming-serializer" style="color: inherit; text-decoration: none;">
 					<h2>Mapping / transforming serializer</h2>
 				</a>
-				<p>If want to implement a mapping serializer which, for example, maps an enum to a number and back you could do so in four ways:</p>
+				<p>If want to implement a mapping serializer which, for example, maps an enum to a number and back you could do so in four ways.
+				<code>EnumSerializer</code> is a specific class to map a static number of values to their indexes and back, primarily Enums.</p>
 				<!-- USEFILE: examples\transform-values.ts; str => str.replace('../src', 'serialization-generator') -->
 				<pre><code class="language-ts"><span class="hljs-keyword">import</span> {
     createTransformSerializer,
     TransformSerializer,
     ValueSerializer,
-    UINT8_SERIALIZER
+    UINT8_SERIALIZER, EnumSerializer
 } <span class="hljs-keyword">from</span> <span class="hljs-string">"serialization-generator"</span>;
 
 <span class="hljs-keyword">type</span> OriginType = <span class="hljs-string">'ENUM_A'</span> | <span class="hljs-string">'ENUM_B'</span> | <span class="hljs-string">'ENUM_C'</span> | <span class="hljs-string">'ENUM_D'</span>
@@ -200,6 +207,14 @@ exSer.serialize(view, <span class="hljs-number">0</span>, instance);
     val != <span class="hljs-string">"ENUM_B"</span> &amp;&amp;
     val != <span class="hljs-string">"ENUM_C"</span> &amp;&amp;
     val != <span class="hljs-string">"ENUM_D"</span>;
+
+<span class="hljs-comment">//</span>
+<span class="hljs-comment">// When the number of values in of type Origin are static and finite you can use EnumSerializer</span>
+<span class="hljs-comment">//</span>
+
+<span class="hljs-keyword">const</span> instance = <span class="hljs-keyword">new</span> EnumSerializer([<span class="hljs-string">'ENUM_A'</span> , <span class="hljs-string">'ENUM_B'</span> , <span class="hljs-string">'ENUM_C'</span> , <span class="hljs-string">'ENUM_D'</span>] <span class="hljs-keyword">as</span> OriginType[]);
+
+<span class="hljs-comment">// If this is not the case you have four other options</span>
 
 <span class="hljs-comment">//</span>
 <span class="hljs-comment">// First Option: Custom Class</span>
@@ -276,39 +291,38 @@ exSer.serialize(view, <span class="hljs-number">0</span>, instance);
 				<a href="#performance-remarks" id="performance-remarks" style="color: inherit; text-decoration: none;">
 					<h2>Performance remarks</h2>
 				</a>
-				<p>This package tries to make the serialization as fast as possible and still keep a readable codebase.
-				With this in mind you should create your own custom serializers and choose the ones you use.</p>
-				<p>There will be no typecheck done serialization, if you can not trust the datastructure you can do one manually by calling
-					<code>typeCheck</code> of the serializer. But if you need to do the serialization as fast as possible you should not include those
-				checks in the code running in production.</p>
+				<p>This package tries to make the serialization as fast as possible and still keep a readable API.</p>
+				<p>There will be no typecheck done on serialization, if you can not trust the datastructure you can do one manually by calling
+				<code>typeCheck</code> of the serializer.</p>
 				<p>The provided default serializers have different runtime behavior which can heavily influence your choice for the datastructure.</p>
-				<p>The performance report below is the result of the serialization from the example provided above.
-					<code>serializetion</code> includes the <code>ObjectSerializer</code> and the number serializer but nothing else.
-				All other are added separately.</p>
+				<p>The performance report below is the result of the serialization from a similar datasctructure like the one shown above.
+					<code>serialization</code> includes the <code>ObjectSerializer</code> and the number serializer but nothing else,
+				all other are added separately.</p>
+				<p>The string serializer uses an internal cache on serialize, which results in a skewed result.</p>
 				<pre><code>                ops/sec  MoE samples relative
 serialization
-  serialize   <span class="hljs-number">2</span>,<span class="hljs-number">684</span>,<span class="hljs-number">042</span> <span class="hljs-number">0.94</span>      <span class="hljs-number">93</span>     <span class="hljs-number">1.20</span>
-  deserialize <span class="hljs-number">2</span>,<span class="hljs-number">238</span>,<span class="hljs-number">283</span> <span class="hljs-number">1.55</span>      <span class="hljs-number">87</span>     <span class="hljs-number">1.00</span>
+  serialize   <span class="hljs-number">2</span>,<span class="hljs-number">620</span>,<span class="hljs-number">854</span> <span class="hljs-number">1.81</span>      <span class="hljs-number">88</span>     <span class="hljs-number">1.20</span>
+  deserialize <span class="hljs-number">2</span>,<span class="hljs-number">178</span>,<span class="hljs-number">406</span> <span class="hljs-number">1.64</span>      <span class="hljs-number">89</span>     <span class="hljs-number">1.00</span>
 serialization + Array
-  serialize      <span class="hljs-number">60</span>,<span class="hljs-number">061</span> <span class="hljs-number">2.39</span>      <span class="hljs-number">86</span>     <span class="hljs-number">1.00</span>
-  deserialize    <span class="hljs-number">67</span>,<span class="hljs-number">150</span> <span class="hljs-number">0.70</span>      <span class="hljs-number">88</span>     <span class="hljs-number">1.12</span>
+  serialize   <span class="hljs-number">1</span>,<span class="hljs-number">287</span>,<span class="hljs-number">073</span> <span class="hljs-number">2.51</span>      <span class="hljs-number">85</span>     <span class="hljs-number">1.29</span>
+  deserialize <span class="hljs-number">1</span>,<span class="hljs-number">000</span>,<span class="hljs-number">358</span> <span class="hljs-number">5.47</span>      <span class="hljs-number">79</span>     <span class="hljs-number">1.00</span>
 serialization + Vector
-  serialize   <span class="hljs-number">1</span>,<span class="hljs-number">420</span>,<span class="hljs-number">139</span> <span class="hljs-number">0.44</span>      <span class="hljs-number">95</span>     <span class="hljs-number">1.32</span>
-  deserialize <span class="hljs-number">1</span>,<span class="hljs-number">073</span>,<span class="hljs-number">853</span> <span class="hljs-number">0.91</span>      <span class="hljs-number">93</span>     <span class="hljs-number">1.00</span>
+  serialize   <span class="hljs-number">1</span>,<span class="hljs-number">100</span>,<span class="hljs-number">311</span> <span class="hljs-number">2.72</span>      <span class="hljs-number">86</span>     <span class="hljs-number">1.23</span>
+  deserialize   <span class="hljs-number">895</span>,<span class="hljs-number">438</span> <span class="hljs-number">2.93</span>      <span class="hljs-number">86</span>     <span class="hljs-number">1.00</span>
 serialization + AB
-  serialize   <span class="hljs-number">1</span>,<span class="hljs-number">318</span>,<span class="hljs-number">086</span> <span class="hljs-number">1.11</span>      <span class="hljs-number">90</span>     <span class="hljs-number">3.14</span>
-  deserialize   <span class="hljs-number">419</span>,<span class="hljs-number">398</span> <span class="hljs-number">1.16</span>      <span class="hljs-number">89</span>     <span class="hljs-number">1.00</span>
+  serialize   <span class="hljs-number">1</span>,<span class="hljs-number">269</span>,<span class="hljs-number">839</span> <span class="hljs-number">3.07</span>      <span class="hljs-number">86</span>     <span class="hljs-number">3.04</span>
+  deserialize   <span class="hljs-number">417</span>,<span class="hljs-number">772</span> <span class="hljs-number">2.08</span>      <span class="hljs-number">86</span>     <span class="hljs-number">1.00</span>
 serialization + String
-  serialize   <span class="hljs-number">1</span>,<span class="hljs-number">196</span>,<span class="hljs-number">285</span> <span class="hljs-number">0.67</span>      <span class="hljs-number">88</span>     <span class="hljs-number">5.93</span>
-  deserialize   <span class="hljs-number">201</span>,<span class="hljs-number">582</span> <span class="hljs-number">0.83</span>      <span class="hljs-number">90</span>     <span class="hljs-number">1.00</span>
-serialization + Array + Vector + AB + String
-  serialize      <span class="hljs-number">58</span>,<span class="hljs-number">956</span> <span class="hljs-number">1.46</span>      <span class="hljs-number">93</span>     <span class="hljs-number">1.33</span>
-  deserialize    <span class="hljs-number">44</span>,<span class="hljs-number">490</span> <span class="hljs-number">1.25</span>      <span class="hljs-number">93</span>     <span class="hljs-number">1.00</span>
- */</code></pre><p>Sadly the array serializer is really slow for smaller vectors and should only be used if the arrays are larger (&gt; 10) or 
-					if the size is not fixed. All other serializers are quite fast, but I would highly recommend that you stick to
-					<code>ObjectSerialzer</code>, <code>VectorSerializer</code> and the number serializer and that you either write a custom serializer by extending
-					the <code>ValueSerializer</code> or just prepend a function which converts your data in another structure which does not include
-				strings, other arraybuffers or arrays.</p>
+  serialize   <span class="hljs-number">1</span>,<span class="hljs-number">184</span>,<span class="hljs-number">358</span> <span class="hljs-number">1.74</span>      <span class="hljs-number">89</span>     <span class="hljs-number">6.11</span>
+  deserialize   <span class="hljs-number">193</span>,<span class="hljs-number">857</span> <span class="hljs-number">2.73</span>      <span class="hljs-number">86</span>     <span class="hljs-number">1.00</span>
+serialization + Enum
+  serialize   <span class="hljs-number">1</span>,<span class="hljs-number">697</span>,<span class="hljs-number">583</span> <span class="hljs-number">0.76</span>      <span class="hljs-number">93</span>     <span class="hljs-number">1.29</span>
+  deserialize <span class="hljs-number">1</span>,<span class="hljs-number">312</span>,<span class="hljs-number">046</span> <span class="hljs-number">1.49</span>      <span class="hljs-number">84</span>     <span class="hljs-number">1.00</span>
+serialization + Array + Vector + AB + String + Enum
+  serialize     <span class="hljs-number">440</span>,<span class="hljs-number">456</span> <span class="hljs-number">0.66</span>      <span class="hljs-number">95</span>     <span class="hljs-number">3.30</span>
+  deserialize   <span class="hljs-number">133</span>,<span class="hljs-number">296</span> <span class="hljs-number">1.04</span>      <span class="hljs-number">89</span>     <span class="hljs-number">1.00</span>
+ */</code></pre><p>As this performance measurement show array buffer and string serialization are quite slow, I would recommend therefore
+				to stick to the other serializers. The most efficient option is to only use <code>ObjectSerializer</code> and the number serializer.  </p>
 				<a href="#in-comparison-to-other-means-of-serialization" id="in-comparison-to-other-means-of-serialization" style="color: inherit; text-decoration: none;">
 					<h2>In comparison to other means of serialization</h2>
 				</a>
@@ -354,6 +368,9 @@ serialization + Array + Vector + AB + String
 					</li>
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="classes/arrayserializer.html" class="tsd-kind-icon">Array<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/enumserializer.html" class="tsd-kind-icon">Enum<wbr>Serializer</a>
 					</li>
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="classes/objectserializer.html" class="tsd-kind-icon">Object<wbr>Serializer</a>
