@@ -56,10 +56,11 @@ serialization + Array + Vector + AB + String
  */
 ```
 
-Sadly the array serializer is really slow and should only be used if you really need to. All other serializers are quite
-fast, but I would highly recommend that you stick to `ObjectSerialzer`, `VectorSerializer` and the number serializer and
-that you either write a custom serializer by extending the `ValueSerializer` or just prepend a function which converts
-your data in another structure which does not include strings, other arraybuffers or arrays.
+Sadly the array serializer is really slow for smaller vectors and should only be used if the arrays are larger (> 10) or 
+if the size is not fixed. All other serializers are quite fast, but I would highly recommend that you stick to
+`ObjectSerialzer`, `VectorSerializer` and the number serializer and that you either write a custom serializer by extending
+the `ValueSerializer` or just prepend a function which converts your data in another structure which does not include
+strings, other arraybuffers or arrays.
 
 ## In comparison to other means of serialization
 
