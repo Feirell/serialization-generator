@@ -9,11 +9,11 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
     // TODO improve internal typing (and the any casts)
     private serializationSteps: AppendedSerializer<Structure, any>[] = [];
 
-    get staticSize(): number | undefined {
+    getStaticSize(): number | undefined {
         let size = 0;
 
         for (const {serializer} of this.serializationSteps) {
-            const staticSize = serializer.staticSize
+            const staticSize = serializer.getStaticSize()
 
             if (staticSize == undefined)
                 return undefined;

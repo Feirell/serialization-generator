@@ -18,8 +18,8 @@ export class VectorSerializer<Type, Length extends 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
         super();
     }
 
-    get staticSize(): number | undefined {
-        const ser = this.serializer.staticSize;
+    getStaticSize(): number | undefined {
+        const ser = this.serializer.getStaticSize();
         return ser == undefined ? undefined : ser * this.length;
     }
 

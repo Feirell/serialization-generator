@@ -20,7 +20,7 @@ class FloatSerializer extends ValueSerializer<number> {
         this.dvDeserializer = DataView.prototype['get' + this.typeIdentifier];
     }
 
-    get staticSize(): number | undefined {
+    getStaticSize(): number | undefined {
         return this.byteSize;
     }
 

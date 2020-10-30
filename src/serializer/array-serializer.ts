@@ -5,7 +5,7 @@ export class ArraySerializer<Type> extends ValueSerializer<Type[]> {
         super();
     }
 
-    get staticSize(): number | undefined {
+    getStaticSize(): number | undefined {
         return undefined;
     }
 

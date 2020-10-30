@@ -21,7 +21,7 @@ export abstract class ValueSerializer<Type> {
      * This value is undefined if it is dependent on the value which is serialized or is a number of bytes needed to
      * serialize any value.
      */
-    abstract get staticSize(): number | undefined;
+    abstract getStaticSize(): number | undefined;
 
     /**
      * Gets the number of bytes needed to to serialize the given value. This value will be the same as staticSize if it

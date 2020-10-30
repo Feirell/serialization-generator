@@ -1,7 +1,7 @@
 import {ValueSerializer} from "./value-serializer";
 
 export class ArrayBufferSerializer extends ValueSerializer<ArrayBuffer> {
-    get staticSize(): number | undefined {
+    getStaticSize(): number | undefined {
         return undefined;
     }
 

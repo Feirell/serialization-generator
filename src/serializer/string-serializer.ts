@@ -10,7 +10,7 @@ export class StringSerializer<Type extends object> extends ValueSerializer<strin
 
     private readonly abSer = new ArrayBufferSerializer();
 
-    get staticSize(): number | undefined {
+    getStaticSize(): number | undefined {
         return undefined;
     }
 
