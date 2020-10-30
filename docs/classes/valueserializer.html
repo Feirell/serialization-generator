@@ -102,6 +102,9 @@
 							<li>
 								<a href="stringserializer.html" class="tsd-signature-type">StringSerializer</a>
 							</li>
+							<li>
+								<a href="transformserializer.html" class="tsd-signature-type">TransformSerializer</a>
+							</li>
 						</ul>
 					</li>
 				</ul>
@@ -117,16 +120,11 @@
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
-							<h3>Accessors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class"><a href="valueserializer.html#staticsize" class="tsd-kind-icon">static<wbr>Size</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="valueserializer.html#deserialize" class="tsd-kind-icon">deserialize</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="valueserializer.html#getsizeforvalue" class="tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="valueserializer.html#getstaticsize" class="tsd-kind-icon">get<wbr>Static<wbr>Size</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="valueserializer.html#serialize" class="tsd-kind-icon">serialize</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="valueserializer.html#typecheck" class="tsd-kind-icon">type<wbr>Check</a></li>
 							</ul>
@@ -142,37 +140,9 @@
 					<div class="tsd-signature tsd-kind-icon">TYPE_<wbr>PINPOINT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Type</span><span class="tsd-signature-symbol"> = undefined as unknown as Type</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/8cc1d69/src/serializer/value-serializer.ts#L15">serializer/value-serializer.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/value-serializer.ts#L15">serializer/value-serializer.ts:15</a></li>
 						</ul>
 					</aside>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class">
-					<a name="staticsize" class="tsd-anchor"></a>
-					<h3>static<wbr>Size</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> staticSize<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/8cc1d69/src/serializer/value-serializer.ts#L24">serializer/value-serializer.ts:24</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>This attribute is used to identify if the number of bytes used by this serializer to serialize the value is
-									dependent on the value which is serialized or if it is the same for all values.</p>
-								</div>
-								<p>This value is undefined if it is dependent on the value which is serialized or is a number of bytes needed to
-								serialize any value.</p>
-							</div>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
-						</li>
-					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -187,7 +157,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/8cc1d69/src/serializer/value-serializer.ts#L60">serializer/value-serializer.ts:60</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/value-serializer.ts#L60">serializer/value-serializer.ts:60</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -233,7 +203,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/8cc1d69/src/serializer/value-serializer.ts#L32">serializer/value-serializer.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/value-serializer.ts#L32">serializer/value-serializer.ts:32</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -256,6 +226,31 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="getstaticsize" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> get<wbr>Static<wbr>Size</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Static<wbr>Size<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/value-serializer.ts#L24">serializer/value-serializer.ts:24</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>This attribute is used to identify if the number of bytes used by this serializer to serialize the value is
+									dependent on the value which is serialized or if it is the same for all values.</p>
+								</div>
+								<p>This value is undefined if it is dependent on the value which is serialized or is a number of bytes needed to
+								serialize any value.</p>
+							</div>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="serialize" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagAbstract">Abstract</span> serialize</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -265,7 +260,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/8cc1d69/src/serializer/value-serializer.ts#L51">serializer/value-serializer.ts:51</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/value-serializer.ts#L51">serializer/value-serializer.ts:51</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -314,7 +309,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/8cc1d69/src/serializer/value-serializer.ts#L41">serializer/value-serializer.ts:41</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/value-serializer.ts#L41">serializer/value-serializer.ts:41</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -366,6 +361,9 @@
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="stringserializer.html" class="tsd-kind-icon">String<wbr>Serializer</a>
 					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="transformserializer.html" class="tsd-kind-icon">Transform<wbr>Serializer</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-has-type-parameter">
@@ -374,14 +372,14 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="valueserializer.html#type_pinpoint" class="tsd-kind-icon">TYPE_<wbr>PINPOINT</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class">
-								<a href="valueserializer.html#staticsize" class="tsd-kind-icon">static<wbr>Size</a>
-							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="valueserializer.html#deserialize" class="tsd-kind-icon">deserialize</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="valueserializer.html#getsizeforvalue" class="tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="valueserializer.html#getstaticsize" class="tsd-kind-icon">get<wbr>Static<wbr>Size</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="valueserializer.html#serialize" class="tsd-kind-icon">serialize</a>
@@ -425,6 +423,9 @@
 					</li>
 					<li class=" tsd-kind-variable">
 						<a href="../globals.html#uint8_serializer" class="tsd-kind-icon">UINT8_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="../globals.html#createtransformserializer" class="tsd-kind-icon">create<wbr>Transform<wbr>Serializer</a>
 					</li>
 				</ul>
 			</nav>

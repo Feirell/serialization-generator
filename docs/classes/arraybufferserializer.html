@@ -88,16 +88,11 @@
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
-							<h3>Accessors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite"><a href="arraybufferserializer.html#staticsize" class="tsd-kind-icon">static<wbr>Size</a></li>
-							</ul>
-						</section>
-						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="arraybufferserializer.html#deserialize" class="tsd-kind-icon">deserialize</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="arraybufferserializer.html#getsizeforvalue" class="tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="arraybufferserializer.html#getstaticsize" class="tsd-kind-icon">get<wbr>Static<wbr>Size</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="arraybufferserializer.html#serialize" class="tsd-kind-icon">serialize</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="arraybufferserializer.html#typecheck" class="tsd-kind-icon">type<wbr>Check</a></li>
 							</ul>
@@ -114,30 +109,9 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#type_pinpoint">TYPE_PINPOINT</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/8cc1d69/src/serializer/value-serializer.ts#L15">serializer/value-serializer.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/value-serializer.ts#L15">serializer/value-serializer.ts:15</a></li>
 						</ul>
 					</aside>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Accessors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-					<a name="staticsize" class="tsd-anchor"></a>
-					<h3>static<wbr>Size</h3>
-					<ul class="tsd-signatures tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">get</span> staticSize<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#staticsize">staticSize</a></p>
-								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/8cc1d69/src/serializer/array-buffer-serializer.ts#L4">serializer/array-buffer-serializer.ts:4</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
-						</li>
-					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
@@ -153,7 +127,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#deserialize">deserialize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/8cc1d69/src/serializer/array-buffer-serializer.ts#L38">serializer/array-buffer-serializer.ts:38</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/array-buffer-serializer.ts#L38">serializer/array-buffer-serializer.ts:38</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -188,7 +162,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#getsizeforvalue">getSizeForValue</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/8cc1d69/src/serializer/array-buffer-serializer.ts#L8">serializer/array-buffer-serializer.ts:8</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/array-buffer-serializer.ts#L8">serializer/array-buffer-serializer.ts:8</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -198,6 +172,24 @@
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+					<a name="getstaticsize" class="tsd-anchor"></a>
+					<h3>get<wbr>Static<wbr>Size</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Static<wbr>Size<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#getstaticsize">getStaticSize</a></p>
+								<ul>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/array-buffer-serializer.ts#L4">serializer/array-buffer-serializer.ts:4</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -212,7 +204,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#serialize">serialize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/8cc1d69/src/serializer/array-buffer-serializer.ts#L23">serializer/array-buffer-serializer.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/array-buffer-serializer.ts#L23">serializer/array-buffer-serializer.ts:23</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -247,7 +239,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#typecheck">typeCheck</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/8cc1d69/src/serializer/array-buffer-serializer.ts#L15">serializer/array-buffer-serializer.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/0787937/src/serializer/array-buffer-serializer.ts#L15">serializer/array-buffer-serializer.ts:15</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -283,14 +275,14 @@
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 								<a href="arraybufferserializer.html#type_pinpoint" class="tsd-kind-icon">TYPE_<wbr>PINPOINT</a>
 							</li>
-							<li class=" tsd-kind-get-signature tsd-parent-kind-class tsd-is-overwrite">
-								<a href="arraybufferserializer.html#staticsize" class="tsd-kind-icon">static<wbr>Size</a>
-							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="arraybufferserializer.html#deserialize" class="tsd-kind-icon">deserialize</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="arraybufferserializer.html#getsizeforvalue" class="tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="arraybufferserializer.html#getstaticsize" class="tsd-kind-icon">get<wbr>Static<wbr>Size</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
 								<a href="arraybufferserializer.html#serialize" class="tsd-kind-icon">serialize</a>
@@ -310,6 +302,9 @@
 					</li>
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="stringserializer.html" class="tsd-kind-icon">String<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="transformserializer.html" class="tsd-kind-icon">Transform<wbr>Serializer</a>
 					</li>
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="valueserializer.html" class="tsd-kind-icon">Value<wbr>Serializer</a>
@@ -346,6 +341,9 @@
 					</li>
 					<li class=" tsd-kind-variable">
 						<a href="../globals.html#uint8_serializer" class="tsd-kind-icon">UINT8_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="../globals.html#createtransformserializer" class="tsd-kind-icon">create<wbr>Transform<wbr>Serializer</a>
 					</li>
 				</ul>
 			</nav>
