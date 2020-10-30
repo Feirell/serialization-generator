@@ -271,7 +271,6 @@ serialization + Enum
 serialization + Array + Vector + AB + String + Enum
   serialize     440,456 0.66      95     3.30
   deserialize   133,296 1.04      89     1.00
- */
 ```
 
 As this performance measurement show array buffer and string serialization are quite slow, I would recommend therefore
