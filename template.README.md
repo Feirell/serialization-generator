@@ -27,47 +27,47 @@ If want to implement a mapping serializer which, for example, maps an enum to a 
 
 ## Performance remarks
 
-This package tries to make the serialization as fast as possible and still keep a readable codebase.
-With this in mind you should create your own custom serializers and choose the ones you use.
+This package tries to make the serialization as fast as possible and still keep a readable API.
 
-There will be no typecheck done serialization, if you can not trust the datastructure you can do one manually by calling
-`typeCheck` of the serializer. But if you need to do the serialization as fast as possible you should not include those
-checks in the code running in production.
+There will be no typecheck done on serialization, if you can not trust the datastructure you can do one manually by calling
+`typeCheck` of the serializer.
 
 The provided default serializers have different runtime behavior which can heavily influence your choice for the datastructure.
 
-The performance report below is the result of the serialization from the example provided above.
-`serialization` includes the `ObjectSerializer` and the number serializer but nothing else.
-All other are added separately.
+The performance report below is the result of the serialization from a similar datasctructure like the one shown above.
+`serialization` includes the `ObjectSerializer` and the number serializer but nothing else,
+all other are added separately.
+
+The string serializer uses an internal cache on serialize, which results in a skewed result.
 
 ```
                 ops/sec  MoE samples relative
 serialization
-  serialize   2,223,855 1.28      90     1.11
-  deserialize 2,006,597 0.91      85     1.00
+  serialize   2,620,854 1.81      88     1.20
+  deserialize 2,178,406 1.64      89     1.00
 serialization + Array
-  serialize   1,702,778 0.68      90     1.22
-  deserialize 1,397,288 2.43      91     1.00
+  serialize   1,287,073 2.51      85     1.29
+  deserialize 1,000,358 5.47      79     1.00
 serialization + Vector
-  serialize   1,371,070 0.67      87     1.31
-  deserialize 1,045,809 1.48      89     1.00
+  serialize   1,100,311 2.72      86     1.23
+  deserialize   895,438 2.93      86     1.00
 serialization + AB
-  serialize   1,250,732 1.54      90     3.09
-  deserialize   404,587 1.12      91     1.00
+  serialize   1,269,839 3.07      86     3.04
+  deserialize   417,772 2.08      86     1.00
 serialization + String
-  serialize   1,010,058 1.00      92     5.44
-  deserialize   185,555 1.74      88     1.00
+  serialize   1,184,358 1.74      89     6.11
+  deserialize   193,857 2.73      86     1.00
 serialization + Enum
-  serialize   1,536,543 0.83      88     1.39
-  deserialize 1,109,299 1.14      94     1.00
+  serialize   1,697,583 0.76      93     1.29
+  deserialize 1,312,046 1.49      84     1.00
 serialization + Array + Vector + AB + String + Enum
-  serialize     479,868 1.49      85     3.59
-  deserialize   133,637 0.90      88     1.00
+  serialize     440,456 0.66      95     3.30
+  deserialize   133,296 1.04      89     1.00
  */
 ```
 
 As this performance measurement show array buffer and string serialization are quite slow, I would recommend therefore
-to stick to the other serializers. Even though  
+to stick to the other serializers. The most efficient option is to only use `ObjectSerializer` and the number serializer.  
 
 ## In comparison to other means of serialization
 

@@ -9,8 +9,9 @@ versions which fit your needed data structures.
 <!-- USEFILE: examples\simple-example.ts; str => str.replace('../src', 'serialization-generator') -->
 ``` ts
 import {
-    ObjectSerializer,
     ArraySerializer,
+    EnumSerializer,
+    ObjectSerializer,
     VectorSerializer,
 
     ARRAY_BUFFER_SERIALIZER,
@@ -34,6 +35,8 @@ interface ExampleSubType {
     f: ArrayBuffer;
 }
 
+type Enum = 'ENUM_VAL_A' | 'ENUM_VAL_B' | 'ENUM_VAL_C';
+
 interface ExampleType {
     a: number;
     b: number;
@@ -41,6 +44,7 @@ interface ExampleType {
     g: string;
     h: number[];
     i: [number, number, number, number];
+    j: Enum;
 }
 
 const EXAMPLE_SUBTYPE_SERIALIZER = new ObjectSerializer<ExampleSubType>()
@@ -55,6 +59,7 @@ const exSer = new ObjectSerializer<ExampleType>()
     .append("g", STRING_SERIALIZER)
     .append("h", new ArraySerializer(UINT32_SERIALIZER))
     .append("i", new VectorSerializer(UINT8_SERIALIZER, 4))
+    .append("j", new EnumSerializer<Enum>(['ENUM_VAL_A', 'ENUM_VAL_B', 'ENUM_VAL_C']))
 
 const ab = new ArrayBuffer(3);
 new Uint8Array(ab).set([1, 4, 9]);
@@ -69,7 +74,8 @@ const instance: ExampleType = {
     },
     g: "Example string with UTF-8 chars €",
     h: [1, 2, 3, 22],
-    i: [8, 7, 7, 2]
+    i: [8, 7, 7, 2],
+    j: "ENUM_VAL_B"
 }
 
 // check weather the provided values are serializable by the configured serializer
@@ -104,7 +110,8 @@ Please have a look at the [API documentation](https://feirell.github.io/serializ
 
 ## Mapping / transforming serializer
 
-If want to implement a mapping serializer which, for example, maps an enum to a number and back you could do so in four ways:
+If want to implement a mapping serializer which, for example, maps an enum to a number and back you could do so in four ways.
+`EnumSerializer` is a specific class to map a static number of values to their indexes and back, primarily Enums.
 
 <!-- USEFILE: examples\transform-values.ts; str => str.replace('../src', 'serialization-generator') -->
 ``` ts
@@ -112,7 +119,7 @@ import {
     createTransformSerializer,
     TransformSerializer,
     ValueSerializer,
-    UINT8_SERIALIZER
+    UINT8_SERIALIZER, EnumSerializer
 } from "serialization-generator";
 
 type OriginType = 'ENUM_A' | 'ENUM_B' | 'ENUM_C' | 'ENUM_D'
@@ -143,6 +150,14 @@ const isOriginType = (val: any): val is  OriginType =>
     val != "ENUM_B" &&
     val != "ENUM_C" &&
     val != "ENUM_D";
+
+//
+// When the number of values in of type Origin are static and finite you can use EnumSerializer
+//
+
+const instance = new EnumSerializer(['ENUM_A' , 'ENUM_B' , 'ENUM_C' , 'ENUM_D'] as OriginType[]);
+
+// If this is not the case you have four other options
 
 //
 // First Option: Custom Class
@@ -220,47 +235,47 @@ const ORIGIN_TYPE_SERIALIZER_VIA_FNC = createTransformSerializer(
 
 ## Performance remarks
 
-This package tries to make the serialization as fast as possible and still keep a readable codebase.
-With this in mind you should create your own custom serializers and choose the ones you use.
+This package tries to make the serialization as fast as possible and still keep a readable API.
 
-There will be no typecheck done serialization, if you can not trust the datastructure you can do one manually by calling
-`typeCheck` of the serializer. But if you need to do the serialization as fast as possible you should not include those
-checks in the code running in production.
+There will be no typecheck done on serialization, if you can not trust the datastructure you can do one manually by calling
+`typeCheck` of the serializer.
 
 The provided default serializers have different runtime behavior which can heavily influence your choice for the datastructure.
 
-The performance report below is the result of the serialization from the example provided above.
-`serializetion` includes the `ObjectSerializer` and the number serializer but nothing else.
-All other are added separately.
+The performance report below is the result of the serialization from a similar datasctructure like the one shown above.
+`serialization` includes the `ObjectSerializer` and the number serializer but nothing else,
+all other are added separately.
+
+The string serializer uses an internal cache on serialize, which results in a skewed result.
 
 ```
                 ops/sec  MoE samples relative
 serialization
-  serialize   2,684,042 0.94      93     1.20
-  deserialize 2,238,283 1.55      87     1.00
+  serialize   2,620,854 1.81      88     1.20
+  deserialize 2,178,406 1.64      89     1.00
 serialization + Array
-  serialize      60,061 2.39      86     1.00
-  deserialize    67,150 0.70      88     1.12
+  serialize   1,287,073 2.51      85     1.29
+  deserialize 1,000,358 5.47      79     1.00
 serialization + Vector
-  serialize   1,420,139 0.44      95     1.32
-  deserialize 1,073,853 0.91      93     1.00
+  serialize   1,100,311 2.72      86     1.23
+  deserialize   895,438 2.93      86     1.00
 serialization + AB
-  serialize   1,318,086 1.11      90     3.14
-  deserialize   419,398 1.16      89     1.00
+  serialize   1,269,839 3.07      86     3.04
+  deserialize   417,772 2.08      86     1.00
 serialization + String
-  serialize   1,196,285 0.67      88     5.93
-  deserialize   201,582 0.83      90     1.00
-serialization + Array + Vector + AB + String
-  serialize      58,956 1.46      93     1.33
-  deserialize    44,490 1.25      93     1.00
+  serialize   1,184,358 1.74      89     6.11
+  deserialize   193,857 2.73      86     1.00
+serialization + Enum
+  serialize   1,697,583 0.76      93     1.29
+  deserialize 1,312,046 1.49      84     1.00
+serialization + Array + Vector + AB + String + Enum
+  serialize     440,456 0.66      95     3.30
+  deserialize   133,296 1.04      89     1.00
  */
 ```
 
-Sadly the array serializer is really slow for smaller vectors and should only be used if the arrays are larger (> 10) or 
-if the size is not fixed. All other serializers are quite fast, but I would highly recommend that you stick to
-`ObjectSerialzer`, `VectorSerializer` and the number serializer and that you either write a custom serializer by extending
-the `ValueSerializer` or just prepend a function which converts your data in another structure which does not include
-strings, other arraybuffers or arrays.
+As this performance measurement show array buffer and string serialization are quite slow, I would recommend therefore
+to stick to the other serializers. The most efficient option is to only use `ObjectSerializer` and the number serializer.  
 
 ## In comparison to other means of serialization
 
