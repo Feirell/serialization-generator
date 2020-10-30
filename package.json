@@ -8,8 +8,8 @@
     "lib"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "start": "node lib/index.js",
+    "build-all": "yarn run build-ts && yarn run build-md && yarn run build-docs",
+    "build-ts": "tsc -p tsconfig.json",
     "build-md": "ifim template.README.md --add-location-notice",
     "build-docs": "typedoc"
   },
