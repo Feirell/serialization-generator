@@ -47,10 +47,15 @@ interface ExampleType {
     j: Enum;
 }
 
-const EXAMPLE_SUBTYPE_SERIALIZER = new ObjectSerializer<ExampleSubType>()
-    .append("d", INT8_SERIALIZER)
-    .append("e", UINT16_SERIALIZER)
-    .append("f", ARRAY_BUFFER_SERIALIZER);
+// you can define the object serializer either directly at construction
+
+const EXAMPLE_SUBTYPE_SERIALIZER = new ObjectSerializer<ExampleSubType>({
+    d: INT8_SERIALIZER,
+    e: UINT16_SERIALIZER,
+    f: ARRAY_BUFFER_SERIALIZER
+});
+
+// or after with the append method
 
 const exSer = new ObjectSerializer<ExampleType>()
     .append("a", UINT32_SERIALIZER)
@@ -78,7 +83,7 @@ const instance: ExampleType = {
     j: "ENUM_VAL_B"
 }
 
-// check weather the provided values are serializable by the configured serializer
+// check whether the provided values are serializable by the configured serializer
 exSer.typeCheck(instance);
 
 // retrieve the number of bytes needed to serialize this value
