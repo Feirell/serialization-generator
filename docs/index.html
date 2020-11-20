@@ -109,10 +109,15 @@
     j: Enum;
 }
 
-<span class="hljs-keyword">const</span> EXAMPLE_SUBTYPE_SERIALIZER = <span class="hljs-keyword">new</span> ObjectSerializer&lt;ExampleSubType&gt;()
-    .append(<span class="hljs-string">"d"</span>, INT8_SERIALIZER)
-    .append(<span class="hljs-string">"e"</span>, UINT16_SERIALIZER)
-    .append(<span class="hljs-string">"f"</span>, ARRAY_BUFFER_SERIALIZER);
+<span class="hljs-comment">// you can define the object serializer either directly at construction</span>
+
+<span class="hljs-keyword">const</span> EXAMPLE_SUBTYPE_SERIALIZER = <span class="hljs-keyword">new</span> ObjectSerializer&lt;ExampleSubType&gt;({
+    d: INT8_SERIALIZER,
+    e: UINT16_SERIALIZER,
+    f: ARRAY_BUFFER_SERIALIZER
+});
+
+<span class="hljs-comment">// or after with the append method</span>
 
 <span class="hljs-keyword">const</span> exSer = <span class="hljs-keyword">new</span> ObjectSerializer&lt;ExampleType&gt;()
     .append(<span class="hljs-string">"a"</span>, UINT32_SERIALIZER)
@@ -140,7 +145,7 @@
     j: <span class="hljs-string">"ENUM_VAL_B"</span>
 }
 
-<span class="hljs-comment">// check weather the provided values are serializable by the configured serializer</span>
+<span class="hljs-comment">// check whether the provided values are serializable by the configured serializer</span>
 exSer.typeCheck(instance);
 
 <span class="hljs-comment">// retrieve the number of bytes needed to serialize this value</span>
@@ -320,8 +325,7 @@ serialization + Enum
   deserialize <span class="hljs-number">1</span>,<span class="hljs-number">312</span>,<span class="hljs-number">046</span> <span class="hljs-number">1.49</span>      <span class="hljs-number">84</span>     <span class="hljs-number">1.00</span>
 serialization + Array + Vector + AB + String + Enum
   serialize     <span class="hljs-number">440</span>,<span class="hljs-number">456</span> <span class="hljs-number">0.66</span>      <span class="hljs-number">95</span>     <span class="hljs-number">3.30</span>
-  deserialize   <span class="hljs-number">133</span>,<span class="hljs-number">296</span> <span class="hljs-number">1.04</span>      <span class="hljs-number">89</span>     <span class="hljs-number">1.00</span>
- */</code></pre><p>As this performance measurement show array buffer and string serialization are quite slow, I would recommend therefore
+  deserialize   <span class="hljs-number">133</span>,<span class="hljs-number">296</span> <span class="hljs-number">1.04</span>      <span class="hljs-number">89</span>     <span class="hljs-number">1.00</span></code></pre><p>As this performance measurement show array buffer and string serialization are quite slow, I would recommend therefore
 				to stick to the other serializers. The most efficient option is to only use <code>ObjectSerializer</code> and the number serializer.  </p>
 				<a href="#in-comparison-to-other-means-of-serialization" id="in-comparison-to-other-means-of-serialization" style="color: inherit; text-decoration: none;">
 					<h2>In comparison to other means of serialization</h2>
