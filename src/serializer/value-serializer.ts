@@ -32,7 +32,7 @@ export abstract class ValueSerializer<Type> {
     abstract getSizeForValue(val: Type): number;
 
     /**
-     * This function will check weather the provided value is fully serializable by this serializer. Which includes a
+     * This function will check whether the provided value is fully serializable by this serializer. Which includes a
      * range and a type check.
      *
      * @param val the value to check
@@ -59,4 +59,24 @@ export abstract class ValueSerializer<Type> {
      */
     abstract deserialize(dv: DataView, offset: number): { offset: number, val: Type };
 
+    /**
+     * Shortcut which creates an appropriately sized ArrayBuffer for the value and serializes the value.
+     *
+     * @param val the value to serialize
+     */
+    valueToArrayBuffer(val: Type): ArrayBuffer {
+        const ab = new ArrayBuffer(this.getSizeForValue(val));
+        const dv = new DataView(ab);
+        this.serialize(dv, 0, val);
+        return ab;
+    }
+
+    /**
+     * Shortcut which deserializes the value and assumes the whole ArrayBuffer for this action.
+     *
+     * @param arrayBuffer the ArrayBuffer which contains the value
+     */
+    arrayBufferToValue(arrayBuffer: ArrayBuffer): Type {
+        return this.deserialize(new DataView(arrayBuffer), 0).val;
+    }
 }

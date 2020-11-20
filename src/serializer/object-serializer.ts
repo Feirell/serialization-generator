@@ -7,12 +7,17 @@ interface AppendedSerializer<Structure extends object, Name extends keyof Struct
 
 const defaultInstanceCreator = () => ({} as object);
 
+type MappedSerializer<T extends object> = { [key in keyof T]?: ValueSerializer<T[key]> };
+
 export class ObjectSerializer<Structure extends object> extends ValueSerializer<Structure> {
     // TODO improve internal typing (and the any casts)
     private serializationSteps: AppendedSerializer<Structure, any>[] = [];
 
-    constructor(private readonly createInstance = defaultInstanceCreator) {
+    constructor(initialSerializer: MappedSerializer<Structure> = {}, private readonly createInstance = defaultInstanceCreator) {
         super();
+
+        for (const [key, ser] of Object.entries(initialSerializer))
+            this.append(key as keyof Structure, ser as ValueSerializer<any>);
     }
 
     getStaticSize(): number | undefined {
@@ -32,7 +37,7 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
 
     /**
      * Appends a serializer for the given name. This serializer needs to be able to serialize the type
-     * of the field from the object. There is no check weather the field actually exists or if there is already another
+     * of the field from the object. There is no check whether the field actually exists or if there is already another
      * serializer registered for this field identifier.
      *
      * All serializer will be called in their appended order.
@@ -83,7 +88,7 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
      * @returns A clone of this object serializer
      */
     clone() {
-        const inst = new ObjectSerializer<Structure>(this.createInstance);
+        const inst = new ObjectSerializer<Structure>({}, this.createInstance);
         inst.serializationSteps = this.serializationSteps.slice();
         return inst;
     }
@@ -123,6 +128,5 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
 
         return {offset, val};
     }
-
 
 }
