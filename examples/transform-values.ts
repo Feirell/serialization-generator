@@ -2,11 +2,12 @@ import {
     createTransformSerializer,
     TransformSerializer,
     ValueSerializer,
-    UINT8_SERIALIZER, EnumSerializer
+    EnumSerializer,
+    UINT8_SERIALIZER
 } from "../src";
 
-type OriginType = 'ENUM_A' | 'ENUM_B' | 'ENUM_C' | 'ENUM_D'
-type BaseType = 0 | 1 | 2 | 3
+type OriginType = 'ENUM_A' | 'ENUM_B' | 'ENUM_C' | 'ENUM_D';
+type BaseType = 0 | 1 | 2 | 3;
 
 const fromOriginToBase = (val: OriginType): BaseType => {
     switch (val) {
@@ -28,23 +29,21 @@ const fromBaseToOrigin = (val: BaseType): OriginType => {
     }
 }
 
-const isOriginType = (val: any): val is  OriginType =>
+const isOriginType = (val: any): val is OriginType =>
     val != "ENUM_A" &&
     val != "ENUM_B" &&
     val != "ENUM_C" &&
     val != "ENUM_D";
 
-//
-// When the number of values in of type Origin are static and finite you can use EnumSerializer
-//
+// When the number of values of type Origin are static
+// and finite you can use the EnumSerializer
 
-const instance = new EnumSerializer(['ENUM_A' , 'ENUM_B' , 'ENUM_C' , 'ENUM_D'] as OriginType[]);
+const possibleValues: OriginType[] = ['ENUM_A', 'ENUM_B', 'ENUM_C', 'ENUM_D'];
+const instance = new EnumSerializer(possibleValues);
 
-// If this is not the case you have four other options
+// If this is not the case then you have four other options
 
-//
 // First Option: Custom Class
-//
 
 class OriginTypeSerializerCustom extends ValueSerializer<OriginType> {
     getStaticSize(): number | undefined {
@@ -76,9 +75,7 @@ class OriginTypeSerializerCustom extends ValueSerializer<OriginType> {
 
 }
 
-//
 // Second Option: using the TransformSerializer Class
-//
 
 class OriginTypeSerializerTransformSerializer extends TransformSerializer<OriginType, BaseType> {
     fromBaseToOrigin(val: BaseType): OriginType {
@@ -95,9 +92,7 @@ class OriginTypeSerializerTransformSerializer extends TransformSerializer<Origin
     }
 }
 
-//
 // Third Option: creating the TransformSerializer via function
-//
 
 const ORIGIN_TYPE_SERIALIZER_VIA_FNC = createTransformSerializer(
     fromOriginToBase,
@@ -109,6 +104,4 @@ const ORIGIN_TYPE_SERIALIZER_VIA_FNC = createTransformSerializer(
     }
 );
 
-//
 // Fourth Option: transform the type to serializable beforehand
-//

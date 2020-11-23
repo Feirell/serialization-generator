@@ -1,5 +1,7 @@
 # serialization-generator
 
+> **Please have a look at the `This package vs FlatBuffers / protobuf` section below before making yourself familiar with this library.**
+
 The main target of this package is to make the creation of serializers to transform JavaScript Values into binary and back
 as easy as possible and to keep the creation readable.
 
@@ -24,6 +26,13 @@ If want to implement a mapping serializer which, for example, maps an enum to a 
 `EnumSerializer` is a specific class to map a static number of values to their indexes and back, primarily Enums.
 
 <!-- USEFILE: examples/transform-values.ts; str => str.replace('../src', 'serialization-generator') -->
+
+## Joined structures
+
+If you have a object structure which is composed of multiple separate structures and they are identified by a property
+then you can use the `SwitchSerializer`.
+ 
+<!-- USEFILE: examples/switch-serializer.ts; str => str.replace('../src', 'serialization-generator') -->
 
 ## Performance remarks
 
@@ -86,6 +95,29 @@ This package is rather basic and is only meant to serialize structures which rem
 \- The structure needs to remain the same
 
 \- The receiver needs to know the structure and construct a deserializer
+
+### This package vs FlatBuffers / protobuf
+
+[FlatBuffers](https://google.github.io/flatbuffers) and [protobuf](https://protobufjs.github.io/protobuf.js/) are two solutions which are well tested and have a huge userbase.
+I had not found those before implementing this library. They might be better suited for your usecase!
+
+Disclaimer: I have never used one of them, my pros and cons are only first impressions. 
+
+\+ Only meant to transport JavaScript Values, might be more suitable
+
+\+ This library is only meant to be used by JavaScript or TypeScript, might be more tailored for that usecase
+
+
+
+\- They are better tested
+
+\- The other libraries have an extensive documentations / many answered questions
+
+\- Might have an inferior performance, might be better optimized
+
+\- Somewhat standard
+
+\- You can access data from FlatBuffers without deserialization
 
 ### Structured clone
 

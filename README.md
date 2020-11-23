@@ -1,5 +1,7 @@
 # serialization-generator
 
+> **Please have a look at the `This package vs FlatBuffers / protobuf` section below before making yourself familiar with this library.**
+
 The main target of this package is to make the creation of serializers to transform JavaScript Values into binary and back
 as easy as possible and to keep the creation readable.
 
@@ -13,6 +15,7 @@ import {
     EnumSerializer,
     ObjectSerializer,
     VectorSerializer,
+    SwitchSerializer,
 
     ARRAY_BUFFER_SERIALIZER,
     STRING_SERIALIZER,
@@ -28,8 +31,6 @@ import {
     UINT16_SERIALIZER,
     UINT32_SERIALIZER
 } from 'serialization-generator';
-
-const capitalizeFirstLetter = (m: string) => m.replace(/^(.)/, (_, m) => m.upperCase());
 
 interface ExampleSubType {
     d: number;
@@ -55,12 +56,6 @@ const EXAMPLE_SUBTYPE_SERIALIZER = new ObjectSerializer<ExampleSubType>({
     d: INT8_SERIALIZER,
     e: UINT16_SERIALIZER,
     f: ARRAY_BUFFER_SERIALIZER
-}, {
-    // you can configure the instance creation for deserialization and the getter and setter
-    instanceCreator: () => Object.create(null),
-
-    // the default getter and setter use direct property access you can change that by defining setter and getter
-    propertyGetter: (instance, key) => (instance as any)['get' + capitalizeFirstLetter(key)]()
 });
 
 // or after with the append method
@@ -132,11 +127,12 @@ import {
     createTransformSerializer,
     TransformSerializer,
     ValueSerializer,
-    UINT8_SERIALIZER, EnumSerializer
+    EnumSerializer,
+    UINT8_SERIALIZER
 } from "serialization-generator";
 
-type OriginType = 'ENUM_A' | 'ENUM_B' | 'ENUM_C' | 'ENUM_D'
-type BaseType = 0 | 1 | 2 | 3
+type OriginType = 'ENUM_A' | 'ENUM_B' | 'ENUM_C' | 'ENUM_D';
+type BaseType = 0 | 1 | 2 | 3;
 
 const fromOriginToBase = (val: OriginType): BaseType => {
     switch (val) {
@@ -158,23 +154,21 @@ const fromBaseToOrigin = (val: BaseType): OriginType => {
     }
 }
 
-const isOriginType = (val: any): val is  OriginType =>
+const isOriginType = (val: any): val is OriginType =>
     val != "ENUM_A" &&
     val != "ENUM_B" &&
     val != "ENUM_C" &&
     val != "ENUM_D";
 
-//
-// When the number of values in of type Origin are static and finite you can use EnumSerializer
-//
+// When the number of values of type Origin are static
+// and finite you can use the EnumSerializer
 
-const instance = new EnumSerializer(['ENUM_A' , 'ENUM_B' , 'ENUM_C' , 'ENUM_D'] as OriginType[]);
+const possibleValues: OriginType[] = ['ENUM_A', 'ENUM_B', 'ENUM_C', 'ENUM_D'];
+const instance = new EnumSerializer(possibleValues);
 
-// If this is not the case you have four other options
+// If this is not the case then you have four other options
 
-//
 // First Option: Custom Class
-//
 
 class OriginTypeSerializerCustom extends ValueSerializer<OriginType> {
     getStaticSize(): number | undefined {
@@ -206,9 +200,7 @@ class OriginTypeSerializerCustom extends ValueSerializer<OriginType> {
 
 }
 
-//
 // Second Option: using the TransformSerializer Class
-//
 
 class OriginTypeSerializerTransformSerializer extends TransformSerializer<OriginType, BaseType> {
     fromBaseToOrigin(val: BaseType): OriginType {
@@ -225,9 +217,7 @@ class OriginTypeSerializerTransformSerializer extends TransformSerializer<Origin
     }
 }
 
-//
 // Third Option: creating the TransformSerializer via function
-//
 
 const ORIGIN_TYPE_SERIALIZER_VIA_FNC = createTransformSerializer(
     fromOriginToBase,
@@ -239,12 +229,56 @@ const ORIGIN_TYPE_SERIALIZER_VIA_FNC = createTransformSerializer(
     }
 );
 
-//
 // Fourth Option: transform the type to serializable beforehand
-//
 
 ```
 *You can find this in `examples\transform-values.ts`*
+
+## Joined structures
+
+If you have a object structure which is composed of multiple separate structures and they are identified by a property
+then you can use the `SwitchSerializer`.
+ 
+<!-- USEFILE: examples\switch-serializer.ts; str => str.replace('../src', 'serialization-generator') -->
+``` ts
+import {
+    ObjectSerializer,
+    SwitchSerializer,
+
+    INT32_SERIALIZER,
+    STRING_SERIALIZER
+} from "serialization-generator";
+
+interface JoinedTypeA {
+    type: 'a';
+    l: number;
+}
+
+interface JoinedTypeB {
+    type: 'b';
+    m: string;
+}
+
+// if you have a joined type which has a property which distinguishes between different
+// type then you can use the SwitchSerializer to serialize / deserialize the value
+type JoinedType = JoinedTypeA | JoinedTypeB;
+
+// To use the Switch Serializer you need to construct the serializer for the different sub
+// types Those serializers SHOULD NOT contain a serializer for the property which is used
+// to distinguish them since this property will be handled by the switch serializer
+const JOINED_TYPE_A = new ObjectSerializer<JoinedTypeA>({l: INT32_SERIALIZER});
+const JOINED_TYPE_B = new ObjectSerializer<JoinedTypeB>({m: STRING_SERIALIZER});
+
+// When you have a serializer for all subtypes you can combine them to a SwitchSerializer.
+// Be aware that there is not type check whether the provided serializer fits for the
+// structure identified by the identifier. You need to call the finalize after all
+// register calls are done to be able to use this serializer.
+const JOINED_TYPE_SERIALIZER = new SwitchSerializer<JoinedType, 'type'>('type')
+    .register("a", JOINED_TYPE_A)
+    .register("b", JOINED_TYPE_B)
+    .finalize();
+```
+*You can find this in `examples\switch-serializer.ts`*
 
 ## Performance remarks
 
@@ -307,6 +341,29 @@ This package is rather basic and is only meant to serialize structures which rem
 \- The structure needs to remain the same
 
 \- The receiver needs to know the structure and construct a deserializer
+
+### This package vs FlatBuffers / protobuf
+
+[FlatBuffers](https://google.github.io/flatbuffers) and [protobuf](https://protobufjs.github.io/protobuf.js/) are two solutions which are well tested and have a huge userbase.
+I had not found those before implementing this library. They might be better suited for your usecase!
+
+Disclaimer: I have never used one of them, my pros and cons are only first impressions. 
+
+\+ Only meant to transport JavaScript Values, might be more suitable
+
+\+ This library is only meant to be used by JavaScript or TypeScript, might be more tailored for that usecase
+
+
+
+\- They are better tested
+
+\- The other libraries have an extensive documentations / many answered questions
+
+\- Might have an inferior performance, might be better optimized
+
+\- Somewhat standard
+
+\- You can access data from FlatBuffers without deserialization
 
 ### Structured clone
 

@@ -3,6 +3,7 @@ import {
     EnumSerializer,
     ObjectSerializer,
     VectorSerializer,
+    SwitchSerializer,
 
     ARRAY_BUFFER_SERIALIZER,
     STRING_SERIALIZER,
@@ -18,8 +19,6 @@ import {
     UINT16_SERIALIZER,
     UINT32_SERIALIZER
 } from '../src';
-
-const capitalizeFirstLetter = (m: string) => m.replace(/^(.)/, (_, m) => m.upperCase());
 
 interface ExampleSubType {
     d: number;
@@ -45,12 +44,6 @@ const EXAMPLE_SUBTYPE_SERIALIZER = new ObjectSerializer<ExampleSubType>({
     d: INT8_SERIALIZER,
     e: UINT16_SERIALIZER,
     f: ARRAY_BUFFER_SERIALIZER
-}, {
-    // you can configure the instance creation for deserialization and the getter and setter
-    instanceCreator: () => Object.create(null),
-
-    // the default getter and setter use direct property access you can change that by defining setter and getter
-    propertyGetter: (instance, key) => (instance as any)['get' + capitalizeFirstLetter(key)]()
 });
 
 // or after with the append method

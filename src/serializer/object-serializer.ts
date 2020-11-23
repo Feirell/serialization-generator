@@ -17,9 +17,15 @@ export interface PropertySetter<S extends object> {
     (instance: S, key: keyof S, val: S[typeof key]): void;
 }
 
+const capitalizeFirstLetter = (m: string) => m.replace(/^(.)/, (_, m) => m.upperCase());
+
 export const DEFAULT_INSTANCE_CREATOR = <S extends object>() => ({} as S);
+
 export const DEFAULT_PROPERTY_GETTER: PropertyGetter<any> = (instance, key) => instance[key];
+export const PROPERTY_GETTER_FNC: PropertyGetter<any> = (instance, key) => instance['get' + capitalizeFirstLetter(key as string)]();
+
 export const DEFAULT_PROPERTY_SETTER: PropertySetter<any> = (instance, key, val) => instance[key] = val;
+export const PROPERTY_SETTER_FNC: PropertySetter<any> = (instance, key, val) => instance['set' + capitalizeFirstLetter(key as string)](val);
 
 export type MappedSerializer<T extends object> = { [key in keyof T]?: ValueSerializer<T[key]> };
 
@@ -29,6 +35,10 @@ export interface ObjectSerializerOptions<Structure extends object> {
     propertySetter?: PropertySetter<Structure>;
 }
 
+/**
+ * The ObjectSerializer is meant to give you a an easy to use way to map an simple object structure to a binary
+ * representation by iteratively serializing / deserializing the properties of the object.
+ */
 export class ObjectSerializer<Structure extends object> extends ValueSerializer<Structure> {
     // TODO improve internal typing (and the any casts)
     private serializationSteps: AppendedSerializer<Structure, any>[] = [];
@@ -37,6 +47,47 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
     private readonly propertyGetter: PropertyGetter<Structure>;
     private readonly propertySetter: PropertySetter<Structure>;
 
+    /**
+     * You defined the whole structure for serialization in the constructor by defining all property name to serializer
+     * mapping via the initialSerializer argument. See the README for an example.
+     *
+     * The second parameter is a configuration object which allows you to configure how new instances at deserialization
+     * should be constructed and how properties will be set and get.
+     *
+     * Those options are optional and are defaults are:
+     *
+     * ```ts
+     * import {
+     *     ObjectSerializerOptions,
+     *     DEFAULT_INSTANCE_CREATOR,
+     *     DEFAULT_PROPERTY_GETTER,
+     *     DEFAULT_PROPERTY_SETTER
+     * } from "serialization-generator/lib/serializer/object-serializer"
+     *
+     * const options: ObjectSerializerOptions = {
+     *     instanceCreator: DEFAULT_INSTANCE_CREATOR,
+     *     propertyGetter: DEFAULT_PROPERTY_GETTER,
+     *     propertySetter: DEFAULT_PROPERTY_SETTER
+     * }
+     * ```
+     *
+     * The Function do the following:
+     *
+     * ```ts
+     * const DEFAULT_INSTANCE_CREATOR = () => ({});
+     * const DEFAULT_PROPERTY_GETTER = (instance, key) => instance[key];
+     * const DEFAULT_PROPERTY_SETTER = (instance, key, value) => instance[key] = val;
+     * ```
+     *
+     * There are additionally `PROPERTY_GETTER_FNC` and `PROPERTY_SETTER_FNC` defined, which transform the key from
+     * `example` to `getExample` and `setExample` respectively and use the functions which are expected to be on those
+     * properties.
+     *
+     * @param initialSerializer
+     * @param instanceCreator
+     * @param propertyGetter
+     * @param propertySetter
+     */
     constructor(initialSerializer: MappedSerializer<Structure> = {}, {
         instanceCreator = DEFAULT_INSTANCE_CREATOR,
         propertyGetter = DEFAULT_PROPERTY_GETTER,

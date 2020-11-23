@@ -65,6 +65,9 @@
 				<a href="#serialization-generator" id="serialization-generator" style="color: inherit; text-decoration: none;">
 					<h1>serialization-generator</h1>
 				</a>
+				<blockquote>
+					<p><strong>Please have a look at the <code>This package vs FlatBuffers / protobuf</code> section below before making yourself familiar with this library.</strong></p>
+				</blockquote>
 				<p>The main target of this package is to make the creation of serializers to transform JavaScript Values into binary and back
 				as easy as possible and to keep the creation readable.</p>
 				<p>To archive this goal this package provides multiple simple serializers which you can combine to create more complex
@@ -75,6 +78,7 @@
     EnumSerializer,
     ObjectSerializer,
     VectorSerializer,
+    SwitchSerializer,
 
     ARRAY_BUFFER_SERIALIZER,
     STRING_SERIALIZER,
@@ -90,8 +94,6 @@
     UINT16_SERIALIZER,
     UINT32_SERIALIZER
 } <span class="hljs-keyword">from</span> <span class="hljs-string">'serialization-generator'</span>;
-
-<span class="hljs-keyword">const</span> capitalizeFirstLetter = <span class="hljs-function">(<span class="hljs-params">m: <span class="hljs-built_in">string</span></span>) =&gt;</span> m.replace(<span class="hljs-regexp">/^(.)/</span>, <span class="hljs-function">(<span class="hljs-params">_, m</span>) =&gt;</span> m.upperCase());
 
 <span class="hljs-keyword">interface</span> ExampleSubType {
     d: <span class="hljs-built_in">number</span>;
@@ -117,12 +119,6 @@
     d: INT8_SERIALIZER,
     e: UINT16_SERIALIZER,
     f: ARRAY_BUFFER_SERIALIZER
-}, {
-    <span class="hljs-comment">// you can configure the instance creation for deserialization and the getter and setter</span>
-    instanceCreator: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-built_in">Object</span>.create(<span class="hljs-literal">null</span>),
-
-    <span class="hljs-comment">// the default getter and setter use direct property access you can change that by defining setter and getter</span>
-    propertyGetter: <span class="hljs-function">(<span class="hljs-params">instance, key</span>) =&gt;</span> (instance <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>)[<span class="hljs-string">'get'</span> + capitalizeFirstLetter(key)]()
 });
 
 <span class="hljs-comment">// or after with the append method</span>
@@ -189,11 +185,12 @@ exSer.serialize(view, <span class="hljs-number">0</span>, instance);
     createTransformSerializer,
     TransformSerializer,
     ValueSerializer,
-    UINT8_SERIALIZER, EnumSerializer
+    EnumSerializer,
+    UINT8_SERIALIZER
 } <span class="hljs-keyword">from</span> <span class="hljs-string">"serialization-generator"</span>;
 
-<span class="hljs-keyword">type</span> OriginType = <span class="hljs-string">'ENUM_A'</span> | <span class="hljs-string">'ENUM_B'</span> | <span class="hljs-string">'ENUM_C'</span> | <span class="hljs-string">'ENUM_D'</span>
-<span class="hljs-keyword">type</span> BaseType = <span class="hljs-number">0</span> | <span class="hljs-number">1</span> | <span class="hljs-number">2</span> | <span class="hljs-number">3</span>
+<span class="hljs-keyword">type</span> OriginType = <span class="hljs-string">'ENUM_A'</span> | <span class="hljs-string">'ENUM_B'</span> | <span class="hljs-string">'ENUM_C'</span> | <span class="hljs-string">'ENUM_D'</span>;
+<span class="hljs-keyword">type</span> BaseType = <span class="hljs-number">0</span> | <span class="hljs-number">1</span> | <span class="hljs-number">2</span> | <span class="hljs-number">3</span>;
 
 <span class="hljs-keyword">const</span> fromOriginToBase = (val: OriginType): <span class="hljs-function"><span class="hljs-params">BaseType</span> =&gt;</span> {
     <span class="hljs-keyword">switch</span> (val) {
@@ -215,23 +212,21 @@ exSer.serialize(view, <span class="hljs-number">0</span>, instance);
     }
 }
 
-<span class="hljs-keyword">const</span> isOriginType = (val: <span class="hljs-built_in">any</span>): val is  OriginType =&gt;
+<span class="hljs-keyword">const</span> isOriginType = (val: <span class="hljs-built_in">any</span>): val is OriginType =&gt;
     val != <span class="hljs-string">"ENUM_A"</span> &amp;&amp;
     val != <span class="hljs-string">"ENUM_B"</span> &amp;&amp;
     val != <span class="hljs-string">"ENUM_C"</span> &amp;&amp;
     val != <span class="hljs-string">"ENUM_D"</span>;
 
-<span class="hljs-comment">//</span>
-<span class="hljs-comment">// When the number of values in of type Origin are static and finite you can use EnumSerializer</span>
-<span class="hljs-comment">//</span>
+<span class="hljs-comment">// When the number of values of type Origin are static</span>
+<span class="hljs-comment">// and finite you can use the EnumSerializer</span>
 
-<span class="hljs-keyword">const</span> instance = <span class="hljs-keyword">new</span> EnumSerializer([<span class="hljs-string">'ENUM_A'</span> , <span class="hljs-string">'ENUM_B'</span> , <span class="hljs-string">'ENUM_C'</span> , <span class="hljs-string">'ENUM_D'</span>] <span class="hljs-keyword">as</span> OriginType[]);
+<span class="hljs-keyword">const</span> possibleValues: OriginType[] = [<span class="hljs-string">'ENUM_A'</span>, <span class="hljs-string">'ENUM_B'</span>, <span class="hljs-string">'ENUM_C'</span>, <span class="hljs-string">'ENUM_D'</span>];
+<span class="hljs-keyword">const</span> instance = <span class="hljs-keyword">new</span> EnumSerializer(possibleValues);
 
-<span class="hljs-comment">// If this is not the case you have four other options</span>
+<span class="hljs-comment">// If this is not the case then you have four other options</span>
 
-<span class="hljs-comment">//</span>
 <span class="hljs-comment">// First Option: Custom Class</span>
-<span class="hljs-comment">//</span>
 
 <span class="hljs-keyword">class</span> OriginTypeSerializerCustom <span class="hljs-keyword">extends</span> ValueSerializer&lt;OriginType&gt; {
     getStaticSize(): <span class="hljs-built_in">number</span> | <span class="hljs-literal">undefined</span> {
@@ -263,9 +258,7 @@ exSer.serialize(view, <span class="hljs-number">0</span>, instance);
 
 }
 
-<span class="hljs-comment">//</span>
 <span class="hljs-comment">// Second Option: using the TransformSerializer Class</span>
-<span class="hljs-comment">//</span>
 
 <span class="hljs-keyword">class</span> OriginTypeSerializerTransformSerializer <span class="hljs-keyword">extends</span> TransformSerializer&lt;OriginType, BaseType&gt; {
     fromBaseToOrigin(val: BaseType): OriginType {
@@ -282,9 +275,7 @@ exSer.serialize(view, <span class="hljs-number">0</span>, instance);
     }
 }
 
-<span class="hljs-comment">//</span>
 <span class="hljs-comment">// Third Option: creating the TransformSerializer via function</span>
-<span class="hljs-comment">//</span>
 
 <span class="hljs-keyword">const</span> ORIGIN_TYPE_SERIALIZER_VIA_FNC = createTransformSerializer(
     fromOriginToBase,
@@ -296,11 +287,52 @@ exSer.serialize(view, <span class="hljs-number">0</span>, instance);
     }
 );
 
-<span class="hljs-comment">//</span>
 <span class="hljs-comment">// Fourth Option: transform the type to serializable beforehand</span>
-<span class="hljs-comment">//</span>
 </code></pre>
 				<p><em>You can find this in <code>examples\transform-values.ts</code></em></p>
+				<a href="#joined-structures" id="joined-structures" style="color: inherit; text-decoration: none;">
+					<h2>Joined structures</h2>
+				</a>
+				<p>If you have a object structure which is composed of multiple separate structures and they are identified by a property
+				then you can use the <code>SwitchSerializer</code>.</p>
+				<!-- USEFILE: examples\switch-serializer.ts; str => str.replace('../src', 'serialization-generator') -->
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> {
+    ObjectSerializer,
+    SwitchSerializer,
+
+    INT32_SERIALIZER,
+    STRING_SERIALIZER
+} <span class="hljs-keyword">from</span> <span class="hljs-string">"serialization-generator"</span>;
+
+<span class="hljs-keyword">interface</span> JoinedTypeA {
+    <span class="hljs-keyword">type</span>: <span class="hljs-string">'a'</span>;
+    l: <span class="hljs-built_in">number</span>;
+}
+
+<span class="hljs-keyword">interface</span> JoinedTypeB {
+    <span class="hljs-keyword">type</span>: <span class="hljs-string">'b'</span>;
+    m: <span class="hljs-built_in">string</span>;
+}
+
+<span class="hljs-comment">// if you have a joined type which has a property which distinguishes between different</span>
+<span class="hljs-comment">// type then you can use the SwitchSerializer to serialize / deserialize the value</span>
+<span class="hljs-keyword">type</span> JoinedType = JoinedTypeA | JoinedTypeB;
+
+<span class="hljs-comment">// To use the Switch Serializer you need to construct the serializer for the different sub</span>
+<span class="hljs-comment">// types Those serializers SHOULD NOT contain a serializer for the property which is used</span>
+<span class="hljs-comment">// to distinguish them since this property will be handled by the switch serializer</span>
+<span class="hljs-keyword">const</span> JOINED_TYPE_A = <span class="hljs-keyword">new</span> ObjectSerializer&lt;JoinedTypeA&gt;({l: INT32_SERIALIZER});
+<span class="hljs-keyword">const</span> JOINED_TYPE_B = <span class="hljs-keyword">new</span> ObjectSerializer&lt;JoinedTypeB&gt;({m: STRING_SERIALIZER});
+
+<span class="hljs-comment">// When you have a serializer for all subtypes you can combine them to a SwitchSerializer.</span>
+<span class="hljs-comment">// Be aware that there is not type check whether the provided serializer fits for the</span>
+<span class="hljs-comment">// structure identified by the identifier. You need to call the finalize after all</span>
+<span class="hljs-comment">// register calls are done to be able to use this serializer.</span>
+<span class="hljs-keyword">const</span> JOINED_TYPE_SERIALIZER = <span class="hljs-keyword">new</span> SwitchSerializer&lt;JoinedType, <span class="hljs-string">'type'</span>&gt;(<span class="hljs-string">'type'</span>)
+    .register(<span class="hljs-string">"a"</span>, JOINED_TYPE_A)
+    .register(<span class="hljs-string">"b"</span>, JOINED_TYPE_B)
+    .finalize();</code></pre>
+				<p><em>You can find this in <code>examples\switch-serializer.ts</code></em></p>
 				<a href="#performance-remarks" id="performance-remarks" style="color: inherit; text-decoration: none;">
 					<h2>Performance remarks</h2>
 				</a>
@@ -348,6 +380,19 @@ serialization + Array + Vector + AB + String + Enum
 				<p>- Needs to be prepared</p>
 				<p>- The structure needs to remain the same</p>
 				<p>- The receiver needs to know the structure and construct a deserializer</p>
+				<a href="#this-package-vs-flatbuffers--protobuf" id="this-package-vs-flatbuffers--protobuf" style="color: inherit; text-decoration: none;">
+					<h3>This package vs FlatBuffers / protobuf</h3>
+				</a>
+				<p><a href="https://google.github.io/flatbuffers">FlatBuffers</a> and <a href="https://protobufjs.github.io/protobuf.js/">protobuf</a> are two solutions which are well tested and have a huge userbase.
+				I had not found those before implementing this library. They might be better suited for your usecase!</p>
+				<p>Disclaimer: I have never used one of them, my pros and cons are only first impressions. </p>
+				<p>+ Only meant to transport JavaScript Values, might be more suitable</p>
+				<p>+ This library is only meant to be used by JavaScript or TypeScript, might be more tailored for that usecase</p>
+				<p>- They are better tested</p>
+				<p>- The other libraries have an extensive documentations / many answered questions</p>
+				<p>- Might have an inferior performance, might be better optimized</p>
+				<p>- Somewhat standard</p>
+				<p>- You can access data from FlatBuffers without deserialization</p>
 				<a href="#structured-clone" id="structured-clone" style="color: inherit; text-decoration: none;">
 					<h3>Structured clone</h3>
 				</a>
@@ -391,6 +436,9 @@ serialization + Array + Vector + AB + String + Enum
 						<a href="classes/stringserializer.html" class="tsd-kind-icon">String<wbr>Serializer</a>
 					</li>
 					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/switchserializer.html" class="tsd-kind-icon">Switch<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="classes/transformserializer.html" class="tsd-kind-icon">Transform<wbr>Serializer</a>
 					</li>
 					<li class=" tsd-kind-class tsd-has-type-parameter">
@@ -398,21 +446,6 @@ serialization + Array + Vector + AB + String + Enum
 					</li>
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="classes/vectorserializer.html" class="tsd-kind-icon">Vector<wbr>Serializer</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-has-type-parameter">
-						<a href="interfaces/instancecreator.html" class="tsd-kind-icon">Instance<wbr>Creator</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-has-type-parameter">
-						<a href="interfaces/objectserializeroptions.html" class="tsd-kind-icon">Object<wbr>Serializer<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-has-type-parameter">
-						<a href="interfaces/propertygetter.html" class="tsd-kind-icon">Property<wbr>Getter</a>
-					</li>
-					<li class=" tsd-kind-interface tsd-has-type-parameter">
-						<a href="interfaces/propertysetter.html" class="tsd-kind-icon">Property<wbr>Setter</a>
-					</li>
-					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
-						<a href="globals.html#mappedserializer" class="tsd-kind-icon">Mapped<wbr>Serializer</a>
 					</li>
 					<li class=" tsd-kind-variable">
 						<a href="globals.html#array_buffer_serializer" class="tsd-kind-icon">ARRAY_<wbr>BUFFER_<wbr>SERIALIZER</a>
@@ -443,15 +476,6 @@ serialization + Array + Vector + AB + String + Enum
 					</li>
 					<li class=" tsd-kind-variable">
 						<a href="globals.html#uint8_serializer" class="tsd-kind-icon">UINT8_<wbr>SERIALIZER</a>
-					</li>
-					<li class=" tsd-kind-function tsd-has-type-parameter">
-						<a href="globals.html#default_instance_creator" class="tsd-kind-icon">DEFAULT_<wbr>INSTANCE_<wbr>CREATOR</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#default_property_getter" class="tsd-kind-icon">DEFAULT_<wbr>PROPERTY_<wbr>GETTER</a>
-					</li>
-					<li class=" tsd-kind-function">
-						<a href="globals.html#default_property_setter" class="tsd-kind-icon">DEFAULT_<wbr>PROPERTY_<wbr>SETTER</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="globals.html#createtransformserializer" class="tsd-kind-icon">create<wbr>Transform<wbr>Serializer</a>

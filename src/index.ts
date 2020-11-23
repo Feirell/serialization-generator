@@ -1,6 +1,8 @@
 export * from "./serializer/value-serializer";
 
-export * from "./serializer/object-serializer";
+export {ObjectSerializer} from "./serializer/object-serializer";
+export * from "./serializer/switch-serializer";
+
 export * from "./serializer/array-serializer";
 export * from "./serializer/vector-serializer";
 
