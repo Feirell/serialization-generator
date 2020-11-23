@@ -126,22 +126,33 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Object<wbr>Serializer<span class="tsd-signature-symbol">(</span>initialSerializer<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">MappedSerializer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">&gt;</span>, createInstance<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">defaultInstanceCreator</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="objectserializer.html" class="tsd-signature-type">ObjectSerializer</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Object<wbr>Serializer<span class="tsd-signature-symbol">(</span>initialSerializer<span class="tsd-signature-symbol">?: </span><a href="../globals.html#mappedserializer" class="tsd-signature-type">MappedSerializer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">&gt;</span>, __namedParameters<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>instanceCreator<span class="tsd-signature-symbol">: </span><a href="../interfaces/instancecreator.html" class="tsd-signature-type">InstanceCreator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>propertyGetter<span class="tsd-signature-symbol">: </span><a href="../interfaces/propertygetter.html" class="tsd-signature-type">PropertyGetter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>propertySetter<span class="tsd-signature-symbol">: </span><a href="../interfaces/propertysetter.html" class="tsd-signature-type">PropertySetter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="objectserializer.html" class="tsd-signature-type">ObjectSerializer</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/49fa64b/src/serializer/object-serializer.ts#L14">serializer/object-serializer.ts:14</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/1c50f08/src/serializer/object-serializer.ts#L38">serializer/object-serializer.ts:38</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> initialSerializer: <span class="tsd-signature-type">MappedSerializer</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = {}</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> initialSerializer: <a href="../globals.html#mappedserializer" class="tsd-signature-type">MappedSerializer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> = {}</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> createInstance: <span class="tsd-signature-type">defaultInstanceCreator</span><span class="tsd-signature-symbol"> = defaultInstanceCreator</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> __namedParameters: <span class="tsd-signature-symbol">{ </span>instanceCreator<span class="tsd-signature-symbol">: </span><a href="../interfaces/instancecreator.html" class="tsd-signature-type">InstanceCreator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>propertyGetter<span class="tsd-signature-symbol">: </span><a href="../interfaces/propertygetter.html" class="tsd-signature-type">PropertyGetter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">; </span>propertySetter<span class="tsd-signature-symbol">: </span><a href="../interfaces/propertysetter.html" class="tsd-signature-type">PropertySetter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = {}</span></h5>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter">
+											<h5>instance<wbr>Creator<span class="tsd-signature-symbol">: </span><a href="../interfaces/instancecreator.html" class="tsd-signature-type">InstanceCreator</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">&gt;</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5>property<wbr>Getter<span class="tsd-signature-symbol">: </span><a href="../interfaces/propertygetter.html" class="tsd-signature-type">PropertyGetter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">&gt;</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5>property<wbr>Setter<span class="tsd-signature-symbol">: </span><a href="../interfaces/propertysetter.html" class="tsd-signature-type">PropertySetter</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">&gt;</span></h5>
+										</li>
+									</ul>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="objectserializer.html" class="tsd-signature-type">ObjectSerializer</a></h4>
@@ -158,7 +169,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#type_pinpoint">TYPE_PINPOINT</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/49fa64b/src/serializer/value-serializer.ts#L15">serializer/value-serializer.ts:15</a></li>
+							<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/1c50f08/src/serializer/value-serializer.ts#L15">serializer/value-serializer.ts:15</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -175,7 +186,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/49fa64b/src/serializer/object-serializer.ts#L48">serializer/object-serializer.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/1c50f08/src/serializer/object-serializer.ts#L80">serializer/object-serializer.ts:80</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -225,7 +236,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#arraybuffertovalue">arrayBufferToValue</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/49fa64b/src/serializer/value-serializer.ts#L79">serializer/value-serializer.ts:79</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/1c50f08/src/serializer/value-serializer.ts#L79">serializer/value-serializer.ts:79</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -256,7 +267,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/49fa64b/src/serializer/object-serializer.ts#L90">serializer/object-serializer.ts:90</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/1c50f08/src/serializer/object-serializer.ts#L122">serializer/object-serializer.ts:122</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -281,7 +292,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#deserialize">deserialize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/49fa64b/src/serializer/object-serializer.ts#L121">serializer/object-serializer.ts:121</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/1c50f08/src/serializer/object-serializer.ts#L158">serializer/object-serializer.ts:158</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -316,7 +327,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#getsizeforvalue">getSizeForValue</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/49fa64b/src/serializer/object-serializer.ts#L96">serializer/object-serializer.ts:96</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/1c50f08/src/serializer/object-serializer.ts#L133">serializer/object-serializer.ts:133</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -340,7 +351,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#getstaticsize">getStaticSize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/49fa64b/src/serializer/object-serializer.ts#L23">serializer/object-serializer.ts:23</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/1c50f08/src/serializer/object-serializer.ts#L55">serializer/object-serializer.ts:55</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
@@ -357,7 +368,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/49fa64b/src/serializer/object-serializer.ts#L73">serializer/object-serializer.ts:73</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/1c50f08/src/serializer/object-serializer.ts#L105">serializer/object-serializer.ts:105</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -394,7 +405,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/49fa64b/src/serializer/object-serializer.ts#L59">serializer/object-serializer.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/1c50f08/src/serializer/object-serializer.ts#L91">serializer/object-serializer.ts:91</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -441,7 +452,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#serialize">serialize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/49fa64b/src/serializer/object-serializer.ts#L112">serializer/object-serializer.ts:112</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/1c50f08/src/serializer/object-serializer.ts#L149">serializer/object-serializer.ts:149</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -476,7 +487,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#typecheck">typeCheck</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/49fa64b/src/serializer/object-serializer.ts#L104">serializer/object-serializer.ts:104</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/1c50f08/src/serializer/object-serializer.ts#L141">serializer/object-serializer.ts:141</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -503,7 +514,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#valuetoarraybuffer">valueToArrayBuffer</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/49fa64b/src/serializer/value-serializer.ts#L67">serializer/value-serializer.ts:67</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/1c50f08/src/serializer/value-serializer.ts#L67">serializer/value-serializer.ts:67</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -605,6 +616,21 @@
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="vectorserializer.html" class="tsd-kind-icon">Vector<wbr>Serializer</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="../interfaces/instancecreator.html" class="tsd-kind-icon">Instance<wbr>Creator</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="../interfaces/objectserializeroptions.html" class="tsd-kind-icon">Object<wbr>Serializer<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="../interfaces/propertygetter.html" class="tsd-kind-icon">Property<wbr>Getter</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="../interfaces/propertysetter.html" class="tsd-kind-icon">Property<wbr>Setter</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="../globals.html#mappedserializer" class="tsd-kind-icon">Mapped<wbr>Serializer</a>
+					</li>
 					<li class=" tsd-kind-variable">
 						<a href="../globals.html#array_buffer_serializer" class="tsd-kind-icon">ARRAY_<wbr>BUFFER_<wbr>SERIALIZER</a>
 					</li>
@@ -634,6 +660,15 @@
 					</li>
 					<li class=" tsd-kind-variable">
 						<a href="../globals.html#uint8_serializer" class="tsd-kind-icon">UINT8_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="../globals.html#default_instance_creator" class="tsd-kind-icon">DEFAULT_<wbr>INSTANCE_<wbr>CREATOR</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../globals.html#default_property_getter" class="tsd-kind-icon">DEFAULT_<wbr>PROPERTY_<wbr>GETTER</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../globals.html#default_property_setter" class="tsd-kind-icon">DEFAULT_<wbr>PROPERTY_<wbr>SETTER</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="../globals.html#createtransformserializer" class="tsd-kind-icon">create<wbr>Transform<wbr>Serializer</a>

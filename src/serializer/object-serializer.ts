@@ -5,16 +5,48 @@ interface AppendedSerializer<Structure extends object, Name extends keyof Struct
     serializer: ValueSerializer<Structure[Name]>;
 }
 
-const defaultInstanceCreator = () => ({} as object);
+export interface InstanceCreator<S extends object> {
+    (): S
+}
 
-type MappedSerializer<T extends object> = { [key in keyof T]?: ValueSerializer<T[key]> };
+export interface PropertyGetter<S extends object> {
+    (instance: S, key: keyof S): S[typeof key];
+}
+
+export interface PropertySetter<S extends object> {
+    (instance: S, key: keyof S, val: S[typeof key]): void;
+}
+
+export const DEFAULT_INSTANCE_CREATOR = <S extends object>() => ({} as S);
+export const DEFAULT_PROPERTY_GETTER: PropertyGetter<any> = (instance, key) => instance[key];
+export const DEFAULT_PROPERTY_SETTER: PropertySetter<any> = (instance, key, val) => instance[key] = val;
+
+export type MappedSerializer<T extends object> = { [key in keyof T]?: ValueSerializer<T[key]> };
+
+export interface ObjectSerializerOptions<Structure extends object> {
+    instanceCreator?: InstanceCreator<Structure>;
+    propertyGetter?: PropertyGetter<Structure>;
+    propertySetter?: PropertySetter<Structure>;
+}
 
 export class ObjectSerializer<Structure extends object> extends ValueSerializer<Structure> {
     // TODO improve internal typing (and the any casts)
     private serializationSteps: AppendedSerializer<Structure, any>[] = [];
 
-    constructor(initialSerializer: MappedSerializer<Structure> = {}, private readonly createInstance = defaultInstanceCreator) {
+    private readonly instanceCreator: InstanceCreator<Structure>;
+    private readonly propertyGetter: PropertyGetter<Structure>;
+    private readonly propertySetter: PropertySetter<Structure>;
+
+    constructor(initialSerializer: MappedSerializer<Structure> = {}, {
+        instanceCreator = DEFAULT_INSTANCE_CREATOR,
+        propertyGetter = DEFAULT_PROPERTY_GETTER,
+        propertySetter = DEFAULT_PROPERTY_SETTER
+    }: ObjectSerializerOptions<Structure> = {}) {
         super();
+
+        this.instanceCreator = instanceCreator;
+        this.propertyGetter = propertyGetter;
+        this.propertySetter = propertySetter;
 
         for (const [key, ser] of Object.entries(initialSerializer))
             this.append(key as keyof Structure, ser as ValueSerializer<any>);
@@ -88,7 +120,12 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
      * @returns A clone of this object serializer
      */
     clone() {
-        const inst = new ObjectSerializer<Structure>({}, this.createInstance);
+        const inst = new ObjectSerializer<Structure>({}, {
+            instanceCreator: this.instanceCreator,
+            propertyGetter: this.propertyGetter,
+            propertySetter: this.propertySetter
+        });
+
         inst.serializationSteps = this.serializationSteps.slice();
         return inst;
     }
@@ -96,7 +133,7 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
     getSizeForValue(val: Structure): number {
         let size = 0;
         for (const {name, serializer} of this.serializationSteps)
-            size += serializer.getSizeForValue((val as any)[name]);
+            size += serializer.getSizeForValue(this.propertyGetter(val, name));
 
         return size;
     }
@@ -106,12 +143,12 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
             throw new Error(name + ' needs to be a object but was ' + val);
 
         for (const {name: innerName, serializer} of this.serializationSteps)
-            serializer.typeCheck((val as any)[innerName], name + '.' + innerName);
+            serializer.typeCheck(this.propertyGetter(val, innerName), name + '.' + innerName);
     }
 
     serialize(dv: DataView, offset: number, val: Structure): { offset: number } {
         for (const {name, serializer} of this.serializationSteps) {
-            const ret = serializer.serialize(dv, offset, (val as any)[name]);
+            const ret = serializer.serialize(dv, offset, this.propertyGetter(val, name));
             offset = ret.offset;
         }
 
@@ -119,11 +156,11 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
     }
 
     deserialize(dv: DataView, offset: number): { offset: number; val: Structure } {
-        const val = this.createInstance() as Structure;
+        const val = this.instanceCreator() as Structure;
         for (const {name, serializer} of this.serializationSteps) {
             const ret = serializer.deserialize(dv, offset);
             offset = ret.offset;
-            (val as any) [name] = ret.val;
+            this.propertySetter(val, name, ret.val);
         }
 
         return {offset, val};

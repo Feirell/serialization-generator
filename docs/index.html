@@ -88,8 +88,10 @@
 
     UINT8_SERIALIZER,
     UINT16_SERIALIZER,
-    UINT32_SERIALIZER,
+    UINT32_SERIALIZER
 } <span class="hljs-keyword">from</span> <span class="hljs-string">'serialization-generator'</span>;
+
+<span class="hljs-keyword">const</span> capitalizeFirstLetter = <span class="hljs-function">(<span class="hljs-params">m: <span class="hljs-built_in">string</span></span>) =&gt;</span> m.replace(<span class="hljs-regexp">/^(.)/</span>, <span class="hljs-function">(<span class="hljs-params">_, m</span>) =&gt;</span> m.upperCase());
 
 <span class="hljs-keyword">interface</span> ExampleSubType {
     d: <span class="hljs-built_in">number</span>;
@@ -115,6 +117,12 @@
     d: INT8_SERIALIZER,
     e: UINT16_SERIALIZER,
     f: ARRAY_BUFFER_SERIALIZER
+}, {
+    <span class="hljs-comment">// you can configure the instance creation for deserialization and the getter and setter</span>
+    instanceCreator: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-built_in">Object</span>.create(<span class="hljs-literal">null</span>),
+
+    <span class="hljs-comment">// the default getter and setter use direct property access you can change that by defining setter and getter</span>
+    propertyGetter: <span class="hljs-function">(<span class="hljs-params">instance, key</span>) =&gt;</span> (instance <span class="hljs-keyword">as</span> <span class="hljs-built_in">any</span>)[<span class="hljs-string">'get'</span> + capitalizeFirstLetter(key)]()
 });
 
 <span class="hljs-comment">// or after with the append method</span>
@@ -391,6 +399,21 @@ serialization + Array + Vector + AB + String + Enum
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="classes/vectorserializer.html" class="tsd-kind-icon">Vector<wbr>Serializer</a>
 					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/instancecreator.html" class="tsd-kind-icon">Instance<wbr>Creator</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/objectserializeroptions.html" class="tsd-kind-icon">Object<wbr>Serializer<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/propertygetter.html" class="tsd-kind-icon">Property<wbr>Getter</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/propertysetter.html" class="tsd-kind-icon">Property<wbr>Setter</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#mappedserializer" class="tsd-kind-icon">Mapped<wbr>Serializer</a>
+					</li>
 					<li class=" tsd-kind-variable">
 						<a href="globals.html#array_buffer_serializer" class="tsd-kind-icon">ARRAY_<wbr>BUFFER_<wbr>SERIALIZER</a>
 					</li>
@@ -420,6 +443,15 @@ serialization + Array + Vector + AB + String + Enum
 					</li>
 					<li class=" tsd-kind-variable">
 						<a href="globals.html#uint8_serializer" class="tsd-kind-icon">UINT8_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#default_instance_creator" class="tsd-kind-icon">DEFAULT_<wbr>INSTANCE_<wbr>CREATOR</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#default_property_getter" class="tsd-kind-icon">DEFAULT_<wbr>PROPERTY_<wbr>GETTER</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="globals.html#default_property_setter" class="tsd-kind-icon">DEFAULT_<wbr>PROPERTY_<wbr>SETTER</a>
 					</li>
 					<li class=" tsd-kind-function tsd-has-type-parameter">
 						<a href="globals.html#createtransformserializer" class="tsd-kind-icon">create<wbr>Transform<wbr>Serializer</a>
