@@ -1,6 +1,8 @@
 import {ValueSerializer} from "./value-serializer";
 import {EnumSerializer} from "./enum-serializer";
 
+type OnlyFitting<Structure, Field extends keyof Structure, Id extends Structure[Field]> = ValueSerializer<Extract<Structure, { [key in Field]: Id }>>;
+
 export class SwitchSerializer<Structure extends object, Field extends keyof Structure> extends ValueSerializer<Structure> {
     private registeredSerializers: { id: Structure[Field], ser: ValueSerializer<any> }[] = [];
 
@@ -19,7 +21,7 @@ export class SwitchSerializer<Structure extends object, Field extends keyof Stru
      * @param id the id the field has to be to use this serializer
      * @param ser the serializer to use
      */
-    register<SpecStruct extends Structure, Id extends SpecStruct[Field], Ser extends ValueSerializer<SpecStruct>>(id: Id, ser: Ser) {
+    register<Id extends Structure[Field], Ser extends OnlyFitting<Structure, Field, Id>>(id: Id, ser: Ser) {
         if (this.finalized)
             throw new Error("SwitchSerializer is already finalized");
 
@@ -71,7 +73,7 @@ export class SwitchSerializer<Structure extends object, Field extends keyof Stru
 
         const idSer = this.enumSer.getSizeForValue(val[this.field]);
         const ser = this.getSerializerOrThrow(val[this.field]);
-        return idSer + ser.getSizeForValue(val);
+        return idSer + ser.getSizeForValue(val as any);
     }
 
     typeCheck(val: Structure, name: string = 'val'): void {
@@ -79,7 +81,7 @@ export class SwitchSerializer<Structure extends object, Field extends keyof Stru
             throw new Error("SwitchSerializer is not finalized");
 
         const ser = this.getSerializerOrThrow(val[this.field]);
-        return ser.typeCheck(val);
+        return ser.typeCheck(val as any);
     }
 
     getStaticSize(): number | undefined {
@@ -112,7 +114,7 @@ export class SwitchSerializer<Structure extends object, Field extends keyof Stru
 
         const ser = this.getSerializerOrThrow(val[this.field]);
         const enumRet = this.enumSer.serialize(dv, offset, val[this.field]);
-        return ser.serialize(dv, enumRet.offset, val);
+        return ser.serialize(dv, enumRet.offset, val as any);
     }
 
     deserialize(dv: DataView, offset: number): { offset: number; val: Structure } {
@@ -123,7 +125,7 @@ export class SwitchSerializer<Structure extends object, Field extends keyof Stru
         const ser = this.getSerializerOrThrow(enumRet.val);
         const serRet = ser.deserialize(dv, enumRet.offset);
 
-        serRet.val[this.field] = enumRet.val;
+        serRet.val[this.field] = enumRet.val as any;
 
         return serRet;
     }
@@ -149,7 +151,7 @@ export class SwitchSerializer<Structure extends object, Field extends keyof Stru
         return copy;
     }
 
-    private getSerializerOrThrow<SpecStruct extends Structure, Id extends SpecStruct[Field], Ser extends ValueSerializer<SpecStruct>>(id: Id): Ser {
+    private getSerializerOrThrow<Id extends Structure[Field], Ser extends OnlyFitting<Structure, Field, Id>>(id: Id): Ser {
         for (const reg of this.registeredSerializers)
             if (reg.id == id)
                 return reg.ser as Ser;
