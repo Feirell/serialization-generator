@@ -270,9 +270,8 @@ const JOINED_TYPE_A = new ObjectSerializer<JoinedTypeA>({l: INT32_SERIALIZER});
 const JOINED_TYPE_B = new ObjectSerializer<JoinedTypeB>({m: STRING_SERIALIZER});
 
 // When you have a serializer for all subtypes you can combine them to a SwitchSerializer.
-// Be aware that there is not type check whether the provided serializer fits for the
-// structure identified by the identifier. You need to call the finalize after all
-// register calls are done to be able to use this serializer.
+// You need to call the finalize after all register calls are done to be able to use this
+// serializer.
 const JOINED_TYPE_SERIALIZER = new SwitchSerializer<JoinedType, 'type'>('type')
     .register("a", JOINED_TYPE_A)
     .register("b", JOINED_TYPE_B)

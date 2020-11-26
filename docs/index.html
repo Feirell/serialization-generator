@@ -325,9 +325,8 @@ exSer.serialize(view, <span class="hljs-number">0</span>, instance);
 <span class="hljs-keyword">const</span> JOINED_TYPE_B = <span class="hljs-keyword">new</span> ObjectSerializer&lt;JoinedTypeB&gt;({m: STRING_SERIALIZER});
 
 <span class="hljs-comment">// When you have a serializer for all subtypes you can combine them to a SwitchSerializer.</span>
-<span class="hljs-comment">// Be aware that there is not type check whether the provided serializer fits for the</span>
-<span class="hljs-comment">// structure identified by the identifier. You need to call the finalize after all</span>
-<span class="hljs-comment">// register calls are done to be able to use this serializer.</span>
+<span class="hljs-comment">// You need to call the finalize after all register calls are done to be able to use this</span>
+<span class="hljs-comment">// serializer.</span>
 <span class="hljs-keyword">const</span> JOINED_TYPE_SERIALIZER = <span class="hljs-keyword">new</span> SwitchSerializer&lt;JoinedType, <span class="hljs-string">'type'</span>&gt;(<span class="hljs-string">'type'</span>)
     .register(<span class="hljs-string">"a"</span>, JOINED_TYPE_A)
     .register(<span class="hljs-string">"b"</span>, JOINED_TYPE_B)
