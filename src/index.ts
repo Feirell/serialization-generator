@@ -5,6 +5,7 @@ export * from "./serializer/switch-serializer";
 
 export * from "./serializer/array-serializer";
 export * from "./serializer/vector-serializer";
+export * from "./serializer/chain-serializer";
 
 export * from "./serializer/int-serializer";
 export * from "./serializer/float-serializer";
