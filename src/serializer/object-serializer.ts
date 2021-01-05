@@ -36,6 +36,25 @@ export interface ObjectSerializerOptions<Structure extends object> {
 }
 
 /**
+ * Can be used to combine multiple object serializers to one. The Serializer will be called in series and there is no
+ * check in place to ensure that every member is only serialized once.
+ *
+ * @param os
+ */
+export const combineObjectSerializer = <K extends object>(...os: ObjectSerializer<K>[]): ObjectSerializer<K> => {
+    const ser = new ObjectSerializer<K>();
+
+    let steps = [] as AppendedSerializer<K, any>[];
+
+    for (let oneSer of os)
+        steps = steps.concat(oneSer.getSerializationSteps());
+
+    ser.setSerializationSteps(steps);
+
+    return ser;
+}
+
+/**
  * The ObjectSerializer is meant to give you a an easy to use way to map an simple object structure to a binary
  * representation by iteratively serializing / deserializing the properties of the object.
  */
@@ -217,4 +236,11 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
         return {offset, val};
     }
 
+    getSerializationSteps() {
+        return this.serializationSteps.map(o => ({...o}));
+    }
+
+    setSerializationSteps(st: AppendedSerializer<Structure, any>[]) {
+        this.serializationSteps = st;
+    }
 }
