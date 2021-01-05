@@ -1,6 +1,6 @@
 {
   "name": "serialization-generator",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Package to generate de-/serializers to convert JavaScript values to and from binaries.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
