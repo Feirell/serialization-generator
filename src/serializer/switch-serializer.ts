@@ -1,6 +1,7 @@
 import {ValueSerializer} from "./value-serializer";
 import {UINT16_SERIALIZER, UINT32_SERIALIZER, UINT8_SERIALIZER} from "./int-serializer";
 
+
 interface Register<K> {
     tester: (val: any) => val is K;
     serializer: ValueSerializer<K>
@@ -98,14 +99,19 @@ export class SwitchSerializer<Type, Remaining extends Type = Type> extends Value
      * guards will be tested in the order in which they were added via the register method, so a broad one would be like
      * a catch all.
      *
+     * There is a caveat with indistinguishable types. Two types are indistinguishable if you can assign a value from type
+     * A to a variable with type B and the other way around. Then Exclude<A, B> results in never. Which results in the
+     * next .register call to have a never as parameter type. One simple workaround is to create a property on the type
+     * which you assign a distinguishable type. In either case this can be cumbersome and is the reason the ValueSerializer
+     * has the TYPE_PINPOINT property.
+     *
      * @param tester The function which distinguishes between values the provided serializer can serialize and which not.
      * @param serializer The attached Serializer.
      */
-    register<Selected extends Remaining,
-        Narrowed extends (Remaining extends Selected ? Remaining : never) = Remaining extends Selected ? Remaining : never>(
+    register<Selected extends Remaining>(
         tester: (val: Remaining) => val is Selected,
-        serializer: ValueSerializer<Narrowed>
-    ) {
+        serializer: ValueSerializer<Remaining extends Selected ? Remaining : never>
+    ): SwitchSerializer<Type, Remaining extends (Remaining extends Selected ? Remaining : never) ? never : Remaining> {
         // Type identifier are unpacked Extract and Exclude, see lib.es5.d.ts:
         // type Exclude<T, U> = T extends U ? never : T;
         // type Extract<T, U> = T extends U ? T : never;
@@ -115,7 +121,7 @@ export class SwitchSerializer<Type, Remaining extends Type = Type> extends Value
             throw new Error('the SwitchSerializer is already finalized');
 
         this.registeredSerializer.push({tester, serializer});
-        return this as unknown as SwitchSerializer<Type, Remaining extends Narrowed ? never : Remaining>;
+        return this as any;
     }
 
     /**
