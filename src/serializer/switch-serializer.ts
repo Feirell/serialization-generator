@@ -17,7 +17,7 @@ interface Register<K> {
  * serialisation and deserialization to. This class will then prepend the data by the index of the used serializer to
  * identify the correct one on deserialization.
  */
-export class SwitchSerializer<Type> extends ValueSerializer<Type> {
+export class SwitchSerializer<Type, Remaining extends Type = Type> extends ValueSerializer<Type> {
     private registeredSerializer: Register<any>[] = [];
     private isFinalized = false;
 
@@ -101,14 +101,22 @@ export class SwitchSerializer<Type> extends ValueSerializer<Type> {
      * @param tester The function which distinguishes between values the provided serializer can serialize and which not.
      * @param serializer The attached Serializer.
      */
-    register<K extends Type>(tester: (val: any) => val is K, serializer: ValueSerializer<K>) {
+    register<Selected extends Remaining,
+        Narrowed extends (Remaining extends Selected ? Remaining : never) = Remaining extends Selected ? Remaining : never>(
+        tester: (val: Remaining) => val is Selected,
+        serializer: ValueSerializer<Narrowed>
+    ) {
+        // Type identifier are unpacked Extract and Exclude, see lib.es5.d.ts:
+        // type Exclude<T, U> = T extends U ? never : T;
+        // type Extract<T, U> = T extends U ? T : never;
+        // They were extracted to improve type hinting in the IDE
+
         if (this.isFinalized)
             throw new Error('the SwitchSerializer is already finalized');
 
         this.registeredSerializer.push({tester, serializer});
-        return this;
+        return this as unknown as SwitchSerializer<Type, Remaining extends Narrowed ? never : Remaining>;
     }
-
 
     /**
      * This method needs to be called after all registers are done to make this serializer usable. The reason is that
