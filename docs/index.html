@@ -78,7 +78,7 @@
     EnumSerializer,
     ObjectSerializer,
     VectorSerializer,
-    SwitchSerializer,
+    PropertySwitchSerializer,
 
     ARRAY_BUFFER_SERIALIZER,
     STRING_SERIALIZER,
@@ -295,10 +295,10 @@ exSer.serialize(view, <span class="hljs-number">0</span>, instance);
 				</a>
 				<p>If you have a object structure which is composed of multiple separate structures and they are identified by a property
 				then you can use the <code>SwitchSerializer</code>.</p>
-				<!-- USEFILE: examples\switch-serializer.ts; str => str.replace('../src', 'serialization-generator') -->
+				<!-- USEFILE: examples\property-switch-serializer.ts; str => str.replace('../src', 'serialization-generator') -->
 				<pre><code class="language-ts"><span class="hljs-keyword">import</span> {
     ObjectSerializer,
-    SwitchSerializer,
+    PropertySwitchSerializer,
 
     INT32_SERIALIZER,
     STRING_SERIALIZER
@@ -315,23 +315,23 @@ exSer.serialize(view, <span class="hljs-number">0</span>, instance);
 }
 
 <span class="hljs-comment">// if you have a joined type which has a property which distinguishes between different</span>
-<span class="hljs-comment">// type then you can use the SwitchSerializer to serialize / deserialize the value</span>
+<span class="hljs-comment">// type then you can use the PropertySwitchSerializer to serialize / deserialize the value</span>
 <span class="hljs-keyword">type</span> JoinedType = JoinedTypeA | JoinedTypeB;
 
-<span class="hljs-comment">// To use the Switch Serializer you need to construct the serializer for the different sub</span>
+<span class="hljs-comment">// To use the Property Switch Serializer you need to construct the serializer for the different sub</span>
 <span class="hljs-comment">// types Those serializers SHOULD NOT contain a serializer for the property which is used</span>
 <span class="hljs-comment">// to distinguish them since this property will be handled by the switch serializer</span>
 <span class="hljs-keyword">const</span> JOINED_TYPE_A = <span class="hljs-keyword">new</span> ObjectSerializer&lt;JoinedTypeA&gt;({l: INT32_SERIALIZER});
 <span class="hljs-keyword">const</span> JOINED_TYPE_B = <span class="hljs-keyword">new</span> ObjectSerializer&lt;JoinedTypeB&gt;({m: STRING_SERIALIZER});
 
-<span class="hljs-comment">// When you have a serializer for all subtypes you can combine them to a SwitchSerializer.</span>
+<span class="hljs-comment">// When you have a serializer for all subtypes you can combine them to a PropertySwitchSerializer.</span>
 <span class="hljs-comment">// You need to call the finalize after all register calls are done to be able to use this</span>
 <span class="hljs-comment">// serializer.</span>
-<span class="hljs-keyword">const</span> JOINED_TYPE_SERIALIZER = <span class="hljs-keyword">new</span> SwitchSerializer&lt;JoinedType, <span class="hljs-string">'type'</span>&gt;(<span class="hljs-string">'type'</span>)
+<span class="hljs-keyword">const</span> JOINED_TYPE_SERIALIZER = <span class="hljs-keyword">new</span> PropertySwitchSerializer&lt;JoinedType, <span class="hljs-string">'type'</span>&gt;(<span class="hljs-string">'type'</span>)
     .register(<span class="hljs-string">"a"</span>, JOINED_TYPE_A)
     .register(<span class="hljs-string">"b"</span>, JOINED_TYPE_B)
     .finalize();</code></pre>
-				<p><em>You can find this in <code>examples\switch-serializer.ts</code></em></p>
+				<p><em>You can find this in <code>examples\property-switch-serializer.ts</code></em></p>
 				<a href="#performance-remarks" id="performance-remarks" style="color: inherit; text-decoration: none;">
 					<h2>Performance remarks</h2>
 				</a>
@@ -435,10 +435,10 @@ serialization + Array + Vector + AB + String + Enum
 						<a href="classes/objectserializer.html" class="tsd-kind-icon">Object<wbr>Serializer</a>
 					</li>
 					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="classes/stringserializer.html" class="tsd-kind-icon">String<wbr>Serializer</a>
+						<a href="classes/propertyswitchserializer.html" class="tsd-kind-icon">Property<wbr>Switch<wbr>Serializer</a>
 					</li>
 					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="classes/switchserializer.html" class="tsd-kind-icon">Switch<wbr>Serializer</a>
+						<a href="classes/stringserializer.html" class="tsd-kind-icon">String<wbr>Serializer</a>
 					</li>
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="classes/transformserializer.html" class="tsd-kind-icon">Transform<wbr>Serializer</a>

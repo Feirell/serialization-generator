@@ -1,7 +1,7 @@
 export * from "./serializer/value-serializer";
 
 export {ObjectSerializer, combineObjectSerializer} from "./serializer/object-serializer";
-export * from "./serializer/switch-serializer";
+export * from "./serializer/property-switch-serializer";
 
 export * from "./serializer/array-serializer";
 export * from "./serializer/vector-serializer";

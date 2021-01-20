@@ -32,7 +32,7 @@ If want to implement a mapping serializer which, for example, maps an enum to a 
 If you have a object structure which is composed of multiple separate structures and they are identified by a property
 then you can use the `SwitchSerializer`.
  
-<!-- USEFILE: examples/switch-serializer.ts; str => str.replace('../src', 'serialization-generator') -->
+<!-- USEFILE: examples/property-switch-serializer.ts; str => str.replace('../src', 'serialization-generator') -->
 
 ## Performance remarks
 

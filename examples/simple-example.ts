@@ -3,7 +3,7 @@ import {
     EnumSerializer,
     ObjectSerializer,
     VectorSerializer,
-    SwitchSerializer,
+    PropertySwitchSerializer,
 
     ARRAY_BUFFER_SERIALIZER,
     STRING_SERIALIZER,
