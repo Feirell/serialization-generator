@@ -12,6 +12,14 @@ interface DeserializerFunction<Type> {
  * when non matching instances are applied, since the generic is not used for those checks.
  */
 export abstract class ValueSerializer<Type> {
+
+    /**
+     * TypeScript only property to prevent to assignment of non fitting classes.
+     *
+     * @ignore
+     * @hidden
+     * @internal
+     */
     public readonly TYPE_PINPOINT: Type = undefined as unknown as Type;
 
     /**
