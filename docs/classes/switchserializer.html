@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>PropertySwitchSerializer | serialization-generator</title>
+	<title>SwitchSerializer | serialization-generator</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -54,24 +54,35 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="propertyswitchserializer.html">PropertySwitchSerializer</a>
+					<a href="switchserializer.html">SwitchSerializer</a>
 				</li>
 			</ul>
-			<h1>Class PropertySwitchSerializer&lt;Structure, Field&gt;</h1>
+			<h1>Class SwitchSerializer&lt;Type&gt;</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>The SwitchSerializer is meant to give you an easy to use way of serializing
+							<a href="https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#union-types">Union Types</a>.
+							You can use this serializer by defining
+							<a href="https://www.typescriptlang.org/docs/handbook/advanced-types.html#user-defined-type-guards">Type Guards</a> and assign
+						serializers to them with the register method.</p>
+					</div>
+					<p>The first fitting serializer, the first serializer whose type guard returns true, will be used to delegate the
+						serialisation and deserialization to. This class will then prepend the data by the index of the used serializer to
+					identify the correct one on deserialization.</p>
+				</div>
+			</section>
 			<section class="tsd-panel tsd-type-parameters">
 				<h3>Type parameters</h3>
 				<ul class="tsd-type-parameters">
 					<li>
-						<h4>Structure<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">object</span></h4>
-					</li>
-					<li>
-						<h4>Field<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">keyof </span><span class="tsd-signature-type">Structure</span></h4>
+						<h4>Type</h4>
 					</li>
 				</ul>
 			</section>
@@ -79,10 +90,10 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="valueserializer.html" class="tsd-signature-type">ValueSerializer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">&gt;</span>
+						<a href="valueserializer.html" class="tsd-signature-type">ValueSerializer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Type</span><span class="tsd-signature-symbol">&gt;</span>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">PropertySwitchSerializer</span>
+								<span class="target">SwitchSerializer</span>
 							</li>
 						</ul>
 					</li>
@@ -92,60 +103,27 @@
 				<h2>Index</h2>
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
-						<section class="tsd-index-section ">
-							<h3>Constructors</h3>
-							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="propertyswitchserializer.html#constructor" class="tsd-kind-icon">constructor</a></li>
-							</ul>
-						</section>
 						<section class="tsd-index-section tsd-is-inherited">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="propertyswitchserializer.html#type_pinpoint" class="tsd-kind-icon">TYPE_<wbr>PINPOINT</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><a href="switchserializer.html#type_pinpoint" class="tsd-kind-icon">TYPE_<wbr>PINPOINT</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="propertyswitchserializer.html#arraybuffertovalue" class="tsd-kind-icon">array<wbr>Buffer<wbr>ToValue</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="propertyswitchserializer.html#clone" class="tsd-kind-icon">clone</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="propertyswitchserializer.html#deserialize" class="tsd-kind-icon">deserialize</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="propertyswitchserializer.html#finalize" class="tsd-kind-icon">finalize</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="propertyswitchserializer.html#getsizeforvalue" class="tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="propertyswitchserializer.html#getstaticsize" class="tsd-kind-icon">get<wbr>Static<wbr>Size</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="propertyswitchserializer.html#register" class="tsd-kind-icon">register</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="propertyswitchserializer.html#serialize" class="tsd-kind-icon">serialize</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="propertyswitchserializer.html#typecheck" class="tsd-kind-icon">type<wbr>Check</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="propertyswitchserializer.html#valuetoarraybuffer" class="tsd-kind-icon">value<wbr>ToArray<wbr>Buffer</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="switchserializer.html#arraybuffertovalue" class="tsd-kind-icon">array<wbr>Buffer<wbr>ToValue</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="switchserializer.html#deserialize" class="tsd-kind-icon">deserialize</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="switchserializer.html#finalize" class="tsd-kind-icon">finalize</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="switchserializer.html#getsizeforvalue" class="tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="switchserializer.html#getstaticsize" class="tsd-kind-icon">get<wbr>Static<wbr>Size</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter"><a href="switchserializer.html#register" class="tsd-kind-icon">register</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="switchserializer.html#serialize" class="tsd-kind-icon">serialize</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="switchserializer.html#typecheck" class="tsd-kind-icon">type<wbr>Check</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><a href="switchserializer.html#valuetoarraybuffer" class="tsd-kind-icon">value<wbr>ToArray<wbr>Buffer</a></li>
 							</ul>
 						</section>
 					</div>
-				</section>
-			</section>
-			<section class="tsd-panel-group tsd-member-group ">
-				<h2>Constructors</h2>
-				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
-					<a name="constructor" class="tsd-anchor"></a>
-					<h3>constructor</h3>
-					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Property<wbr>Switch<wbr>Serializer<span class="tsd-signature-symbol">(</span>field<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Field</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="propertyswitchserializer.html" class="tsd-signature-type">PropertySwitchSerializer</a></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/property-switch-serializer.ts#L13">serializer/property-switch-serializer.ts:13</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>field: <span class="tsd-signature-type">Field</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="propertyswitchserializer.html" class="tsd-signature-type">PropertySwitchSerializer</a></h4>
-						</li>
-					</ul>
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
@@ -153,7 +131,7 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="type_pinpoint" class="tsd-anchor"></a>
 					<h3>TYPE_<wbr>PINPOINT</h3>
-					<div class="tsd-signature tsd-kind-icon">TYPE_<wbr>PINPOINT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol"> = undefined as unknown as Type</span></div>
+					<div class="tsd-signature tsd-kind-icon">TYPE_<wbr>PINPOINT<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Type</span><span class="tsd-signature-symbol"> = undefined as unknown as Type</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="objectserializer.html">ObjectSerializer</a>.<a href="objectserializer.html#type_pinpoint">TYPE_PINPOINT</a></p>
 						<ul>
@@ -168,7 +146,7 @@
 					<a name="arraybuffertovalue" class="tsd-anchor"></a>
 					<h3>array<wbr>Buffer<wbr>ToValue</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">array<wbr>Buffer<wbr>ToValue<span class="tsd-signature-symbol">(</span>arrayBuffer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Structure</span></li>
+						<li class="tsd-signature tsd-kind-icon">array<wbr>Buffer<wbr>ToValue<span class="tsd-signature-symbol">(</span>arrayBuffer<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Type</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -192,38 +170,7 @@
 									</div>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Structure</span></h4>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="clone" class="tsd-anchor"></a>
-					<h3>clone</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">clone<span class="tsd-signature-symbol">(</span>deFinalize<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="propertyswitchserializer.html" class="tsd-signature-type">PropertySwitchSerializer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Field</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/property-switch-serializer.ts#L128">serializer/property-switch-serializer.ts:128</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Clones this SwitchSerializer, which copies the current state. The deFinalize argument allows you to lift the
-									finalize state like {@link deFinalize} methods allows you to.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> deFinalize: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
-									<div class="tsd-comment tsd-typography">
-									</div>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="propertyswitchserializer.html" class="tsd-signature-type">PropertySwitchSerializer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Field</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Type</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -231,14 +178,14 @@
 					<a name="deserialize" class="tsd-anchor"></a>
 					<h3>deserialize</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">deserialize<span class="tsd-signature-symbol">(</span>dv<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">DataView</span>, offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol"> }</span></li>
+						<li class="tsd-signature tsd-kind-icon">deserialize<span class="tsd-signature-symbol">(</span>dv<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">DataView</span>, offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Type</span><span class="tsd-signature-symbol"> }</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#deserialize">deserialize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/property-switch-serializer.ts#L109">serializer/property-switch-serializer.ts:109</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/switch-serializer.ts#L26">serializer/switch-serializer.ts:26</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -250,13 +197,13 @@
 									<h5>offset: <span class="tsd-signature-type">number</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol"> }</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Type</span><span class="tsd-signature-symbol"> }</span></h4>
 							<ul class="tsd-parameters">
 								<li class="tsd-parameter">
 									<h5>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li class="tsd-parameter">
-									<h5>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Structure</span></h5>
+									<h5>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Type</span></h5>
 								</li>
 							</ul>
 						</li>
@@ -272,13 +219,14 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/property-switch-serializer.ts#L47">serializer/property-switch-serializer.ts:47</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/switch-serializer.ts#L118">serializer/switch-serializer.ts:118</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>This method needs to be called after all registers are done to make this serializer usable. The reason is that
-									this serializer needs an internal <a href="enumserializer.html">EnumSerializer</a> to work which needs to be created at some point.</p>
+										this serializer needs an internal IntSerializer to work which needs to be created at some point and be fitting to
+									the number of registered serializers to be able to identify all of the indexes.</p>
 								</div>
 							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">this</span></h4>
@@ -289,20 +237,20 @@
 					<a name="getsizeforvalue" class="tsd-anchor"></a>
 					<h3>get<wbr>Size<wbr>For<wbr>Value</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+						<li class="tsd-signature tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Type</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#getsizeforvalue">getSizeForValue</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/property-switch-serializer.ts#L59">serializer/property-switch-serializer.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/switch-serializer.ts#L42">serializer/switch-serializer.ts:42</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>val: <span class="tsd-signature-type">Structure</span></h5>
+									<h5>val: <span class="tsd-signature-type">Type</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
@@ -320,7 +268,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#getstaticsize">getStaticSize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/property-switch-serializer.ts#L76">serializer/property-switch-serializer.ts:76</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/switch-serializer.ts#L52">serializer/switch-serializer.ts:52</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h4>
@@ -331,43 +279,63 @@
 					<a name="register" class="tsd-anchor"></a>
 					<h3>register</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-						<li class="tsd-signature tsd-kind-icon">register&lt;Id, Ser&gt;<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Id</span>, ser<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Ser</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
+						<li class="tsd-signature tsd-kind-icon">register&lt;K&gt;<span class="tsd-signature-symbol">(</span>tester<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">val</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">K</span>, serializer<span class="tsd-signature-symbol">: </span><a href="valueserializer.html" class="tsd-signature-type">ValueSerializer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">this</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/property-switch-serializer.ts#L27">serializer/property-switch-serializer.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/switch-serializer.ts#L104">serializer/switch-serializer.ts:104</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Registers a serializer which will be used to serialize the value when the field (defined in the constructor) has
-										the value equal to the value given as id. If there is already another serializer attached to this id it will be
-									overwritten.</p>
+									<p>This function allows you to register serializers for the specific sub types of the union. On serialization the
+										first fitting serializer will be used. That means that the first serializer with a true returning tester will be
+									used.</p>
 								</div>
+								<p>You need to keep the order of registers the same to prevent any issue with the deserialization, since this class
+								only prepends the index of the used serializer.</p>
+								<p>You should add the most strict type guards first and then gradually add the more general ones, since the type
+									guards will be tested in the order in which they were added via the register method, so a broad one would be like
+								a catch all.</p>
 							</div>
 							<h4 class="tsd-type-parameters-title">Type parameters</h4>
 							<ul class="tsd-type-parameters">
 								<li>
-									<h4>Id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">[</span><span class="tsd-signature-type">Field</span><span class="tsd-signature-symbol">]</span></h4>
-								</li>
-								<li>
-									<h4>Ser<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">OnlyFitting</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Field</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Id</span><span class="tsd-signature-symbol">&gt;</span></h4>
+									<h4>K<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Type</span></h4>
 								</li>
 							</ul>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>id: <span class="tsd-signature-type">Id</span></h5>
+									<h5>tester: <span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">val</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">K</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>the id the field has to be to use this serializer</p>
+										<p>The function which distinguishes between values the provided serializer can serialize and which not.</p>
 									</div>
+									<ul class="tsd-parameters">
+										<li class="tsd-parameter-signature">
+											<ul class="tsd-signatures tsd-kind-type-literal">
+												<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">val</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">K</span></li>
+											</ul>
+											<ul class="tsd-descriptions">
+												<li class="tsd-description">
+													<h4 class="tsd-parameters-title">Parameters</h4>
+													<ul class="tsd-parameters">
+														<li>
+															<h5>val: <span class="tsd-signature-type">any</span></h5>
+														</li>
+													</ul>
+													<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">val</span><span class="tsd-signature-symbol"> is </span><span class="tsd-signature-type">K</span></h4>
+												</li>
+											</ul>
+										</li>
+									</ul>
 								</li>
 								<li>
-									<h5>ser: <span class="tsd-signature-type">Ser</span></h5>
+									<h5>serializer: <a href="valueserializer.html" class="tsd-signature-type">ValueSerializer</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">K</span><span class="tsd-signature-symbol">&gt;</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>the serializer to use</p>
+										<p>The attached Serializer.</p>
 									</div>
 								</li>
 							</ul>
@@ -379,14 +347,14 @@
 					<a name="serialize" class="tsd-anchor"></a>
 					<h3>serialize</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">serialize<span class="tsd-signature-symbol">(</span>dv<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">DataView</span>, offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></li>
+						<li class="tsd-signature tsd-kind-icon">serialize<span class="tsd-signature-symbol">(</span>dv<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">DataView</span>, offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Type</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#serialize">serialize</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/property-switch-serializer.ts#L100">serializer/property-switch-serializer.ts:100</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/switch-serializer.ts#L72">serializer/switch-serializer.ts:72</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -398,7 +366,7 @@
 									<h5>offset: <span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li>
-									<h5>val: <span class="tsd-signature-type">Structure</span></h5>
+									<h5>val: <span class="tsd-signature-type">Type</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{ </span>offset<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></h4>
@@ -414,23 +382,23 @@
 					<a name="typecheck" class="tsd-anchor"></a>
 					<h3>type<wbr>Check</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">type<wbr>Check<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Structure</span>, name<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">type<wbr>Check<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Type</span>, name<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="valueserializer.html">ValueSerializer</a>.<a href="valueserializer.html#typecheck">typeCheck</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/property-switch-serializer.ts#L68">serializer/property-switch-serializer.ts:68</a></li>
+									<li>Defined in <a href="https://github.com/Feirell/serialization-generator/blob/b52e925/src/serializer/switch-serializer.ts#L84">serializer/switch-serializer.ts:84</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>val: <span class="tsd-signature-type">Structure</span></h5>
+									<h5>val: <span class="tsd-signature-type">Type</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> name: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;val&quot;</span></h5>
+									<h5>name: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></h5>
 								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
@@ -441,7 +409,7 @@
 					<a name="valuetoarraybuffer" class="tsd-anchor"></a>
 					<h3>value<wbr>ToArray<wbr>Buffer</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-						<li class="tsd-signature tsd-kind-icon">value<wbr>ToArray<wbr>Buffer<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Structure</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span></li>
+						<li class="tsd-signature tsd-kind-icon">value<wbr>ToArray<wbr>Buffer<span class="tsd-signature-symbol">(</span>val<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Type</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">ArrayBuffer</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
@@ -459,7 +427,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>val: <span class="tsd-signature-type">Structure</span></h5>
+									<h5>val: <span class="tsd-signature-type">Type</span></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>the value to serialize</p>
 									</div>
@@ -496,57 +464,51 @@
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="objectserializer.html" class="tsd-kind-icon">Object<wbr>Serializer</a>
 					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="propertyswitchserializer.html" class="tsd-kind-icon">Property<wbr>Switch<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="stringserializer.html" class="tsd-kind-icon">String<wbr>Serializer</a>
+					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class tsd-has-type-parameter">
-						<a href="propertyswitchserializer.html" class="tsd-kind-icon">Property<wbr>Switch<wbr>Serializer</a>
+						<a href="switchserializer.html" class="tsd-kind-icon">Switch<wbr>Serializer</a>
 						<ul>
-							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="propertyswitchserializer.html#constructor" class="tsd-kind-icon">constructor</a>
-							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
-								<a href="propertyswitchserializer.html#type_pinpoint" class="tsd-kind-icon">TYPE_<wbr>PINPOINT</a>
+								<a href="switchserializer.html#type_pinpoint" class="tsd-kind-icon">TYPE_<wbr>PINPOINT</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="propertyswitchserializer.html#arraybuffertovalue" class="tsd-kind-icon">array<wbr>Buffer<wbr>ToValue</a>
+								<a href="switchserializer.html#arraybuffertovalue" class="tsd-kind-icon">array<wbr>Buffer<wbr>ToValue</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
+								<a href="switchserializer.html#deserialize" class="tsd-kind-icon">deserialize</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="propertyswitchserializer.html#clone" class="tsd-kind-icon">clone</a>
+								<a href="switchserializer.html#finalize" class="tsd-kind-icon">finalize</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="propertyswitchserializer.html#deserialize" class="tsd-kind-icon">deserialize</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="propertyswitchserializer.html#finalize" class="tsd-kind-icon">finalize</a>
+								<a href="switchserializer.html#getsizeforvalue" class="tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="propertyswitchserializer.html#getsizeforvalue" class="tsd-kind-icon">get<wbr>Size<wbr>For<wbr>Value</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="propertyswitchserializer.html#getstaticsize" class="tsd-kind-icon">get<wbr>Static<wbr>Size</a>
+								<a href="switchserializer.html#getstaticsize" class="tsd-kind-icon">get<wbr>Static<wbr>Size</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter">
-								<a href="propertyswitchserializer.html#register" class="tsd-kind-icon">register</a>
+								<a href="switchserializer.html#register" class="tsd-kind-icon">register</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="propertyswitchserializer.html#serialize" class="tsd-kind-icon">serialize</a>
+								<a href="switchserializer.html#serialize" class="tsd-kind-icon">serialize</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="propertyswitchserializer.html#typecheck" class="tsd-kind-icon">type<wbr>Check</a>
+								<a href="switchserializer.html#typecheck" class="tsd-kind-icon">type<wbr>Check</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited">
-								<a href="propertyswitchserializer.html#valuetoarraybuffer" class="tsd-kind-icon">value<wbr>ToArray<wbr>Buffer</a>
+								<a href="switchserializer.html#valuetoarraybuffer" class="tsd-kind-icon">value<wbr>ToArray<wbr>Buffer</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
-					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="stringserializer.html" class="tsd-kind-icon">String<wbr>Serializer</a>
-					</li>
-					<li class=" tsd-kind-class tsd-has-type-parameter">
-						<a href="switchserializer.html" class="tsd-kind-icon">Switch<wbr>Serializer</a>
-					</li>
 					<li class=" tsd-kind-class tsd-has-type-parameter">
 						<a href="transformserializer.html" class="tsd-kind-icon">Transform<wbr>Serializer</a>
 					</li>

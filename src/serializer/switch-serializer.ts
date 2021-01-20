@@ -1,161 +1,145 @@
 import {ValueSerializer} from "./value-serializer";
-import {EnumSerializer} from "./enum-serializer";
+import {UINT16_SERIALIZER, UINT32_SERIALIZER, UINT8_SERIALIZER} from "./int-serializer";
 
-type OnlyFitting<Structure, Field extends keyof Structure, Id extends Structure[Field]> = ValueSerializer<Extract<Structure, { [key in Field]: Id }>>;
+interface Register<K> {
+    tester: (val: any) => val is K;
+    serializer: ValueSerializer<K>
+}
 
-export class SwitchSerializer<Structure extends object, Field extends keyof Structure> extends ValueSerializer<Structure> {
-    private registeredSerializers: { id: Structure[Field], ser: ValueSerializer<any> }[] = [];
+/**
+ * The SwitchSerializer is meant to give you an easy to use way of serializing
+ * [Union Types](https://www.typescriptlang.org/docs/handbook/unions-and-intersections.html#union-types).
+ * You can use this serializer by defining
+ * [Type Guards](https://www.typescriptlang.org/docs/handbook/advanced-types.html#user-defined-type-guards) and assign
+ * serializers to them with the register method.
+ *
+ * The first fitting serializer, the first serializer whose type guard returns true, will be used to delegate the
+ * serialisation and deserialization to. This class will then prepend the data by the index of the used serializer to
+ * identify the correct one on deserialization.
+ */
+export class SwitchSerializer<Type> extends ValueSerializer<Type> {
+    private registeredSerializer: Register<any>[] = [];
+    private isFinalized = false;
 
-    private finalized: boolean = false;
-    private enumSer!: EnumSerializer<Structure[Field]>;
+    private pickedIndexSerializer: undefined | ValueSerializer<number> = undefined;
 
-    constructor(private field: Field) {
-        super();
+    deserialize(dv: DataView, offset: number): { offset: number; val: Type } {
+        if (!this.isFinalized)
+            throw new Error('The SwitchSerializer is not finalized');
+
+        const nrRes = this.pickedIndexSerializer!.deserialize(dv, offset);
+        offset = nrRes.offset;
+
+        const nr = nrRes.val;
+        if (!(nr in this.registeredSerializer))
+            throw new Error('the nr serialized in the data for the index of the used serializer is not in a valid range of the used in this deserializer');
+
+        const picked = this.registeredSerializer[nr].serializer;
+
+        return picked.deserialize(dv, offset);
     }
 
-    /**
-     * Registers a serializer which will be used to serialize the value when the field (defined in the constructor) has
-     * the value equal to the value given as id. If there is already another serializer attached to this id it will be
-     * overwritten.
-     *
-     * @param id the id the field has to be to use this serializer
-     * @param ser the serializer to use
-     */
-    register<Id extends Structure[Field], Ser extends OnlyFitting<Structure, Field, Id>>(id: Id, ser: Ser) {
-        if (this.finalized)
-            throw new Error("SwitchSerializer is already finalized");
+    getSizeForValue(val: Type): number {
+        if (!this.isFinalized)
+            throw new Error('the SwitchSerializer is not finalized');
 
-        for (const reg of this.registeredSerializers)
-            if (reg.id == id) {
-                reg.ser = ser;
-                return this;
-            }
+        const nr = this.pickOrThrow(val);
+        const serializer = this.registeredSerializer[nr].serializer;
 
-
-        this.registeredSerializers.push({id: id, ser});
-
-        return this;
-    }
-
-    /**
-     * This method needs to be called after all registers are done to make this serializer usable. The reason is that
-     * this serializer needs an internal {@link EnumSerializer} to work which needs to be created at some point.
-     */
-    finalize() {
-        if (this.finalized)
-            return this;
-
-        const regIds = this.registeredSerializers.map(r => r.id);
-        this.enumSer = new EnumSerializer<Structure[Field]>(regIds);
-
-        this.finalized = true;
-
-        return this;
-    }
-
-    /**
-     * If you need to extend the switch serializer after using the finalize you can do so by calling this method first
-     * and then registering your new serializer.
-     */
-    deFinalize(){
-        if(!this.finalized)
-            return this;
-
-        this.finalized = false;
-        this.enumSer = undefined as any;
-
-        return this;
-    }
-
-    getSizeForValue(val: Structure): number {
-        if (!this.finalized)
-            throw new Error("SwitchSerializer is not finalized");
-
-        const idSer = this.enumSer.getSizeForValue(val[this.field]);
-        const ser = this.getSerializerOrThrow(val[this.field]);
-        return idSer + ser.getSizeForValue(val as any);
-    }
-
-    typeCheck(val: Structure, name: string = 'val'): void {
-        if (!this.finalized)
-            throw new Error("SwitchSerializer is not finalized");
-
-        const ser = this.getSerializerOrThrow(val[this.field]);
-        return ser.typeCheck(val as any);
+        return this.pickedIndexSerializer!.getSizeForValue(nr) + serializer.getSizeForValue(val);
     }
 
     getStaticSize(): number | undefined {
-        if (!this.finalized)
-            throw new Error("SwitchSerializer is not finalized");
+        if (!this.isFinalized)
+            throw new Error('the SwitchSerializer is not finalized');
 
-        const enumSer = this.enumSer.getStaticSize();
-        if (enumSer == undefined)
-            return undefined;
+        let size: undefined | number = undefined;
 
-        let size = undefined as number | undefined;
-        for (const ser of this.registeredSerializers) {
-            const stat = ser.ser.getStaticSize();
-            if (stat == undefined)
+        for (const {serializer} of this.registeredSerializer) {
+            const staticSize = serializer.getStaticSize();
+            if (staticSize == undefined)
                 return undefined;
 
-            if (size == undefined)
-                size = stat;
-            else if (size != stat)
+            if (size === undefined)
+                size = staticSize;
+            else if (size != staticSize)
                 return undefined;
-
         }
 
-        return enumSer + (size || 0);
+        return this.pickedIndexSerializer!.getStaticSize()! + (size || 0);
     }
 
-    serialize(dv: DataView, offset: number, val: Structure): { offset: number } {
-        if (!this.finalized)
-            throw new Error("SwitchSerializer is not finalized");
+    serialize(dv: DataView, offset: number, val: Type): { offset: number } {
+        if (!this.isFinalized)
+            throw new Error('The SwitchSerializer is not finalized');
 
-        const ser = this.getSerializerOrThrow(val[this.field]);
-        const enumRet = this.enumSer.serialize(dv, offset, val[this.field]);
-        return ser.serialize(dv, enumRet.offset, val as any);
+        const nr = this.pickOrThrow(val);
+
+        offset = this.pickedIndexSerializer!.serialize(dv, offset, nr).offset;
+
+        const serializer = this.registeredSerializer[nr].serializer;
+        return serializer.serialize(dv, offset, val);
     }
 
-    deserialize(dv: DataView, offset: number): { offset: number; val: Structure } {
-        if (!this.finalized)
-            throw new Error("SwitchSerializer is not finalized");
-
-        const enumRet = this.enumSer.deserialize(dv, offset);
-        const ser = this.getSerializerOrThrow(enumRet.val);
-        const serRet = ser.deserialize(dv, enumRet.offset);
-
-        serRet.val[this.field] = enumRet.val as any;
-
-        return serRet;
+    typeCheck(val: Type, name: string | undefined): void {
+        const nr = this.pickOrThrow(val);
+        this.registeredSerializer[nr].serializer.typeCheck(val, name);
     }
 
     /**
-     * Clones this SwitchSerializer, which copies the current state. The deFinalize argument allows you to lift the
-     * finalize state like {@link deFinalize} methods allows you to.
+     * This function allows you to register serializers for the specific sub types of the union. On serialization the
+     * first fitting serializer will be used. That means that the first serializer with a true returning tester will be
+     * used.
      *
-     * @param deFinalize
+     * You need to keep the order of registers the same to prevent any issue with the deserialization, since this class
+     * only prepends the index of the used serializer.
+     *
+     * You should add the most strict type guards first and then gradually add the more general ones, since the type
+     * guards will be tested in the order in which they were added via the register method, so a broad one would be like
+     * a catch all.
+     *
+     * @param tester The function which distinguishes between values the provided serializer can serialize and which not.
+     * @param serializer The attached Serializer.
      */
-    clone(deFinalize = false) {
-        const copy = new SwitchSerializer<Structure, Field>(this.field);
-        copy.registeredSerializers = this.registeredSerializers.map(v => ({id: v.id, ser: v.ser}));
+    register<K extends Type>(tester: (val: any) => val is K, serializer: ValueSerializer<K>) {
+        if (this.isFinalized)
+            throw new Error('the SwitchSerializer is already finalized');
 
-        if (!deFinalize) {
-            copy.finalized = this.finalized;
-            copy.enumSer = this.enumSer;
-        } else {
-            copy.finalized = false;
-            copy.enumSer = undefined as any;
-        }
-
-        return copy;
+        this.registeredSerializer.push({tester, serializer});
+        return this;
     }
 
-    private getSerializerOrThrow<Id extends Structure[Field], Ser extends OnlyFitting<Structure, Field, Id>>(id: Id): Ser {
-        for (const reg of this.registeredSerializers)
-            if (reg.id == id)
-                return reg.ser as Ser;
 
-        throw new Error("there is no serializer for the identification property " + this.field + " with the value " + id);
+    /**
+     * This method needs to be called after all registers are done to make this serializer usable. The reason is that
+     * this serializer needs an internal IntSerializer to work which needs to be created at some point and be fitting to
+     * the number of registered serializers to be able to identify all of the indexes.
+     */
+    finalize() {
+        const nrOfSerializer = this.registeredSerializer.length;
+
+        if (nrOfSerializer <= 2 ** 8)
+            this.pickedIndexSerializer = UINT8_SERIALIZER;
+
+        else if (nrOfSerializer <= 2 ** 16)
+            this.pickedIndexSerializer = UINT16_SERIALIZER;
+
+        else if (nrOfSerializer <= 2 ** 32)
+            this.pickedIndexSerializer = UINT32_SERIALIZER;
+
+        else
+            throw new Error('the number of serializer is greater the 2^32');
+
+        this.isFinalized = true;
+
+        return this;
+    }
+
+    private pickOrThrow(val: Type): number {
+        for (let i = 0; i < this.registeredSerializer.length; i++)
+            if (this.registeredSerializer[i].tester(val))
+                return i;
+
+        throw new Error('could not find a suitable serializer for type ' + val);
     }
 }
