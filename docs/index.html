@@ -111,6 +111,7 @@
     h: <span class="hljs-built_in">number</span>[];
     i: [<span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>, <span class="hljs-built_in">number</span>];
     j: Enum;
+    k: <span class="hljs-string">'Static-Property'</span>;
 }
 
 <span class="hljs-comment">// you can define the object serializer either directly at construction</span>
@@ -131,6 +132,7 @@
     .append(<span class="hljs-string">"h"</span>, <span class="hljs-keyword">new</span> ArraySerializer(UINT32_SERIALIZER))
     .append(<span class="hljs-string">"i"</span>, <span class="hljs-keyword">new</span> VectorSerializer(UINT8_SERIALIZER, <span class="hljs-number">4</span>))
     .append(<span class="hljs-string">"j"</span>, <span class="hljs-keyword">new</span> EnumSerializer&lt;Enum&gt;([<span class="hljs-string">'ENUM_VAL_A'</span>, <span class="hljs-string">'ENUM_VAL_B'</span>, <span class="hljs-string">'ENUM_VAL_C'</span>]))
+    .appendStatic(<span class="hljs-string">"k"</span>, <span class="hljs-string">"Static-Property"</span>);
 
 <span class="hljs-keyword">const</span> ab = <span class="hljs-keyword">new</span> <span class="hljs-built_in">ArrayBuffer</span>(<span class="hljs-number">3</span>);
 <span class="hljs-keyword">new</span> <span class="hljs-built_in">Uint8Array</span>(ab).set([<span class="hljs-number">1</span>, <span class="hljs-number">4</span>, <span class="hljs-number">9</span>]);
@@ -146,7 +148,8 @@
     g: <span class="hljs-string">"Example string with UTF-8 chars €"</span>,
     h: [<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">22</span>],
     i: [<span class="hljs-number">8</span>, <span class="hljs-number">7</span>, <span class="hljs-number">7</span>, <span class="hljs-number">2</span>],
-    j: <span class="hljs-string">"ENUM_VAL_B"</span>
+    j: <span class="hljs-string">"ENUM_VAL_B"</span>,
+    k: <span class="hljs-string">"Static-Property"</span>
 }
 
 <span class="hljs-comment">// check whether the provided values are serializable by the configured serializer</span>

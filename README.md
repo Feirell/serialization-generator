@@ -48,6 +48,7 @@ interface ExampleType {
     h: number[];
     i: [number, number, number, number];
     j: Enum;
+    k: 'Static-Property';
 }
 
 // you can define the object serializer either directly at construction
@@ -68,6 +69,7 @@ const exSer = new ObjectSerializer<ExampleType>()
     .append("h", new ArraySerializer(UINT32_SERIALIZER))
     .append("i", new VectorSerializer(UINT8_SERIALIZER, 4))
     .append("j", new EnumSerializer<Enum>(['ENUM_VAL_A', 'ENUM_VAL_B', 'ENUM_VAL_C']))
+    .appendStatic("k", "Static-Property");
 
 const ab = new ArrayBuffer(3);
 new Uint8Array(ab).set([1, 4, 9]);
@@ -83,7 +85,8 @@ const instance: ExampleType = {
     g: "Example string with UTF-8 chars €",
     h: [1, 2, 3, 22],
     i: [8, 7, 7, 2],
-    j: "ENUM_VAL_B"
+    j: "ENUM_VAL_B",
+    k: "Static-Property"
 }
 
 // check whether the provided values are serializable by the configured serializer

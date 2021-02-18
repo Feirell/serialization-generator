@@ -1,6 +1,11 @@
 import {ValueSerializer} from "./value-serializer";
 
-interface AppendedSerializer<Structure extends object, Name extends keyof Structure> {
+interface StaticMember<Structure extends object, Name extends StringKeys<Structure>> {
+    name: Name;
+    value: Structure[Name];
+}
+
+interface AppendedSerializer<Structure extends object, Name extends StringKeys<Structure>> {
     name: Name;
     serializer: ValueSerializer<Structure[Name]>;
 }
@@ -9,117 +14,74 @@ export interface InstanceCreator<S extends object> {
     (): S
 }
 
-export interface PropertyGetter<S extends object> {
-    (instance: S, key: keyof S): S[typeof key];
-}
-
-export interface PropertySetter<S extends object> {
-    (instance: S, key: keyof S, val: S[typeof key]): void;
-}
-
-const capitalizeFirstLetter = (m: string) => m.replace(/^(.)/, (_, m) => m.upperCase());
+const isValidObjectMemberIdentifier = (key: string) => /^[a-zA-Z_]+[a-zA-Z0-9_]*$/.test(key);
 
 export const DEFAULT_INSTANCE_CREATOR = <S extends object>() => ({} as S);
 
-export const DEFAULT_PROPERTY_GETTER: PropertyGetter<any> = (instance, key) => instance[key];
-export const PROPERTY_GETTER_FNC: PropertyGetter<any> = (instance, key) => instance['get' + capitalizeFirstLetter(key as string)]();
-
-export const DEFAULT_PROPERTY_SETTER: PropertySetter<any> = (instance, key, val) => instance[key] = val;
-export const PROPERTY_SETTER_FNC: PropertySetter<any> = (instance, key, val) => instance['set' + capitalizeFirstLetter(key as string)](val);
-
-export type MappedSerializer<T extends object> = { [key in keyof T]?: ValueSerializer<T[key]> };
+export type MappedSerializer<T extends object> = { [key in StringKeys<T>]?: ValueSerializer<T[key]> };
 
 export interface ObjectSerializerOptions<Structure extends object> {
     instanceCreator?: InstanceCreator<Structure>;
-    propertyGetter?: PropertyGetter<Structure>;
-    propertySetter?: PropertySetter<Structure>;
 }
 
 /**
- * Can be used to combine multiple object serializers to one. The Serializer will be called in series and there is no
- * check in place to ensure that every member is only serialized once.
+ * Can be used to combine multiple object serializers to one.
  *
  * @param os
  */
 export const combineObjectSerializer = <K extends object>(...os: ObjectSerializer<K>[]): ObjectSerializer<K> => {
     const ser = new ObjectSerializer<K>();
 
-    let steps = [] as AppendedSerializer<K, any>[];
+    for (const oneSer of os)
+        for (const step of oneSer.getStaticMembers())
+            ser.appendStatic(step.name, step.value);
 
-    for (let oneSer of os)
-        steps = steps.concat(oneSer.getSerializationSteps());
-
-    ser.setSerializationSteps(steps);
+    for (const oneSer of os)
+        for (const step of oneSer.getSerializationSteps())
+            ser.append(step.name, step.serializer);
 
     return ser;
 }
+
+const addFieldToPath = (base: string, field: string) => base + (isValidObjectMemberIdentifier(field) ?
+        '.' + field :
+        '["' + field + '"]'
+);
+
+type StringKeys<Type extends object, Keys = keyof Type> = Keys extends string ? Keys : never;
 
 /**
  * The ObjectSerializer is meant to give you a an easy to use way to map an simple object structure to a binary
  * representation by iteratively serializing / deserializing the properties of the object.
  */
 export class ObjectSerializer<Structure extends object> extends ValueSerializer<Structure> {
-    // TODO improve internal typing (and the any casts)
-    private serializationSteps: AppendedSerializer<Structure, any>[] = [];
+    private staticMembers: StaticMember<Structure, StringKeys<Structure>>[] = [];
+    private serializationSteps: AppendedSerializer<Structure, StringKeys<Structure>>[] = [];
 
     private readonly instanceCreator: InstanceCreator<Structure>;
-    private readonly propertyGetter: PropertyGetter<Structure>;
-    private readonly propertySetter: PropertySetter<Structure>;
 
     /**
      * You defined the whole structure for serialization in the constructor by defining all property name to serializer
      * mapping via the initialSerializer argument. See the README for an example.
      *
-     * The second parameter is a configuration object which allows you to configure how new instances at deserialization
-     * should be constructed and how properties will be set and get.
+     * The serializerOptions is used to define the instance creator, which should be used to create new object instances
+     * of this type. This can be useful if you want to create a instance of a class of attach a prototype manually.
      *
-     * Those options are optional and are defaults are:
-     *
-     * ```ts
-     * import {
-     *     ObjectSerializerOptions,
-     *     DEFAULT_INSTANCE_CREATOR,
-     *     DEFAULT_PROPERTY_GETTER,
-     *     DEFAULT_PROPERTY_SETTER
-     * } from "serialization-generator/lib/serializer/object-serializer"
-     *
-     * const options: ObjectSerializerOptions = {
-     *     instanceCreator: DEFAULT_INSTANCE_CREATOR,
-     *     propertyGetter: DEFAULT_PROPERTY_GETTER,
-     *     propertySetter: DEFAULT_PROPERTY_SETTER
-     * }
-     * ```
-     *
-     * The Function do the following:
-     *
-     * ```ts
-     * const DEFAULT_INSTANCE_CREATOR = () => ({});
-     * const DEFAULT_PROPERTY_GETTER = (instance, key) => instance[key];
-     * const DEFAULT_PROPERTY_SETTER = (instance, key, value) => instance[key] = val;
-     * ```
-     *
-     * There are additionally `PROPERTY_GETTER_FNC` and `PROPERTY_SETTER_FNC` defined, which transform the key from
-     * `example` to `getExample` and `setExample` respectively and use the functions which are expected to be on those
-     * properties.
+     * In any case, any member will be overwritten by the defined serializers or the static members. The default is just
+     * the object literal `{}`.
      *
      * @param initialSerializer
-     * @param instanceCreator
-     * @param propertyGetter
-     * @param propertySetter
+     * @param serializerOptions
      */
     constructor(initialSerializer: MappedSerializer<Structure> = {}, {
-        instanceCreator = DEFAULT_INSTANCE_CREATOR,
-        propertyGetter = DEFAULT_PROPERTY_GETTER,
-        propertySetter = DEFAULT_PROPERTY_SETTER
+        instanceCreator = DEFAULT_INSTANCE_CREATOR
     }: ObjectSerializerOptions<Structure> = {}) {
         super();
 
         this.instanceCreator = instanceCreator;
-        this.propertyGetter = propertyGetter;
-        this.propertySetter = propertySetter;
 
         for (const [key, ser] of Object.entries(initialSerializer))
-            this.append(key as keyof Structure, ser as ValueSerializer<any>);
+            this.append(key as StringKeys<Structure>, ser as ValueSerializer<any>);
     }
 
     getStaticSize(): number | undefined {
@@ -147,36 +109,39 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
      * @param name The field name to attach this serializer on.
      * @param serializer The serializer to attach on that field.
      */
-    append<Name extends keyof Structure, Serializer extends ValueSerializer<Structure[Name]>>(name: Name, serializer: Serializer) {
+    append<Name extends StringKeys<Structure>, Serializer extends ValueSerializer<Structure[Name]>>(name: Name, serializer: Serializer) {
+        this.ensureNameIsNotTaken(name);
+
         this.serializationSteps.push({name, serializer} as AppendedSerializer<Structure, Name>);
         return this;
     }
 
     /**
-     * Replaces ALL serializers which were attached using the given name with the given serializer.
+     * This method sets a static value which will not be serialized and transferred but added after the serialization
+     * is finished. This can be useful when you have an identifier member which is always the same for all instanced of
+     * this type.
      *
-     * @param name The name which was used to attach the serializers which you want to replace.
-     * @param serializer The serializer you want to use as the replacement.
+     * @param name The name of the field for the static value.
+     * @param value The value which should be put there.
      */
-    replaceSerializer<Name extends keyof Structure, Serializer extends ValueSerializer<Structure[Name]>>(name: Name, serializer: Serializer) {
-        const serSteps = this.serializationSteps;
-        for (let i = 0; i < serSteps.length; i++)
-            if (serSteps[i].name == name)
-                serSteps[i] = {name, serializer}
+    appendStatic<Name extends StringKeys<Structure>, Value extends Structure[Name]>(name: Name, value: Value) {
+        this.ensureNameIsNotTaken(name);
 
+        this.staticMembers.push({name, value} as StaticMember<Structure, Name>);
         return this;
     }
 
     /**
-     * Removes all serializer which are appended using this field identifier.
+     * Removes the serializer which are appended using this field identifier.
      *
      * @param name the name to search for
      */
-    remove<Name extends keyof Structure>(name: Name) {
-        for (let i = this.serializationSteps.length - 1; i >= 0; i--) {
+    remove<Name extends StringKeys<Structure>>(name: Name) {
+        for (let i = 0; i < this.serializationSteps.length; i++) {
             if (this.serializationSteps[i].name == name) {
                 this.serializationSteps.splice(i, 1);
 
+                return this;
             }
         }
 
@@ -190,20 +155,18 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
      * @returns A clone of this object serializer
      */
     clone() {
-        const inst = new ObjectSerializer<Structure>({}, {
-            instanceCreator: this.instanceCreator,
-            propertyGetter: this.propertyGetter,
-            propertySetter: this.propertySetter
-        });
+        const inst = new ObjectSerializer<Structure>();
 
+        inst.staticMembers = this.staticMembers.slice();
         inst.serializationSteps = this.serializationSteps.slice();
+
         return inst;
     }
 
     getSizeForValue(val: Structure): number {
         let size = 0;
         for (const {name, serializer} of this.serializationSteps)
-            size += serializer.getSizeForValue(this.propertyGetter(val, name));
+            size += serializer.getSizeForValue(val[name]);
 
         return size;
     }
@@ -212,13 +175,29 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
         if (typeof val != 'object')
             throw new Error(name + ' needs to be a object but was ' + val);
 
-        for (const {name: innerName, serializer} of this.serializationSteps)
-            serializer.typeCheck(this.propertyGetter(val, innerName), name + '.' + innerName);
+        for (const {name: memberName, value} of this.staticMembers) {
+            if (!(memberName in val))
+                throw new Error(addFieldToPath(name, memberName) + ' is missing in ' + name + ' but required as ' +
+                    'static member');
+
+            if (!Object.is(val[memberName], value))
+                throw new Error('The value of the static member ' + memberName + ' at ' +
+                    addFieldToPath(name, memberName) + ' does not match the provided static value ' + value +
+                    ' is: ' + val[memberName]);
+        }
+
+
+        for (const {name: innerName, serializer} of this.serializationSteps) {
+            if (!(innerName in val))
+                throw new Error();
+
+            serializer.typeCheck(val[innerName], addFieldToPath(name, innerName));
+        }
     }
 
     serialize(dv: DataView, offset: number, val: Structure): { offset: number } {
         for (const {name, serializer} of this.serializationSteps) {
-            const ret = serializer.serialize(dv, offset, this.propertyGetter(val, name));
+            const ret = serializer.serialize(dv, offset, val[name]);
             offset = ret.offset;
         }
 
@@ -226,21 +205,34 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
     }
 
     deserialize(dv: DataView, offset: number): { offset: number; val: Structure } {
-        const val = this.instanceCreator() as Structure;
+        const val = this.instanceCreator();
+
+        for (const {name, value} of this.staticMembers) {
+            val[name] = value;
+        }
+
         for (const {name, serializer} of this.serializationSteps) {
             const ret = serializer.deserialize(dv, offset);
             offset = ret.offset;
-            this.propertySetter(val, name, ret.val);
+            val[name] = ret.val;
         }
 
         return {offset, val};
+    }
+
+    getStaticMembers() {
+        return this.staticMembers.map(o => ({...o}));
     }
 
     getSerializationSteps() {
         return this.serializationSteps.map(o => ({...o}));
     }
 
-    setSerializationSteps(st: AppendedSerializer<Structure, any>[]) {
-        this.serializationSteps = st;
+    private ensureNameIsNotTaken<Name extends StringKeys<Structure>>(name: Name) {
+        if (this.serializationSteps.some(v => v.name == name))
+            throw new Error('Can not register on this name since an serializer is already registered on this name');
+
+        if (this.staticMembers.some(v => v.name == name))
+            throw new Error('Can not register on this name since an static value is already registered on this name');
     }
 }
