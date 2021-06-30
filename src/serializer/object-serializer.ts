@@ -50,6 +50,12 @@ const addFieldToPath = (base: string, field: string) => base + (isValidObjectMem
 
 type StringKeys<Type extends object, Keys = keyof Type> = Keys extends string ? Keys : never;
 
+type OptionalArrayBuffer<Structure extends object> = {
+    [key in keyof Structure]: Structure[key] | ArrayBuffer
+}
+
+const isArrayBuffer = (val: any): val is ArrayBuffer => val instanceof ArrayBuffer;
+
 /**
  * The ObjectSerializer is meant to give you a an easy to use way to map an simple object structure to a binary
  * representation by iteratively serializing / deserializing the properties of the object.
@@ -163,15 +169,20 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
         return inst;
     }
 
-    getSizeForValue(val: Structure): number {
+    getSizeForValue(val: OptionalArrayBuffer<Structure>): number {
         let size = 0;
-        for (const {name, serializer} of this.serializationSteps)
-            size += serializer.getSizeForValue(val[name]);
+        for (const {name, serializer} of this.serializationSteps) {
+            const fieldValue: ArrayBuffer | Structure[typeof name] = val[name];
+            if (isArrayBuffer(fieldValue))
+                size += fieldValue.byteLength;
+            else
+                size += serializer.getSizeForValue(fieldValue);
+        }
 
         return size;
     }
 
-    typeCheck(val: Structure, name = 'val'): void {
+    typeCheck(val: OptionalArrayBuffer<Structure>, name = 'val'): void {
         if (typeof val != 'object')
             throw new Error(name + ' needs to be a object but was ' + val);
 
@@ -180,7 +191,7 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
                 throw new Error(addFieldToPath(name, memberName) + ' is missing in ' + name + ' but required as ' +
                     'static member');
 
-            if (!Object.is(val[memberName], value))
+            if (!isArrayBuffer(val[memberName]) && !Object.is(val[memberName], value))
                 throw new Error('The value of the static member ' + memberName + ' at ' +
                     addFieldToPath(name, memberName) + ' does not match the provided static value ' + value +
                     ' is: ' + val[memberName]);
@@ -189,16 +200,32 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
 
         for (const {name: innerName, serializer} of this.serializationSteps) {
             if (!(innerName in val))
-                throw new Error();
+                throw new Error("The field " + addFieldToPath(name, innerName) + " defined in the serializationSteps is not present in the object.");
 
-            serializer.typeCheck(val[innerName], addFieldToPath(name, innerName));
+            const innerVal: ArrayBuffer | Structure[typeof innerName] = val[innerName];
+
+            if (!isArrayBuffer(innerVal))
+                serializer.typeCheck(innerVal, addFieldToPath(name, innerName));
         }
     }
 
-    serialize(dv: DataView, offset: number, val: Structure): { offset: number } {
+    serialize(dv: DataView, offset: number, val: OptionalArrayBuffer<Structure>): { offset: number } {
         for (const {name, serializer} of this.serializationSteps) {
-            const ret = serializer.serialize(dv, offset, val[name]);
-            offset = ret.offset;
+            const fieldVal: ArrayBuffer | Structure[typeof name] = val[name];
+
+            if (isArrayBuffer(fieldVal)) {
+                // TODO should check the length of the array buffer to ensure that it matches with
+                //  the designated space
+
+                const target = new Uint8Array(dv.buffer);
+                const source = new Uint8Array(fieldVal);
+
+                target.set(source, offset);
+                offset += source.length;
+            } else {
+                const ret = serializer.serialize(dv, offset, fieldVal);
+                offset = ret.offset;
+            }
         }
 
         return {offset};
