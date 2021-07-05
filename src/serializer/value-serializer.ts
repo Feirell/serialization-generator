@@ -20,7 +20,7 @@ export abstract class ValueSerializer<Type> {
      * @hidden
      * @internal
      */
-    public readonly TYPE_PINPOINT: Type = undefined as unknown as Type;
+   declare public readonly TYPE_PINPOINT: Type;
 
     /**
      * This attribute is used to identify if the number of bytes used by this serializer to serialize the value is
@@ -88,3 +88,5 @@ export abstract class ValueSerializer<Type> {
         return this.deserialize(new DataView(arrayBuffer), 0).val;
     }
 }
+
+export type SerializerType<V> = V extends ValueSerializer<any> ? V['TYPE_PINPOINT'] : never;

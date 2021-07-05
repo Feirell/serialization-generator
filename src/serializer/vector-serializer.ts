@@ -1,4 +1,4 @@
-import {ValueSerializer} from "./value-serializer";
+import {SerializerType, ValueSerializer} from "./value-serializer";
 
 type FixedLengthArray<Type, Count extends number> =
     Count extends 1 ? [Type] :
@@ -13,8 +13,13 @@ type FixedLengthArray<Type, Count extends number> =
                                         Count extends 10 ? [Type, Type, Type, Type, Type, Type, Type, Type, Type, Type] :
                                             never;
 
-export class VectorSerializer<Type, Length extends 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10> extends ValueSerializer<FixedLengthArray<Type, Length>> {
-    constructor(private readonly serializer: ValueSerializer<Type>, private readonly length: Length) {
+// TODO Remove this new generic type as soon as https://github.com/microsoft/TypeScript/issues/44900 is resolved
+
+/**
+ *
+ */
+export class VectorSerializer<Serializer extends ValueSerializer<any>, Type extends SerializerType<Serializer>, Length extends 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10> extends ValueSerializer<FixedLengthArray<Type, Length>> {
+    constructor(private readonly serializer: Serializer, private readonly length: Length) {
         super();
     }
 

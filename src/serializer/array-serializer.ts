@@ -1,7 +1,12 @@
-import {ValueSerializer} from "./value-serializer";
+import {SerializerType, ValueSerializer} from "./value-serializer";
 
-export class ArraySerializer<Type> extends ValueSerializer<Type[]> {
-    constructor(private readonly serializer: ValueSerializer<Type>) {
+// TODO Remove this new generic type as soon as https://github.com/microsoft/TypeScript/issues/44900 is resolved
+
+/**
+ *
+ */
+export class ArraySerializer<Serializer extends ValueSerializer<any>, Type extends SerializerType<Serializer> = SerializerType<Serializer>> extends ValueSerializer<Type[]> {
+    constructor(private readonly serializer: Serializer) {
         super();
     }
 

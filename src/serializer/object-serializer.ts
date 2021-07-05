@@ -169,10 +169,13 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
         return inst;
     }
 
-    getSizeForValue(val: OptionalArrayBuffer<Structure>): number {
+
+    getSizeForValue(val: Structure): number;
+    getSizeForValue(val: OptionalArrayBuffer<Structure>): number;
+    getSizeForValue(val: Structure | OptionalArrayBuffer<Structure>): number {
         let size = 0;
         for (const {name, serializer} of this.serializationSteps) {
-            const fieldValue: ArrayBuffer | Structure[typeof name] = val[name];
+            const fieldValue = val[name] as ArrayBuffer | Structure[typeof name];
             if (isArrayBuffer(fieldValue))
                 size += fieldValue.byteLength;
             else
@@ -182,7 +185,9 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
         return size;
     }
 
-    typeCheck(val: OptionalArrayBuffer<Structure>, name = 'val'): void {
+    typeCheck(val: Structure): void;
+    typeCheck(val: OptionalArrayBuffer<Structure>): void;
+    typeCheck(val: Structure | OptionalArrayBuffer<Structure>, name = 'val'): void {
         if (typeof val != 'object')
             throw new Error(name + ' needs to be a object but was ' + val);
 
@@ -202,16 +207,18 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
             if (!(innerName in val))
                 throw new Error("The field " + addFieldToPath(name, innerName) + " defined in the serializationSteps is not present in the object.");
 
-            const innerVal: ArrayBuffer | Structure[typeof innerName] = val[innerName];
+            const innerVal = val[innerName] as ArrayBuffer | Structure[typeof innerName];
 
             if (!isArrayBuffer(innerVal))
                 serializer.typeCheck(innerVal, addFieldToPath(name, innerName));
         }
     }
 
-    serialize(dv: DataView, offset: number, val: OptionalArrayBuffer<Structure>): { offset: number } {
+    serialize(dv: DataView, offset: number, val: Structure): { offset: number };
+    serialize(dv: DataView, offset: number, val: OptionalArrayBuffer<Structure>): { offset: number };
+    serialize(dv: DataView, offset: number, val: Structure | OptionalArrayBuffer<Structure>): { offset: number } {
         for (const {name, serializer} of this.serializationSteps) {
-            const fieldVal: ArrayBuffer | Structure[typeof name] = val[name];
+            const fieldVal = val[name] as ArrayBuffer | Structure[typeof name];
 
             if (isArrayBuffer(fieldVal)) {
                 // TODO should check the length of the array buffer to ensure that it matches with
