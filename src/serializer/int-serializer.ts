@@ -61,8 +61,8 @@ class IntSerializer extends ValueSerializer<number> {
 
         this.typeIdentifier = (unsigned ? 'Uint' : 'Int') + (byteSize * 8).toString();
 
-        this.dvSerializer = DataView.prototype['set' + this.typeIdentifier];
-        this.dvDeserializer = DataView.prototype['get' + this.typeIdentifier];
+        this.dvSerializer = (DataView as any).prototype['set' + this.typeIdentifier];
+        this.dvDeserializer = (DataView as any).prototype['get' + this.typeIdentifier];
     }
 
     getStaticSize(): number | undefined {
