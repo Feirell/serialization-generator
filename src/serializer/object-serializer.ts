@@ -51,7 +51,7 @@ const addFieldToPath = (base: string, field: string) => base + (isValidObjectMem
 type StringKeys<Type extends object, Keys = keyof Type> = Keys extends string ? Keys : never;
 
 export type OptionalArrayBuffer<Structure extends object> = {
-    [key in keyof Structure]: Structure[key] | ArrayBuffer
+    [key in keyof Structure]: Structure[key] | ArrayBuffer | (Structure[key] extends object ? OptionalArrayBuffer<Structure[key]> : never);
 }
 
 const isArrayBuffer = (val: any): val is ArrayBuffer => val instanceof ArrayBuffer;
