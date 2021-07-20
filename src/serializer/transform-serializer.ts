@@ -43,20 +43,24 @@ export abstract class TransformSerializer<Origin, Base> extends ValueSerializer<
         }
     }
 
+    getByteSizeFromDataInBuffer(dv: DataView, offset: number): number {
+        return this.baseSerializer.getByteSizeFromDataInBuffer(dv, offset);
+    }
+
     /**
      * This method maps the Origin value to Base. This method should throw an error
      * if the value is not in fact of type origin.
      *
      * @param val the value to map
      */
-    abstract fromOriginToBase(val: Origin): Base;
+    abstract fromOriginToBase(val: Origin): Base
 
     /**
      * This method maps the value back from Base to Origin.
      *
      * @param val the value to map
      */
-    abstract fromBaseToOrigin(val: Base): Origin;
+    abstract fromBaseToOrigin(val: Base): Origin
 
     /**
      * This method will be called by the {@link typeCheck} method. Before calling the
@@ -69,5 +73,5 @@ export abstract class TransformSerializer<Origin, Base> extends ValueSerializer<
      * @param val the value to check
      * @param name the identifier name this value had in the greater scope
      */
-    abstract originTypeCheck(val: Origin, name: string): never | void ;
+    abstract originTypeCheck(val: Origin, name: string): never | void
 }

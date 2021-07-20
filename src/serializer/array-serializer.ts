@@ -15,6 +15,11 @@ export class ArraySerializer<Serializer extends ValueSerializer<any>, Type exten
     }
 
     getSizeForValue(val: Type[]): number {
+        const staticSize = this.serializer.getStaticSize();
+
+        if (staticSize !== undefined)
+            return 2 + staticSize * val.length;
+
         let size = 0;
         for (let i = 0; i < val.length; i++)
             size += this.serializer.getSizeForValue(val[i]);
@@ -57,5 +62,23 @@ export class ArraySerializer<Serializer extends ValueSerializer<any>, Type exten
         }
 
         return {offset, val};
+    }
+
+    getByteSizeFromDataInBuffer(dv: DataView, offset: number): number {
+        const length = dv.getUint16(offset);
+
+        const staticSize = this.serializer.getStaticSize();
+        if (staticSize !== undefined)
+            return 2 + staticSize * length;
+
+        const initialOffset = offset;
+
+        offset += 2;
+
+        for (let i = 0; i < length; i++) {
+            offset += this.serializer.getByteSizeFromDataInBuffer(dv, offset);
+        }
+
+        return offset - initialOffset;
     }
 }

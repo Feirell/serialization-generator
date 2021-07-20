@@ -23,6 +23,7 @@ export class SwitchSerializer<Type, Remaining extends Type = Type> extends Value
     private isFinalized = false;
 
     private pickedIndexSerializer: undefined | ValueSerializer<number> = undefined;
+    private staticSizeCache: null | undefined | number = null;
 
     deserialize(dv: DataView, offset: number): { offset: number; val: Type } {
         if (!this.isFinalized)
@@ -54,20 +55,43 @@ export class SwitchSerializer<Type, Remaining extends Type = Type> extends Value
         if (!this.isFinalized)
             throw new Error('the SwitchSerializer is not finalized');
 
+        if (this.staticSizeCache !== null)
+            return this.staticSizeCache;
+
         let size: undefined | number = undefined;
 
         for (const {serializer} of this.registeredSerializer) {
             const staticSize = serializer.getStaticSize();
-            if (staticSize == undefined)
+            if (staticSize == undefined) {
+                this.staticSizeCache = undefined;
                 return undefined;
+            }
 
             if (size === undefined)
                 size = staticSize;
-            else if (size != staticSize)
+            else if (size != staticSize) {
+                this.staticSizeCache = undefined;
                 return undefined;
+            }
         }
 
-        return this.pickedIndexSerializer!.getStaticSize()! + (size || 0);
+        this.staticSizeCache = this.pickedIndexSerializer!.getStaticSize()! + (size || 0);
+        return this.staticSizeCache;
+    }
+
+    getByteSizeFromDataInBuffer(dv: DataView, offset: number): number {
+        const staticSize = this.getStaticSize();
+
+        if (staticSize !== undefined)
+            return staticSize;
+
+        const {val, offset: idOffset} = this.pickedIndexSerializer!.deserialize(dv, offset);
+        let size = idOffset - offset;
+
+        const valueSerializer = this.registeredSerializer[val].serializer;
+        size += valueSerializer.getByteSizeFromDataInBuffer(dv, idOffset);
+
+        return size;
     }
 
     serialize(dv: DataView, offset: number, val: Type): { offset: number } {

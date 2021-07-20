@@ -44,6 +44,10 @@ export class StringSerializer<Type extends object> extends ValueSerializer<strin
         return {offset: ret.offset, val};
     }
 
+    getByteSizeFromDataInBuffer(dv: DataView, offset: number): number {
+        return this.abSer.getByteSizeFromDataInBuffer(dv, offset);
+    }
+
     private deserializeString(ab: ArrayBuffer): string {
         return StringSerializer.td.decode(ab);
     }
@@ -61,7 +65,6 @@ export class StringSerializer<Type extends object> extends ValueSerializer<strin
         // TODO don't encode here
         return this.serializeString(str).length;
     }
-
 }
 
 export const STRING_SERIALIZER = new StringSerializer();

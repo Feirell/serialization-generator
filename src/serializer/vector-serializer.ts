@@ -36,6 +36,19 @@ export class VectorSerializer<Serializer extends ValueSerializer<any>, Type exte
         return size;
     }
 
+    getByteSizeFromDataInBuffer(dv: DataView, offset: number): number {
+        const staticSize = this.getStaticSize();
+        if (staticSize !== undefined)
+            return staticSize;
+
+        const initialOffset = offset;
+
+        for (let i = 0; i < this.length; i++)
+            offset += this.serializer.getByteSizeFromDataInBuffer(dv, offset);
+
+        return offset - initialOffset;
+    }
+
     typeCheck(val: FixedLengthArray<Type, Length>, name: string = 'val'): void {
         if (!Array.isArray(val))
             throw new Error(val + ' needs to be an array but was ' + val);

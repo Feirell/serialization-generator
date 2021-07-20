@@ -11,6 +11,7 @@ export class PropertySwitchSerializer<Structure extends object, Field extends ke
 
     private finalized: boolean = false;
     private enumSer!: EnumSerializer<Structure[Field]>;
+    private staticSizeCache: null | undefined | number = null;
 
     constructor(private field: Field) {
         super();
@@ -35,7 +36,7 @@ export class PropertySwitchSerializer<Structure extends object, Field extends ke
             }
 
 
-        this.registeredSerializers.push({id: id, ser});
+        this.registeredSerializers.push({id, ser});
 
         return this;
     }
@@ -77,24 +78,49 @@ export class PropertySwitchSerializer<Structure extends object, Field extends ke
         if (!this.finalized)
             throw new Error("SwitchSerializer is not finalized");
 
+        if (this.staticSizeCache !== null)
+            return this.staticSizeCache;
+
         const enumSer = this.enumSer.getStaticSize();
-        if (enumSer == undefined)
+        if (enumSer == undefined) {
+            this.staticSizeCache = undefined;
             return undefined;
+        }
 
         let size = undefined as number | undefined;
         for (const ser of this.registeredSerializers) {
             const stat = ser.ser.getStaticSize();
-            if (stat == undefined)
+            if (stat == undefined) {
+                this.staticSizeCache = undefined;
                 return undefined;
+            }
 
             if (size == undefined)
                 size = stat;
-            else if (size != stat)
+            else if (size != stat) {
+                this.staticSizeCache = undefined;
                 return undefined;
+            }
 
         }
 
-        return enumSer + (size || 0);
+        this.staticSizeCache = enumSer + (size || 0);
+        return this.staticSizeCache;
+    }
+
+    getByteSizeFromDataInBuffer(dv: DataView, offset: number): number {
+        const staticSize = this.getStaticSize();
+
+        if (staticSize !== undefined)
+            return staticSize;
+
+        const {val, offset: idOffset} = this.enumSer.deserialize(dv, offset);
+        let size = idOffset - offset;
+
+        const valueSerializer = this.getSerializerOrThrow(val);
+        size += valueSerializer.getByteSizeFromDataInBuffer(dv, idOffset);
+
+        return size;
     }
 
     serialize(dv: DataView, offset: number, val: Structure): { offset: number } {
@@ -121,7 +147,7 @@ export class PropertySwitchSerializer<Structure extends object, Field extends ke
 
     /**
      * Clones this SwitchSerializer, which copies the current state. The deFinalize argument allows you to lift the
-     * finalize state like {@link deFinalize} methods allows you to.
+     * finalize state.
      *
      * @param deFinalize
      */

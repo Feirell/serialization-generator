@@ -59,6 +59,7 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
     private serializationSteps: AppendedSerializer<Structure, StringKeys<Structure>>[] = [];
 
     private readonly instanceCreator: InstanceCreator<Structure>;
+    private cachedStaticSize: null | undefined | number = null;
 
     /**
      * You defined the whole structure for serialization in the constructor by defining all property name to serializer
@@ -85,17 +86,23 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
     }
 
     getStaticSize(): number | undefined {
+        if (this.cachedStaticSize !== null)
+            return this.cachedStaticSize;
+
         let size = 0;
 
         for (const {serializer} of this.serializationSteps) {
             const staticSize = serializer.getStaticSize()
 
-            if (staticSize == undefined)
+            if (staticSize == undefined) {
+                this.cachedStaticSize = undefined;
                 return undefined;
+            }
 
             size += staticSize;
         }
 
+        this.cachedStaticSize = size;
         return size;
     }
 
@@ -111,7 +118,7 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
      */
     append<Name extends StringKeys<Structure>, Serializer extends ValueSerializer<Structure[Name]>>(name: Name, serializer: Serializer) {
         this.ensureNameIsNotTaken(name);
-
+        this.cachedStaticSize = null;
         this.serializationSteps.push({name, serializer} as AppendedSerializer<Structure, Name>);
         return this;
     }
@@ -140,7 +147,7 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
         for (let i = 0; i < this.serializationSteps.length; i++) {
             if (this.serializationSteps[i].name == name) {
                 this.serializationSteps.splice(i, 1);
-
+                this.cachedStaticSize = null;
                 return this;
             }
         }
@@ -164,6 +171,10 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
     }
 
     getSizeForValue(val: Structure): number {
+        const staticSize = this.getStaticSize();
+        if (typeof staticSize == 'number')
+            return staticSize;
+
         let size = 0;
         for (const {name, serializer} of this.serializationSteps)
             size += serializer.getSizeForValue(val[name]);
@@ -221,11 +232,26 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
     }
 
     getStaticMembers() {
-        return this.staticMembers.map(o => ({...o}));
+        return this.staticMembers;
     }
 
     getSerializationSteps() {
-        return this.serializationSteps.map(o => ({...o}));
+        return this.serializationSteps;
+    }
+
+    getByteSizeFromDataInBuffer(dv: DataView, offset: number): number {
+        const staticSize = this.getStaticSize();
+
+        if (staticSize !== undefined)
+            return staticSize;
+
+        const startOffset = offset;
+
+        for (const {serializer} of this.serializationSteps) {
+            offset += serializer.getByteSizeFromDataInBuffer(dv, offset);
+        }
+
+        return offset - startOffset;
     }
 
     private ensureNameIsNotTaken<Name extends StringKeys<Structure>>(name: Name) {

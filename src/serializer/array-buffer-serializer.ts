@@ -49,6 +49,10 @@ export class ArrayBufferSerializer extends ValueSerializer<ArrayBuffer> {
 
         return {offset, val};
     }
+
+    getByteSizeFromDataInBuffer(dv: DataView, offset: number): number {
+        return 2 + dv.getUint16(offset);
+    }
 }
 
 export const ARRAY_BUFFER_SERIALIZER = new ArrayBufferSerializer();

@@ -20,7 +20,7 @@ export abstract class ValueSerializer<Type> {
      * @hidden
      * @internal
      */
-   declare public readonly TYPE_PINPOINT: Type;
+    declare public readonly TYPE_PINPOINT: Type;
 
     /**
      * This attribute is used to identify if the number of bytes used by this serializer to serialize the value is
@@ -86,6 +86,24 @@ export abstract class ValueSerializer<Type> {
      */
     arrayBufferToValue(arrayBuffer: ArrayBuffer): Type {
         return this.deserialize(new DataView(arrayBuffer), 0).val;
+    }
+
+    /**
+     * This method retrieves the number of bytes this serializer will consume from the given buffer and offset.
+     * This is handy if you want to split the deserialization or want to skip sections of the deserialization.
+     *
+     * If the `getStaticSize` value is given than this method will return this value, if not then it will use the given
+     * buffer to calculate the length without deserializing it.
+     *
+     * Be aware that this operation might be called recursively and not as fast as expected since the full byte size
+     * of a structure is not written in the data.
+     */
+    getByteSizeFromDataInBuffer(dv: DataView, offset: number) {
+        const staticSize = this.getStaticSize();
+        if (staticSize !== undefined)
+            return staticSize;
+        else
+            throw new Error('This serializer does not implement this method.');
     }
 }
 

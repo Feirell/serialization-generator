@@ -9,6 +9,7 @@ type Serializer<Components> = { [i in keyof Components]: ValueSerializer<Compone
  */
 export class ChainSerializer<Components extends any[]> extends ValueSerializer<Components> {
     private serializer: Serializer<Components>;
+    private staticSizeCache: null | undefined | number = null;
 
     constructor(...k: Serializer<Components>) {
         super();
@@ -46,17 +47,23 @@ export class ChainSerializer<Components extends any[]> extends ValueSerializer<C
     }
 
     getStaticSize(): number | undefined {
+        if (this.staticSizeCache !== null)
+            return this.staticSizeCache;
+
         let sizeSum = 0;
 
         for (let i = 0; i < this.serializer.length; i++) {
             const size = this.serializer[i].getStaticSize();
 
-            if (size == undefined)
+            if (size == undefined) {
+                this.staticSizeCache = undefined;
                 return undefined;
+            }
 
             sizeSum += size;
         }
 
+        this.staticSizeCache = sizeSum;
         return sizeSum;
     }
 
@@ -66,5 +73,18 @@ export class ChainSerializer<Components extends any[]> extends ValueSerializer<C
 
         for (let i = 0; i < val.length; i++)
             this.serializer[i].typeCheck(val[i]);
+    }
+
+    getByteSizeFromDataInBuffer(dv: DataView, offset: number): number {
+        const staticSize = this.getStaticSize();
+        if (staticSize !== undefined)
+            return staticSize;
+
+        const initialOffset = offset;
+
+        for (const comp of this.serializer)
+            offset += comp.getByteSizeFromDataInBuffer(dv, offset);
+
+        return offset - initialOffset;
     }
 }
