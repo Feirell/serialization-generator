@@ -2,8 +2,8 @@
 
 > **Please have a look at the `This package vs FlatBuffers / protobuf` section below before making yourself familiar with this library.**
 
-The main target of this package is to make the creation of serializers to transform JavaScript Values into binary and back
-as easy as possible and to keep the creation readable.
+The main target of this package is to make the creation of serializers to transform JavaScript Values into binary and
+back as easy as possible and to keep the creation readable.
 
 To archive this goal this package provides multiple simple serializers which you can combine to create more complex
 versions which fit your needed data structures.
@@ -121,7 +121,8 @@ Please have a look at the [API documentation](https://feirell.github.io/serializ
 
 ## Mapping / transforming serializer
 
-If want to implement a mapping serializer which, for example, maps an enum to a number and back you could do so in four ways.
+If want to implement a mapping serializer which, for example, maps an enum to a number and back you could do so in four
+ways.
 `EnumSerializer` is a specific class to map a static number of values to their indexes and back, primarily Enums.
 
 <!-- USEFILE: examples\transform-values.ts; str => str.replace('../src', 'serialization-generator') -->
@@ -241,7 +242,7 @@ const ORIGIN_TYPE_SERIALIZER_VIA_FNC = createTransformSerializer(
 
 If you have a object structure which is composed of multiple separate structures and they are identified by a property
 then you can use the `SwitchSerializer`.
- 
+
 <!-- USEFILE: examples\property-switch-serializer.ts; str => str.replace('../src', 'serialization-generator') -->
 ``` ts
 import {
@@ -286,14 +287,16 @@ const JOINED_TYPE_SERIALIZER = new PropertySwitchSerializer<JoinedType, 'type'>(
 
 This package tries to make the serialization as fast as possible and still keep a readable API.
 
-There will be no typecheck done on serialization, if you can not trust the datastructure you can do one manually by calling
+There will be no typecheck done on serialization, if you can not trust the datastructure you can do one manually by
+calling
 `typeCheck` of the serializer.
 
-The provided default serializers have different runtime behavior which can heavily influence your choice for the datastructure.
+The provided default serializers have different runtime behavior which can heavily influence your choice for the
+datastructure.
 
 The performance report below is the result of the serialization from a similar datasctructure like the one shown above.
-`serialization` includes the `ObjectSerializer` and the number serializer but nothing else,
-all other are added separately.
+`serialization` includes the `ObjectSerializer` and the number serializer but nothing else, all other are added
+separately.
 
 The string serializer uses an internal cache on serialize, which results in a skewed result.
 
@@ -323,7 +326,8 @@ serialization + Array + Vector + AB + String + Enum
 ```
 
 As this performance measurement show array buffer and string serialization are quite slow, I would recommend therefore
-to stick to the other serializers. The most efficient option is to only use `ObjectSerializer` and the number serializer.  
+to stick to the other serializers. The most efficient option is to only use `ObjectSerializer` and the number
+serializer.
 
 ## In comparison to other means of serialization
 
@@ -331,54 +335,55 @@ This package is rather basic and is only meant to serialize structures which rem
 
 ### This package vs JSON
 
-\+ Maps to a lot less bytes
+#### Pro `serialization-generator`
 
-\+ Has type check
+- Maps to a lot less bytes
+- Has type check
+- The structure does not need to be send / saved each time
 
-\+ The structure does not need to be send / saved each time
+#### Pro `JSON`
 
-
-\- Needs to be prepared
-
-\- The structure needs to remain the same
-
-\- The receiver needs to know the structure and construct a deserializer
+- Doesn't need to be prepared
+- The structure doesn't need to be predefined
+- The receiver doesn't need to know the structure and construct a deserializer
 
 ### This package vs FlatBuffers / protobuf
 
-[FlatBuffers](https://google.github.io/flatbuffers) and [protobuf](https://protobufjs.github.io/protobuf.js/) are two solutions which are well tested and have a huge userbase.
-I had not found those before implementing this library. They might be better suited for your usecase!
+[FlatBuffers](https://google.github.io/flatbuffers) and [protobuf](https://protobufjs.github.io/protobuf.js/) are two
+solutions which are well tested and have a huge userbase. I had not found those before implementing this library. They
+might be better suited for your usecase!
 
-Disclaimer: I have never used one of them, my pros and cons are only first impressions. 
+Disclaimer: I have never used one of them, my pros and cons are only first impressions.
 
-\+ Only meant to transport JavaScript Values, might be more suitable
+#### Pro `serialization-generator`
 
-\+ This library is only meant to be used by JavaScript or TypeScript, might be more tailored for that usecase
+- Only meant to transport JavaScript Values, might be more suitable
+- This library is only meant to be used by JavaScript or TypeScript, might be more tailored for that usecase
 
+#### Pro `FlatBuffers / protobuf`
 
-
-\- They are better tested
-
-\- The other libraries have an extensive documentations / many answered questions
-
-\- Might have an inferior performance, might be better optimized
-
-\- Somewhat standard
-
-\- You can access data from FlatBuffers without deserialization
+- They are better tested
+- They have an extensive documentations / many answered questions
+- They might be better optimized
+- Somewhat standard
+- Can be used with other languages beside JavaScript
+- You can access data from FlatBuffers without deserialization
 
 ### Structured clone
 
-This is internally used by the JavaScript engine to transfer JavaScript values from one realm to another (WebWorkers, IndexDB, History API).
-Sadly this API is not yet exposed directly but might be in the future.  
+This is internally used by the JavaScript engine to transfer JavaScript values from one realm to another (WebWorkers,
+IndexDB, History API). Sadly this API is not yet exposed directly but might be in the future.
 
 NodeJS exposed this functionality from the V8, have look here: https://nodejs.org/api/v8.html#v8_serialization_api
 
 Either way those values can not be read by JavaScript in the browser, which makes it not suitable for my usecase.
 Hopefully this functionality will come to the browser at some point, you can read more about it here:
 
-Definition: https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeforstorage 
-ECMAScript proposal: https://github.com/dslomov/ecmascript-structured-clone (found here: https://github.com/tc39/proposals/blob/master/stage-0-proposals.md)
+Definition: https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeforstorage
+
+ECMAScript proposal: https://github.com/dslomov/ecmascript-structured-clone (found
+here: https://github.com/tc39/proposals/blob/master/stage-0-proposals.md)
+
 Discussion about specification: https://github.com/whatwg/html/issues/793
 
 ## Runtime requirements
