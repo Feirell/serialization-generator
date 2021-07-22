@@ -35,6 +35,37 @@ then you can use the `SwitchSerializer`.
 
 <!-- USEFILE: examples/property-switch-serializer.ts; str => str.replace('../src', 'serialization-generator') -->
 
+## Partial De- / Serialization
+
+There are several use cases where you would like to provide a value already serialized and incorporate it into a greater
+structure or where you would like not to deserialize a part of an object.
+
+Example use cases:
+
+- You have a `NodeJS-Task-Worker` <-> `NodeJS-HTTP-Worker` <-> `Browser-Client` setup and the `NodeJS-Task-Worker`
+  creates a value ultimately meant to be used by the `Browser-Client`. In the first step the task worker will send this
+  value wrapped in some message object to the HTTP worker, which will re-wrap this value and send it to the browser.
+  Without a partial serializer you would fully deserialize this value in the HTTP worker and then re-serialize it to
+  send it to the browser.
+
+- Another szenario is that you would like to send the same value to multiple clients, then you could serialize it once
+  and only have the changing wrapper be serialized for each client.
+
+- Or you could have the value already serialized and taken from a cache or it could be loaded from a file.
+
+The `ObjectPartialSerializer` is not identical to having an object with an `ArrayBuffer` field. The reason being that
+this array buffer would not be deserialized when deserializing the object, so it is not transparent in the deserializing
+step.
+
+The `ArrayBuffer` created by serializing an object with the `ObjectPartialSerializer` is identical to the `ArrayBuffer`
+created by the corresponding `ObjectSerializer`, at least if the data is identical.
+
+This means that you can use the `ObjectSerializer` for type T and `ObjectPartialSerializer` for type T interchangeably.
+
+Have a look at those two examples:
+
+<!-- USEFILE: examples/partial-serializer.ts; str => str.replace('../src', 'serialization-generator') -->
+
 ## Performance remarks
 
 This package tries to make the serialization as fast as possible and still keep a readable API.

@@ -58,7 +58,7 @@ export class ObjectSerializer<Structure extends object> extends ValueSerializer<
     private staticMembers: StaticMember<Structure, StringKeys<Structure>>[] = [];
     private serializationSteps: AppendedSerializer<Structure, StringKeys<Structure>>[] = [];
 
-    private readonly instanceCreator: InstanceCreator<Structure>;
+    public readonly instanceCreator: InstanceCreator<Structure>;
     private cachedStaticSize: null | undefined | number = null;
 
     /**
