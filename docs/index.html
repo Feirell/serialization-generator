@@ -68,8 +68,8 @@
 				<blockquote>
 					<p><strong>Please have a look at the <code>This package vs FlatBuffers / protobuf</code> section below before making yourself familiar with this library.</strong></p>
 				</blockquote>
-				<p>The main target of this package is to make the creation of serializers to transform JavaScript Values into binary and back
-				as easy as possible and to keep the creation readable.</p>
+				<p>The main target of this package is to make the creation of serializers to transform JavaScript Values into binary and
+				back as easy as possible and to keep the creation readable.</p>
 				<p>To archive this goal this package provides multiple simple serializers which you can combine to create more complex
 				versions which fit your needed data structures.</p>
 				<!-- USEFILE: examples\simple-example.ts; str => str.replace('../src', 'serialization-generator') -->
@@ -181,7 +181,8 @@ exSer.serialize(view, <span class="hljs-number">0</span>, instance);
 				<a href="#mapping--transforming-serializer" id="mapping--transforming-serializer" style="color: inherit; text-decoration: none;">
 					<h2>Mapping / transforming serializer</h2>
 				</a>
-				<p>If want to implement a mapping serializer which, for example, maps an enum to a number and back you could do so in four ways.
+				<p>If want to implement a mapping serializer which, for example, maps an enum to a number and back you could do so in four
+					ways.
 				<code>EnumSerializer</code> is a specific class to map a static number of values to their indexes and back, primarily Enums.</p>
 				<!-- USEFILE: examples\transform-values.ts; str => str.replace('../src', 'serialization-generator') -->
 				<pre><code class="language-ts"><span class="hljs-keyword">import</span> {
@@ -335,16 +336,144 @@ exSer.serialize(view, <span class="hljs-number">0</span>, instance);
     .register(<span class="hljs-string">"b"</span>, JOINED_TYPE_B)
     .finalize();</code></pre>
 				<p><em>You can find this in <code>examples\property-switch-serializer.ts</code></em></p>
+				<a href="#partial-de---serialization" id="partial-de---serialization" style="color: inherit; text-decoration: none;">
+					<h2>Partial De- / Serialization</h2>
+				</a>
+				<p>There are several use cases where you would like to provide a value already serialized and incorporate it into a greater
+				structure or where you would like not to deserialize a part of an object.</p>
+				<p>Example use cases:</p>
+				<ul>
+					<li><p>You have a <code>NodeJS-Task-Worker</code> &lt;-&gt; <code>NodeJS-HTTP-Worker</code> &lt;-&gt; <code>Browser-Client</code> setup and the <code>NodeJS-Task-Worker</code>
+							creates a value ultimately meant to be used by the <code>Browser-Client</code>. In the first step the task worker will send this
+							value wrapped in some message object to the HTTP worker, which will re-wrap this value and send it to the browser.
+							Without a partial serializer you would fully deserialize this value in the HTTP worker and then re-serialize it to
+						send it to the browser.</p>
+					</li>
+					<li><p>Another szenario is that you would like to send the same value to multiple clients, then you could serialize it once
+						and only have the changing wrapper be serialized for each client.</p>
+					</li>
+					<li><p>Or you could have the value already serialized and taken from a cache or it could be loaded from a file.</p>
+					</li>
+				</ul>
+				<p>The <code>ObjectPartialSerializer</code> is not identical to having an object with an <code>ArrayBuffer</code> field. The reason being that
+					this array buffer would not be deserialized when deserializing the object, so it is not transparent in the deserializing
+				step.</p>
+				<p>The <code>ArrayBuffer</code> created by serializing an object with the <code>ObjectPartialSerializer</code> is identical to the <code>ArrayBuffer</code>
+				created by the corresponding <code>ObjectSerializer</code>, at least if the data is identical.</p>
+				<p>This means that you can use the <code>ObjectSerializer</code> for type T and <code>ObjectPartialSerializer</code> for type T interchangeably.</p>
+				<p>Have a look at those two examples:</p>
+				<!-- USEFILE: examples\partial-serializer.ts; str => str.replace('../src', 'serialization-generator') -->
+				<pre><code class="language-ts"><span class="hljs-keyword">import</span> {
+    ObjectPartialSerializer,
+    ObjectSerializer,
+    SerializerType,
+    STRING_SERIALIZER,
+    UINT16_SERIALIZER,
+    VectorSerializer
+} <span class="hljs-keyword">from</span> <span class="hljs-string">"serialization-generator"</span>;
+
+<span class="hljs-keyword">interface</span> ExampleStructure {
+    fieldA: <span class="hljs-built_in">number</span>;
+    fieldB: [<span class="hljs-built_in">string</span>, <span class="hljs-built_in">string</span>];
+    fieldC: <span class="hljs-built_in">string</span>;
+}
+
+<span class="hljs-keyword">const</span> STRING_VECTOR_2_SERIALIZER = <span class="hljs-keyword">new</span> VectorSerializer(STRING_SERIALIZER, <span class="hljs-number">2</span>);
+
+<span class="hljs-keyword">const</span> EXAMPLE_FULL_SERIALIZER = <span class="hljs-keyword">new</span> ObjectSerializer&lt;ExampleStructure&gt;()
+    .append(<span class="hljs-string">'fieldA'</span>, UINT16_SERIALIZER)
+    .append(<span class="hljs-string">'fieldB'</span>, STRING_VECTOR_2_SERIALIZER)
+    .append(<span class="hljs-string">'fieldC'</span>, STRING_SERIALIZER);
+
+<span class="hljs-keyword">const</span> EXAMPLE_PARTIAL_SERIALIZER = <span class="hljs-keyword">new</span> ObjectPartialSerializer(EXAMPLE_FULL_SERIALIZER, <span class="hljs-string">'fieldB'</span>);
+
+<span class="hljs-comment">// This type is the same as the ExampleStructure but the fieldB is replaced with the type ArrayBuffer</span>
+<span class="hljs-comment">// You could have written the following instead:</span>
+<span class="hljs-comment">// type ExamplePartialStructure = InsteadArrayBuffer&lt;ExampleStructure, 'fieldB'&gt;;</span>
+<span class="hljs-keyword">type</span> ExamplePartialStructure = SerializerType&lt;<span class="hljs-keyword">typeof</span> EXAMPLE_PARTIAL_SERIALIZER&gt;;
+
+
+
+
+
+
+
+
+
+<span class="hljs-comment">// Example szenario:</span>
+
+<span class="hljs-comment">// This could be a NodesJS-Worker who serialized a generated value which he send to the main thread</span>
+<span class="hljs-keyword">const</span> fullSerialized = EXAMPLE_FULL_SERIALIZER.valueToArrayBuffer({
+    fieldA: <span class="hljs-number">12</span>,
+    fieldB: [<span class="hljs-string">'Test'</span>, <span class="hljs-string">'test'</span>],
+    fieldC: <span class="hljs-string">'test'</span>
+});
+
+<span class="hljs-comment">// Transferring fullSerialized to another Worker ...</span>
+
+<span class="hljs-comment">// This could be a the HTTP-Server Worker of the NodeJS instance</span>
+<span class="hljs-comment">// This one needs to read fieldA and fieldC but keeps fieldB as it is because it does not need to read it but to send</span>
+<span class="hljs-comment">// the value to the client</span>
+
+<span class="hljs-keyword">const</span> partialDeserialized = EXAMPLE_PARTIAL_SERIALIZER.arrayBufferToValue(fullSerialized);
+
+<span class="hljs-keyword">const</span> reWrapped = {
+    <span class="hljs-keyword">type</span>: <span class="hljs-string">'client-message'</span>,
+
+    <span class="hljs-comment">// is an ArrayBuffer</span>
+    value: partialDeserialized.fieldB
+}
+
+<span class="hljs-comment">// You would then use another ObjectPartialSerializer to pack this value to send it to the client</span>
+<span class="hljs-comment">// which would use another ObjectSerializer to fully unpack the values and receive the original value of fieldB.</span>
+
+<span class="hljs-comment">// const toClient = CLIENT_PARTIAL_SERIALIZER.valueToArrayBuffer(reWrapped);</span>
+<span class="hljs-comment">// Sending ...</span>
+<span class="hljs-comment">// const fullValue = CLIENT_SERIALIZER.arrayBufferToValue(toClient);</span>
+<span class="hljs-comment">// fullValue.value[0] == 'Test'</span>
+
+
+
+
+
+<span class="hljs-comment">// Another szenario:</span>
+
+<span class="hljs-comment">// You have serialized the value by some other means already, for example loaded it from a file took the serialized value</span>
+<span class="hljs-comment">// from a cache or are sending part of the object to multiple clients, for which you need to copy this part of the object.</span>
+
+<span class="hljs-comment">// Then you can attach this value directly like so:</span>
+
+<span class="hljs-comment">// Creating the pre-serialized portion of the object:</span>
+<span class="hljs-keyword">const</span> preSerValue = STRING_VECTOR_2_SERIALIZER.valueToArrayBuffer([<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>]);
+
+<span class="hljs-keyword">const</span> partialValue: ExamplePartialStructure = {
+    fieldA: <span class="hljs-number">22</span>,
+    fieldB: preSerValue,
+    fieldC: <span class="hljs-string">'nice'</span>
+};
+
+<span class="hljs-comment">// Can be used anyway</span>
+EXAMPLE_PARTIAL_SERIALIZER.typeCheck(partialValue);
+
+<span class="hljs-comment">// This would be the server:</span>
+<span class="hljs-keyword">const</span> partialSer = EXAMPLE_PARTIAL_SERIALIZER.valueToArrayBuffer(partialValue);
+
+<span class="hljs-comment">// And each client could unpack the full object and read fielB fully again</span>
+<span class="hljs-keyword">const</span> fullDes = EXAMPLE_FULL_SERIALIZER.arrayBufferToValue(partialSer);
+</code></pre>
+				<p><em>You can find this in <code>examples\partial-serializer.ts</code></em></p>
 				<a href="#performance-remarks" id="performance-remarks" style="color: inherit; text-decoration: none;">
 					<h2>Performance remarks</h2>
 				</a>
 				<p>This package tries to make the serialization as fast as possible and still keep a readable API.</p>
-				<p>There will be no typecheck done on serialization, if you can not trust the datastructure you can do one manually by calling
+				<p>There will be no typecheck done on serialization, if you can not trust the datastructure you can do one manually by
+					calling
 				<code>typeCheck</code> of the serializer.</p>
-				<p>The provided default serializers have different runtime behavior which can heavily influence your choice for the datastructure.</p>
+				<p>The provided default serializers have different runtime behavior which can heavily influence your choice for the
+				datastructure.</p>
 				<p>The performance report below is the result of the serialization from a similar datasctructure like the one shown above.
-					<code>serialization</code> includes the <code>ObjectSerializer</code> and the number serializer but nothing else,
-				all other are added separately.</p>
+					<code>serialization</code> includes the <code>ObjectSerializer</code> and the number serializer but nothing else, all other are added
+				separately.</p>
 				<p>The string serializer uses an internal cache on serialize, which results in a skewed result.</p>
 				<pre><code>                ops/sec  MoE samples relative
 serialization
@@ -368,7 +497,8 @@ serialization + Enum
 serialization + Array + Vector + AB + String + Enum
   serialize     <span class="hljs-number">440</span>,<span class="hljs-number">456</span> <span class="hljs-number">0.66</span>      <span class="hljs-number">95</span>     <span class="hljs-number">3.30</span>
   deserialize   <span class="hljs-number">133</span>,<span class="hljs-number">296</span> <span class="hljs-number">1.04</span>      <span class="hljs-number">89</span>     <span class="hljs-number">1.00</span></code></pre><p>As this performance measurement show array buffer and string serialization are quite slow, I would recommend therefore
-				to stick to the other serializers. The most efficient option is to only use <code>ObjectSerializer</code> and the number serializer.  </p>
+					to stick to the other serializers. The most efficient option is to only use <code>ObjectSerializer</code> and the number
+				serializer.</p>
 				<a href="#in-comparison-to-other-means-of-serialization" id="in-comparison-to-other-means-of-serialization" style="color: inherit; text-decoration: none;">
 					<h2>In comparison to other means of serialization</h2>
 				</a>
@@ -376,36 +506,59 @@ serialization + Array + Vector + AB + String + Enum
 				<a href="#this-package-vs-json" id="this-package-vs-json" style="color: inherit; text-decoration: none;">
 					<h3>This package vs JSON</h3>
 				</a>
-				<p>+ Maps to a lot less bytes</p>
-				<p>+ Has type check</p>
-				<p>+ The structure does not need to be send / saved each time</p>
-				<p>- Needs to be prepared</p>
-				<p>- The structure needs to remain the same</p>
-				<p>- The receiver needs to know the structure and construct a deserializer</p>
+				<a href="#pro-serialization-generator" id="pro-serialization-generator" style="color: inherit; text-decoration: none;">
+					<h4>Pro <code>serialization-generator</code></h4>
+				</a>
+				<ul>
+					<li>Maps to a lot less bytes</li>
+					<li>Has type check</li>
+					<li>The structure does not need to be send / saved each time</li>
+				</ul>
+				<a href="#pro-json" id="pro-json" style="color: inherit; text-decoration: none;">
+					<h4>Pro <code>JSON</code></h4>
+				</a>
+				<ul>
+					<li>Doesn&#39;t need to be prepared</li>
+					<li>The structure doesn&#39;t need to be predefined</li>
+					<li>The receiver doesn&#39;t need to know the structure and construct a deserializer</li>
+				</ul>
 				<a href="#this-package-vs-flatbuffers--protobuf" id="this-package-vs-flatbuffers--protobuf" style="color: inherit; text-decoration: none;">
 					<h3>This package vs FlatBuffers / protobuf</h3>
 				</a>
-				<p><a href="https://google.github.io/flatbuffers">FlatBuffers</a> and <a href="https://protobufjs.github.io/protobuf.js/">protobuf</a> are two solutions which are well tested and have a huge userbase.
-				I had not found those before implementing this library. They might be better suited for your usecase!</p>
-				<p>Disclaimer: I have never used one of them, my pros and cons are only first impressions. </p>
-				<p>+ Only meant to transport JavaScript Values, might be more suitable</p>
-				<p>+ This library is only meant to be used by JavaScript or TypeScript, might be more tailored for that usecase</p>
-				<p>- They are better tested</p>
-				<p>- The other libraries have an extensive documentations / many answered questions</p>
-				<p>- Might have an inferior performance, might be better optimized</p>
-				<p>- Somewhat standard</p>
-				<p>- You can access data from FlatBuffers without deserialization</p>
+				<p><a href="https://google.github.io/flatbuffers">FlatBuffers</a> and <a href="https://protobufjs.github.io/protobuf.js/">protobuf</a> are two
+					solutions which are well tested and have a huge userbase. I had not found those before implementing this library. They
+				might be better suited for your usecase!</p>
+				<p>Disclaimer: I have never used one of them, my pros and cons are only first impressions.</p>
+				<a href="#pro-serialization-generator-1" id="pro-serialization-generator-1" style="color: inherit; text-decoration: none;">
+					<h4>Pro <code>serialization-generator</code></h4>
+				</a>
+				<ul>
+					<li>Only meant to transport JavaScript Values, might be more suitable</li>
+					<li>This library is only meant to be used by JavaScript or TypeScript, might be more tailored for that usecase</li>
+				</ul>
+				<a href="#pro-flatbuffers--protobuf" id="pro-flatbuffers--protobuf" style="color: inherit; text-decoration: none;">
+					<h4>Pro <code>FlatBuffers / protobuf</code></h4>
+				</a>
+				<ul>
+					<li>They are better tested</li>
+					<li>They have an extensive documentations / many answered questions</li>
+					<li>They might be better optimized</li>
+					<li>Somewhat standard</li>
+					<li>Can be used with other languages beside JavaScript</li>
+					<li>You can access data from FlatBuffers without deserialization</li>
+				</ul>
 				<a href="#structured-clone" id="structured-clone" style="color: inherit; text-decoration: none;">
 					<h3>Structured clone</h3>
 				</a>
-				<p>This is internally used by the JavaScript engine to transfer JavaScript values from one realm to another (WebWorkers, IndexDB, History API).
-				Sadly this API is not yet exposed directly but might be in the future.  </p>
+				<p>This is internally used by the JavaScript engine to transfer JavaScript values from one realm to another (WebWorkers,
+				IndexDB, History API). Sadly this API is not yet exposed directly but might be in the future.</p>
 				<p>NodeJS exposed this functionality from the V8, have look here: <a href="https://nodejs.org/api/v8.html#v8_serialization_api">https://nodejs.org/api/v8.html#v8_serialization_api</a></p>
 				<p>Either way those values can not be read by JavaScript in the browser, which makes it not suitable for my usecase.
 				Hopefully this functionality will come to the browser at some point, you can read more about it here:</p>
-				<p>Definition: <a href="https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeforstorage">https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeforstorage</a>
-					ECMAScript proposal: <a href="https://github.com/dslomov/ecmascript-structured-clone">https://github.com/dslomov/ecmascript-structured-clone</a> (found here: <a href="https://github.com/tc39/proposals/blob/master/stage-0-proposals.md">https://github.com/tc39/proposals/blob/master/stage-0-proposals.md</a>)
-				Discussion about specification: <a href="https://github.com/whatwg/html/issues/793">https://github.com/whatwg/html/issues/793</a></p>
+				<p>Definition: <a href="https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeforstorage">https://html.spec.whatwg.org/multipage/structured-data.html#structuredserializeforstorage</a></p>
+				<p>ECMAScript proposal: <a href="https://github.com/dslomov/ecmascript-structured-clone">https://github.com/dslomov/ecmascript-structured-clone</a> (found
+				here: <a href="https://github.com/tc39/proposals/blob/master/stage-0-proposals.md">https://github.com/tc39/proposals/blob/master/stage-0-proposals.md</a>)</p>
+				<p>Discussion about specification: <a href="https://github.com/whatwg/html/issues/793">https://github.com/whatwg/html/issues/793</a></p>
 				<a href="#runtime-requirements" id="runtime-requirements" style="color: inherit; text-decoration: none;">
 					<h2>Runtime requirements</h2>
 				</a>
@@ -418,13 +571,97 @@ serialization + Array + Vector + AB + String + Enum
 					<li class="globals  ">
 						<a href="globals.html"><em>Globals</em></a>
 					</li>
-					<li class=" tsd-kind-module">
-						<a href="modules/_src_index_.html">&quot;src/index&quot;</a>
-					</li>
 				</ul>
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="classes/arraybufferserializer.html" class="tsd-kind-icon">Array<wbr>Buffer<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/arrayserializer.html" class="tsd-kind-icon">Array<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/chainserializer.html" class="tsd-kind-icon">Chain<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/enumserializer.html" class="tsd-kind-icon">Enum<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/objectpartialserializer.html" class="tsd-kind-icon">Object<wbr>Partial<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/objectserializer.html" class="tsd-kind-icon">Object<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/propertyswitchserializer.html" class="tsd-kind-icon">Property<wbr>Switch<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/stringserializer.html" class="tsd-kind-icon">String<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/switchserializer.html" class="tsd-kind-icon">Switch<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/transformserializer.html" class="tsd-kind-icon">Transform<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/valueserializer.html" class="tsd-kind-icon">Value<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-class tsd-has-type-parameter">
+						<a href="classes/vectorserializer.html" class="tsd-kind-icon">Vector<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/instancecreator.html" class="tsd-kind-icon">Instance<wbr>Creator</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-has-type-parameter">
+						<a href="interfaces/objectserializeroptions.html" class="tsd-kind-icon">Object<wbr>Serializer<wbr>Options</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#insteadarraybuffer" class="tsd-kind-icon">Instead<wbr>Array<wbr>Buffer</a>
+					</li>
+					<li class=" tsd-kind-type-alias tsd-has-type-parameter">
+						<a href="globals.html#serializertype" class="tsd-kind-icon">Serializer<wbr>Type</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#array_buffer_serializer" class="tsd-kind-icon">ARRAY_<wbr>BUFFER_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#float32_serializer" class="tsd-kind-icon">FLOAT32_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#float64_serializer" class="tsd-kind-icon">FLOAT64_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#int16_serializer" class="tsd-kind-icon">INT16_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#int32_serializer" class="tsd-kind-icon">INT32_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#int8_serializer" class="tsd-kind-icon">INT8_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#string_serializer" class="tsd-kind-icon">STRING_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#uint16_serializer" class="tsd-kind-icon">UINT16_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#uint32_serializer" class="tsd-kind-icon">UINT32_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-variable">
+						<a href="globals.html#uint8_serializer" class="tsd-kind-icon">UINT8_<wbr>SERIALIZER</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#default_instance_creator" class="tsd-kind-icon">DEFAULT_<wbr>INSTANCE_<wbr>CREATOR</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#combineobjectserializer" class="tsd-kind-icon">combine<wbr>Object<wbr>Serializer</a>
+					</li>
+					<li class=" tsd-kind-function tsd-has-type-parameter">
+						<a href="globals.html#createtransformserializer" class="tsd-kind-icon">create<wbr>Transform<wbr>Serializer</a>
+					</li>
 				</ul>
 			</nav>
 		</div>
