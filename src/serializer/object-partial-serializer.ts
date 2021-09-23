@@ -181,6 +181,8 @@ export class ObjectPartialSerializer<Structure extends object, KeepSerialized ex
                 const subSource = source.subarray(offset, offset + sizeOfSegment);
 
                 target.set(subSource);
+
+                offset += sizeOfSegment;
                 val[name] = segment as any;
             } else {
                 const ret = serializer.deserialize(dv, offset);
