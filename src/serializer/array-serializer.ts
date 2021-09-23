@@ -38,6 +38,9 @@ export class ArraySerializer<Serializer extends ValueSerializer<any>, Type exten
     serialize(dv: DataView, offset: number, val: Type[]): { offset: number } {
         const length = val.length;
 
+        if (length > 0xffff)
+            throw new Error('The array is bigger than the maximum number of elements allowed');
+
         dv.setUint16(offset, length);
         offset += 2;
 
