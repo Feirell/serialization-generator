@@ -67,9 +67,5 @@
     "skipLibCheck": true,                     /* Skip type checking of declaration files. */
     "forceConsistentCasingInFileNames": true  /* Disallow inconsistently-cased references to the same file. */
   },
-  "files": [
-    "examples/simple-example.ts",
-    "examples/transform-values.ts",
-    "examples/measure-performance.ts"
-  ]
+  "include": ["examples/*.ts"]
 }
